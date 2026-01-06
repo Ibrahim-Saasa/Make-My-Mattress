@@ -106,7 +106,7 @@ const LoginScreen: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-indigo-50 p-6 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-6 relative overflow-hidden">
       
       {/* Simulated SMS Notification (Mock Push) */}
       <div className={`fixed top-6 left-1/2 -translate-x-1/2 w-[90%] max-w-sm z-[100] transition-all duration-700 ease-out ${
@@ -130,11 +130,11 @@ const LoginScreen: React.FC = () => {
         </div>
       </div>
 
-      <div className="max-w-md w-full space-y-12 transition-all duration-500">
+      <div className="max-w-md w-full space-y-12 transition-all duration-500 bg-white p-10 rounded-[3.5rem] shadow-2xl shadow-indigo-500/20 border border-slate-200">
         {/* Branding */}
         <div className="text-center space-y-4">
           <div className="flex justify-center">
-            <div className="w-20 h-20 bg-indigo-600 rounded-[2rem] flex items-center justify-center text-white shadow-2xl shadow-indigo-600/20 animate-pulse">
+            <div className="w-20 h-20 bg-indigo-700 rounded-[2rem] flex items-center justify-center text-white shadow-2xl shadow-indigo-700/30 animate-pulse">
               <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
               </svg>
@@ -148,8 +148,8 @@ const LoginScreen: React.FC = () => {
             <button
               type="button"
               onClick={() => setStep('PHONE_INPUT')}
-              className={`flex-1 py-3 rounded-2xl text-sm font-bold transition-all border hover:scale-[1.01] ${
-                step === 'PHONE_INPUT' || step === 'OTP_VERIFICATION' ? 'bg-indigo-600 text-white border-indigo-600 shadow-lg' : 'bg-slate-50 text-slate-500 border-slate-200'
+              className={`flex-1 py-3 rounded-2xl text-sm font-bold transition-all border hover:scale-[1.02] ${
+                step === 'PHONE_INPUT' || step === 'OTP_VERIFICATION' ? 'bg-indigo-700 text-white border-indigo-700 shadow-lg shadow-indigo-500/20' : 'bg-slate-100 text-slate-600 border-slate-300 shadow-sm'
               }`}
             >
               Login with Phone
@@ -157,8 +157,8 @@ const LoginScreen: React.FC = () => {
             <button
               type="button"
               onClick={() => setStep('EMAIL_PASSWORD')}
-              className={`flex-1 py-3 rounded-2xl text-sm font-bold transition-all border hover:scale-[1.01] ${
-                step === 'EMAIL_PASSWORD' ? 'bg-indigo-600 text-white border-indigo-600 shadow-lg' : 'bg-slate-50 text-slate-500 border-slate-200'
+              className={`flex-1 py-3 rounded-2xl text-sm font-bold transition-all border hover:scale-[1.02] ${
+                step === 'EMAIL_PASSWORD' ? 'bg-indigo-700 text-white border-indigo-700 shadow-lg shadow-indigo-500/20' : 'bg-slate-100 text-slate-600 border-slate-300 shadow-sm'
               }`}
             >
               Login with Email
@@ -168,26 +168,26 @@ const LoginScreen: React.FC = () => {
           {step === 'PHONE_INPUT' && (
             <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="space-y-2">
-                <h2 className="text-sm font-bold text-slate-400 uppercase tracking-widest">Login to start building</h2>
+                <h2 className="text-sm font-bold text-slate-500 uppercase tracking-widest">Login to start building</h2>
                 <form onSubmit={handleSendOtp} className="space-y-6">
                   <div className="relative">
-                    <span className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm">+91 </span>
+                    <span className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-500 font-bold text-sm">+91 </span>
                     <input 
                       type="tel"
                       maxLength={10}
                       value={phone}
                       onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
                       placeholder="Enter Mobile Number"
-                      className="w-full bg-slate-50 border border-slate-200 rounded-2xl pl-14 pr-6 py-5 font-bold text-lg focus:outline-none focus:border-indigo-600 transition-colors"
+                      className="w-full bg-slate-100 border border-slate-300 rounded-2xl pl-14 pr-6 py-5 font-bold text-lg focus:outline-none focus:border-indigo-700 transition-colors shadow-sm"
                     />
                   </div>
                   
-                  {error && <p className="text-xs font-bold text-red-500 px-2">{error}</p>}
+                  {error && <p className="text-xs font-bold text-red-600 px-2">{error}</p>}
 
                   <button 
                     type="submit"
                     disabled={isLoading}
-                    className="w-full bg-indigo-600 text-white py-5 rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-indigo-500/20 hover:bg-indigo-700 active:scale-[0.98] transition-all flex items-center justify-center"
+                    className="w-full bg-indigo-700 text-white py-5 rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-indigo-700/30 hover:bg-indigo-800 active:scale-[0.98] transition-all flex items-center justify-center"
                   >
                     {isLoading ? (
                       <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
@@ -204,10 +204,10 @@ const LoginScreen: React.FC = () => {
             <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
               <div className="space-y-2">
                 <div className="flex justify-between items-center mb-2">
-                  <h2 className="text-sm font-bold text-slate-400 uppercase tracking-widest">Verify Identity</h2>
-                  <button onClick={() => setStep('PHONE_INPUT')} className="text-[10px] font-black text-indigo-600 uppercase tracking-widest">Change Number</button>
+                  <h2 className="text-sm font-bold text-slate-500 uppercase tracking-widest">Verify Identity</h2>
+                  <button onClick={() => setStep('PHONE_INPUT')} className="text-[10px] font-black text-indigo-700 uppercase tracking-widest">Change Number</button>
                 </div>
-                <p className="text-xs text-slate-500 mb-6">We've sent a code to <span className="text-slate-900 font-bold">+91 {phone}</span></p>
+                <p className="text-xs text-slate-600 mb-6">We've sent a code to <span className="text-slate-900 font-bold">+91 {phone}</span></p>
                 
                 <form onSubmit={handleVerifyOtp} className="space-y-6">
                   <div className="flex justify-center gap-4">
@@ -217,16 +217,16 @@ const LoginScreen: React.FC = () => {
                       value={otpInput}
                       onChange={(e) => setOtpInput(e.target.value.replace(/\D/g, ''))}
                       placeholder="• • • • • •"
-                      className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-6 font-black text-4xl text-center tracking-[0.5em] focus:outline-none focus:border-indigo-600 transition-colors placeholder:text-slate-200"
+                      className="w-full bg-slate-100 border border-slate-300 rounded-2xl py-6 font-black text-4xl text-center tracking-[0.5em] focus:outline-none focus:border-indigo-700 transition-colors placeholder:text-slate-300 shadow-sm"
                     />
                   </div>
 
-                  {error && <p className="text-xs font-bold text-red-500 text-center">{error}</p>}
+                  {error && <p className="text-xs font-bold text-red-600 text-center">{error}</p>}
 
                   <button 
                     type="submit"
                     disabled={isLoading || otpInput.length < 6} // OTPs are typically 6 digits for Supabase
-                    className="w-full bg-brand-amber text-brand-navy py-5 rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-amber-500/20 hover:brightness-110 active:scale-[0.98] transition-all flex items-center justify-center"
+                    className="w-full bg-brand-amber text-brand-navy py-5 rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-amber-500/30 hover:brightness-110 active:scale-[0.98] transition-all flex items-center justify-center"
                   >
                     {isLoading ? (
                       <div className="w-6 h-6 border-2 border-brand-navy/30 border-t-brand-navy rounded-full animate-spin"></div>
@@ -237,8 +237,8 @@ const LoginScreen: React.FC = () => {
                 </form>
                 
                 <div className="text-center mt-6">
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                    Didn't receive code? <span className="text-indigo-600 cursor-pointer" onClick={handleSendOtp}>Resend SMS</span>
+                  <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                    Didn't receive code? <span className="text-indigo-700 cursor-pointer" onClick={handleSendOtp}>Resend SMS</span>
                   </p>
                 </div>
               </div>
@@ -248,37 +248,37 @@ const LoginScreen: React.FC = () => {
           {step === 'EMAIL_PASSWORD' && (
             <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="space-y-2">
-                <h2 className="text-sm font-bold text-slate-400 uppercase tracking-widest">Login with Email</h2>
+                <h2 className="text-sm font-bold text-slate-500 uppercase tracking-widest">Login with Email</h2>
                 <form onSubmit={handleEmailLogin} className="space-y-6">
                   <div>
-                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block">Email</label>
+                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2 block">Email</label>
                     <input
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 font-bold focus:outline-none focus:border-indigo-600 transition-colors"
+                      className="w-full bg-slate-100 border border-slate-300 rounded-2xl px-6 py-4 font-bold focus:outline-none focus:border-indigo-700 transition-colors shadow-sm"
                       placeholder="john.doe@example.com"
                       required
                     />
                   </div>
                   <div>
-                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block">Password</label>
+                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2 block">Password</label>
                     <input
                       type="password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 font-bold focus:outline-none focus:border-indigo-600 transition-colors"
+                      className="w-full bg-slate-100 border border-slate-300 rounded-2xl px-6 py-4 font-bold focus:outline-none focus:border-indigo-700 transition-colors shadow-sm"
                       placeholder="••••••••"
                       required
                     />
                   </div>
                   
-                  {error && <p className="text-xs font-bold text-red-500 px-2">{error}</p>}
+                  {error && <p className="text-xs font-bold text-red-600 px-2">{error}</p>}
 
                   <button 
                     type="submit"
                     disabled={isLoading}
-                    className="w-full bg-indigo-600 text-white py-5 rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-indigo-500/20 hover:bg-indigo-700 active:scale-[0.98] transition-all flex items-center justify-center"
+                    className="w-full bg-indigo-700 text-white py-5 rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-indigo-700/30 hover:bg-indigo-800 active:scale-[0.98] transition-all flex items-center justify-center"
                   >
                     {isLoading ? (
                       <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
@@ -292,13 +292,13 @@ const LoginScreen: React.FC = () => {
           )}
 
           <div className="text-center mt-6">
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-              Don't have an account? <span className="text-indigo-600 cursor-pointer" onClick={() => navigate('/signup')}>Sign up here</span>
+            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+              Don't have an account? <span className="text-indigo-700 cursor-pointer" onClick={() => navigate('/signup')}>Sign up here</span>
             </p>
           </div>
 
-          <p className="text-[11px] text-center text-slate-400 leading-relaxed font-medium">
-            By continuing, you agree to our <span className="text-indigo-600 underline cursor-pointer">Terms & Privacy Policy</span>.
+          <p className="text-[11px] text-center text-slate-500 leading-relaxed font-medium">
+            By continuing, you agree to our <span className="text-indigo-700 underline cursor-pointer">Terms & Privacy Policy</span>.
           </p>
         </div>
       </div>
