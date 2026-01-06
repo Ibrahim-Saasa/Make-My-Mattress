@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Routes, Route, useNavigate, Navigate } from 'react-router-dom';
 import { useSession } from './src/contexts/SessionContext'; // Corrected import path
 import LoginScreen from './components/LoginScreen';
+import SignupScreen from './components/SignupScreen'; // Import the new SignupScreen
 import IdentityScreen from './components/IdentityScreen';
 import BrandHall from './components/BrandHall';
 import SmartConfigurator from './components/SmartConfigurator';
@@ -119,11 +120,11 @@ const App: React.FC = () => {
     );
   }
 
-  const isIndustrialScreen = ['/admin-capitol', '/factory-kanban', '/technician-portal', '/dealer-dashboard', '/service-booker', '/login', '/checkout'].some(path => location.pathname.startsWith(path));
+  const isIndustrialScreen = ['/admin-capitol', '/factory-kanban', '/technician-portal', '/dealer-dashboard', '/service-booker', '/login', '/checkout', '/signup'].some(path => location.pathname.startsWith(path));
 
   return (
     <div className="min-h-screen bg-[#FDFDFD] text-slate-900 overflow-x-hidden font-sans">
-      {location.pathname !== '/identity' && location.pathname !== '/login' && !isIndustrialScreen && (
+      {location.pathname !== '/identity' && location.pathname !== '/login' && location.pathname !== '/signup' && !isIndustrialScreen && (
         <header className="fixed top-0 w-full z-40 bg-white/80 backdrop-blur-xl border-b border-slate-100 px-6 py-4">
           <div className="max-w-7xl mx-auto flex items-center justify-between">
             <div className="flex items-center gap-2 cursor-pointer group" onClick={() => navigate('/brand-hall')}>
@@ -151,9 +152,10 @@ const App: React.FC = () => {
         </header>
       )}
 
-      <main className={`${(location.pathname !== '/identity' && location.pathname !== '/login' && !isIndustrialScreen) ? 'pt-24' : ''}`}>
+      <main className={`${(location.pathname !== '/identity' && location.pathname !== '/login' && location.pathname !== '/signup' && !isIndustrialScreen) ? 'pt-24' : ''}`}>
         <Routes>
           <Route path="/login" element={<LoginScreen />} />
+          <Route path="/signup" element={<SignupScreen />} /> {/* New Signup Route */}
           <Route path="/identity" element={<IdentityScreen onSelectRole={handleRoleSelection} />} />
           <Route path="/brand-hall" element={<BrandHall onSelectBrand={brand => { setSelectedBrand(brand); navigate('/configurator'); }} />} />
           <Route path="/configurator" element={selectedBrand ? (

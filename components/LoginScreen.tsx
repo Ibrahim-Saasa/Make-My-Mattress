@@ -2,14 +2,16 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSession } from '../src/contexts/SessionContext'; // Corrected import path
 
-type LoginStep = 'PHONE' | 'OTP';
+type LoginStep = 'PHONE_OTP' | 'EMAIL_PASSWORD';
 
 const LoginScreen: React.FC = () => {
   const { supabase } = useSession();
   const navigate = useNavigate();
 
-  const [step, setStep] = useState<LoginStep>('PHONE');
+  const [step, setStep] = useState<LoginStep>('PHONE_OTP'); // Default to phone OTP
   const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [otpInput, setOtpInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -39,7 +41,7 @@ const LoginScreen: React.FC = () => {
         throw error;
       }
 
-      setStep('OTP');
+      // No change in step, just show SMS simulation
       triggerSmsSimulation(`Your OTP for Hindustan Mattress Co. is: [Check your phone for the actual OTP]`); // Supabase sends actual OTP
     } catch (err: any) {
       console.error("OTP Send Error:", err);
@@ -69,6 +71,30 @@ const LoginScreen: React.FC = () => {
     } catch (err: any) {
       console.error("OTP Verification Error:", err);
       setError(err.message || "Invalid OTP. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleEmailLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setIsLoading(true);
+
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      navigate('/identity', { replace: true }); // Redirect to identity screen after successful login
+    } catch (err: any) {
+      console.error("Email Login Error:", err);
+      setError(err.message || "Invalid email or password. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -113,7 +139,28 @@ const LoginScreen: React.FC = () => {
         </div>
 
         <div className="space-y-8">
-          {step === 'PHONE' ? (
+          <div className="flex gap-4">
+            <button
+              type="button"
+              onClick={() => setStep('PHONE_OTP')}
+              className={`flex-1 py-3 rounded-2xl text-sm font-bold transition-all border ${
+                step === 'PHONE_OTP' ? 'bg-indigo-600 text-white border-indigo-600 shadow-lg' : 'bg-slate-50 text-slate-500 border-slate-200'
+              }`}
+            >
+              Login with Phone
+            </button>
+            <button
+              type="button"
+              onClick={() => setStep('EMAIL_PASSWORD')}
+              className={`flex-1 py-3 rounded-2xl text-sm font-bold transition-all border ${
+                step === 'EMAIL_PASSWORD' ? 'bg-indigo-600 text-white border-indigo-600 shadow-lg' : 'bg-slate-50 text-slate-500 border-slate-200'
+              }`}
+            >
+              Login with Email
+            </button>
+          </div>
+
+          {step === 'PHONE_OTP' ? (
             <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="space-y-2">
                 <h2 className="text-sm font-bold text-slate-400 uppercase tracking-widest">Login to start building</h2>
@@ -145,51 +192,100 @@ const LoginScreen: React.FC = () => {
                   </button>
                 </form>
               </div>
-            </div>
-          ) : (
-            <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
-              <div className="space-y-2">
-                <div className="flex justify-between items-center mb-2">
-                  <h2 className="text-sm font-bold text-slate-400 uppercase tracking-widest">Verify Identity</h2>
-                  <button onClick={() => setStep('PHONE')} className="text-[10px] font-black text-indigo-600 uppercase tracking-widest">Change Number</button>
-                </div>
-                <p className="text-xs text-slate-500 mb-6">We've sent a code to <span className="text-slate-900 font-bold">+91 {phone}</span></p>
-                
-                <form onSubmit={handleVerifyOtp} className="space-y-6">
-                  <div className="flex justify-center gap-4">
-                    <input 
-                      type="text"
-                      maxLength={6} // OTPs are typically 6 digits for Supabase
-                      value={otpInput}
-                      onChange={(e) => setOtpInput(e.target.value.replace(/\D/g, ''))}
-                      placeholder="• • • • • •"
-                      className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-6 font-black text-4xl text-center tracking-[0.5em] focus:outline-none focus:border-indigo-600 transition-colors placeholder:text-slate-200"
-                    />
+              <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center mb-2">
+                    <h2 className="text-sm font-bold text-slate-400 uppercase tracking-widest">Verify Identity</h2>
+                    <button onClick={() => setStep('PHONE_OTP')} className="text-[10px] font-black text-indigo-600 uppercase tracking-widest">Change Number</button>
                   </div>
+                  <p className="text-xs text-slate-500 mb-6">We've sent a code to <span className="text-slate-900 font-bold">+91 {phone}</span></p>
+                  
+                  <form onSubmit={handleVerifyOtp} className="space-y-6">
+                    <div className="flex justify-center gap-4">
+                      <input 
+                        type="text"
+                        maxLength={6} // OTPs are typically 6 digits for Supabase
+                        value={otpInput}
+                        onChange={(e) => setOtpInput(e.target.value.replace(/\D/g, ''))}
+                        placeholder="• • • • • •"
+                        className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-6 font-black text-4xl text-center tracking-[0.5em] focus:outline-none focus:border-indigo-600 transition-colors placeholder:text-slate-200"
+                      />
+                    </div>
 
-                  {error && <p className="text-xs font-bold text-red-500 text-center">{error}</p>}
+                    {error && <p className="text-xs font-bold text-red-500 text-center">{error}</p>}
 
-                  <button 
-                    type="submit"
-                    disabled={isLoading || otpInput.length < 6} // OTPs are typically 6 digits for Supabase
-                    className="w-full bg-brand-amber text-brand-navy py-5 rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-amber-500/20 hover:brightness-110 active:scale-[0.98] transition-all flex items-center justify-center"
-                  >
-                    {isLoading ? (
-                      <div className="w-6 h-6 border-2 border-brand-navy/30 border-t-brand-navy rounded-full animate-spin"></div>
-                    ) : (
-                      "VERIFY & ENTER"
-                    )}
-                  </button>
-                </form>
-                
-                <div className="text-center mt-6">
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                    Didn't receive code? <span className="text-indigo-600 cursor-pointer" onClick={handleSendOtp}>Resend SMS</span>
-                  </p>
+                    <button 
+                      type="submit"
+                      disabled={isLoading || otpInput.length < 6} // OTPs are typically 6 digits for Supabase
+                      className="w-full bg-brand-amber text-brand-navy py-5 rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-amber-500/20 hover:brightness-110 active:scale-[0.98] transition-all flex items-center justify-center"
+                    >
+                      {isLoading ? (
+                        <div className="w-6 h-6 border-2 border-brand-navy/30 border-t-brand-navy rounded-full animate-spin"></div>
+                      ) : (
+                        "VERIFY & ENTER"
+                      )}
+                    </button>
+                  </form>
+                  
+                  <div className="text-center mt-6">
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                      Didn't receive code? <span className="text-indigo-600 cursor-pointer" onClick={handleSendOtp}>Resend SMS</span>
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
+          ) : (
+            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <div className="space-y-2">
+                <h2 className="text-sm font-bold text-slate-400 uppercase tracking-widest">Login with Email</h2>
+                <form onSubmit={handleEmailLogin} className="space-y-6">
+                  <div>
+                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block">Email</label>
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 font-bold focus:outline-none focus:border-indigo-600 transition-colors"
+                      placeholder="john.doe@example.com"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block">Password</label>
+                    <input
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 font-bold focus:outline-none focus:border-indigo-600 transition-colors"
+                      placeholder="••••••••"
+                      required
+                    />
+                  </div>
+                  
+                  {error && <p className="text-xs font-bold text-red-500 px-2">{error}</p>}
+
+                  <button 
+                    type="submit"
+                    disabled={isLoading}
+                    className="w-full bg-indigo-600 text-white py-5 rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-indigo-500/20 hover:bg-indigo-700 active:scale-[0.98] transition-all flex items-center justify-center"
+                  >
+                    {isLoading ? (
+                      <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                    ) : (
+                      "LOGIN"
+                    )}
+                  </button>
+                </form>
+              </div>
+            </div>
           )}
+
+          <div className="text-center mt-6">
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+              Don't have an account? <span className="text-indigo-600 cursor-pointer" onClick={() => navigate('/signup')}>Sign up here</span>
+            </p>
+          </div>
 
           <p className="text-[11px] text-center text-slate-400 leading-relaxed font-medium">
             By continuing, you agree to our <span className="text-indigo-600 underline cursor-pointer">Terms & Privacy Policy</span>.
