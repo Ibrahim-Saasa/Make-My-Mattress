@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo, useEffect } from 'react';
 import { BrandMetadata, UserRole, MattressParams, PricingResult } from '../types';
 import { LENGTHS, BREADTHS, THICKNESS_STEPS } from '../constants';
@@ -68,7 +67,7 @@ const SmartConfigurator: React.FC<Props> = ({ brand, userRole, onNext, onBack, o
   };
 
   return (
-    <div className="flex flex-col h-screen bg-white">
+    <div className="flex flex-col h-screen bg-gradient-to-br from-slate-50 to-indigo-50">
       {/* Top Half: Visual Anchor */}
       <div className="h-1/2 bg-slate-50 relative flex items-center justify-center overflow-hidden border-b border-slate-100">
         <button onClick={onBack} className="absolute top-6 left-6 z-20 text-slate-400 hover:text-indigo-600 transition-colors">
@@ -119,10 +118,10 @@ const SmartConfigurator: React.FC<Props> = ({ brand, userRole, onNext, onBack, o
               <button 
                 key={t}
                 onClick={() => { setParams({...params, thickness: t}); triggerHaptic('light'); }}
-                className={`flex-shrink-0 w-24 py-6 rounded-3xl font-bold transition-all border snap-center ${
+                className={`flex-shrink-0 w-24 py-6 rounded-3xl font-bold transition-all border snap-center hover:scale-[1.02] ${
                   params.thickness === t 
-                  ? 'bg-brand-navy text-white border-brand-navy shadow-xl' 
-                  : 'bg-white text-slate-400 border-slate-100 hover:border-indigo-200'
+                  ? 'bg-brand-navy text-white border-brand-navy shadow-xl shadow-indigo-500/20' 
+                  : 'bg-white text-slate-400 border-slate-200 hover:border-indigo-200'
                 }`}
               >
                 <span className="text-2xl block">{t}"</span>
@@ -140,8 +139,8 @@ const SmartConfigurator: React.FC<Props> = ({ brand, userRole, onNext, onBack, o
                 <button 
                   key={l}
                   onClick={() => { setParams({...params, length: l}); triggerHaptic('light'); }}
-                  className={`px-6 py-3 rounded-2xl text-sm font-bold transition-all border ${
-                    params.length === l ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-slate-50 text-slate-500 border-slate-200'
+                  className={`px-6 py-3 rounded-2xl text-sm font-bold transition-all border hover:scale-[1.02] ${
+                    params.length === l ? 'bg-indigo-600 text-white border-indigo-600 shadow-md' : 'bg-slate-50 text-slate-500 border-slate-200'
                   }`}
                 >
                   {l}"
@@ -165,8 +164,8 @@ const SmartConfigurator: React.FC<Props> = ({ brand, userRole, onNext, onBack, o
                 <button 
                   key={b}
                   onClick={() => { setParams({...params, breadth: b}); triggerHaptic('light'); }}
-                  className={`px-6 py-3 rounded-2xl text-sm font-bold transition-all border ${
-                    params.breadth === b ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-slate-50 text-slate-500 border-slate-200'
+                  className={`px-6 py-3 rounded-2xl text-sm font-bold transition-all border hover:scale-[1.02] ${
+                    params.breadth === b ? 'bg-indigo-600 text-white border-indigo-600 shadow-md' : 'bg-slate-50 text-slate-500 border-slate-200'
                   }`}
                 >
                   {b}"
@@ -174,7 +173,7 @@ const SmartConfigurator: React.FC<Props> = ({ brand, userRole, onNext, onBack, o
               ))}
               <button 
                 onClick={() => setCustomModalOpen(true)}
-                className="px-6 py-3 rounded-2xl text-sm font-bold transition-all border bg-brand-amber/10 text-brand-amber border-brand-amber/20 flex items-center gap-2"
+                className="px-6 py-3 rounded-2xl text-sm font-bold transition-all border bg-brand-amber/10 text-brand-amber border-brand-amber/20 flex items-center gap-2 hover:scale-[1.02]"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
                 Odd Size
@@ -222,7 +221,7 @@ const SmartConfigurator: React.FC<Props> = ({ brand, userRole, onNext, onBack, o
                   type="number"
                   value={customInput.l}
                   onChange={e => setCustomInput({...customInput, l: e.target.value})}
-                  className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-5 font-bold focus:outline-none focus:border-indigo-600"
+                  className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-5 font-bold focus:outline-none focus:border-indigo-600 transition-colors"
                   placeholder="72.5"
                 />
               </div>
@@ -232,7 +231,7 @@ const SmartConfigurator: React.FC<Props> = ({ brand, userRole, onNext, onBack, o
                   type="number"
                   value={customInput.b}
                   onChange={e => setCustomInput({...customInput, b: e.target.value})}
-                  className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-5 font-bold focus:outline-none focus:border-indigo-600"
+                  className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-5 font-bold focus:outline-none focus:border-indigo-600 transition-colors"
                   placeholder="36.5"
                 />
               </div>

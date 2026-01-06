@@ -31,7 +31,7 @@ const BrandHall: React.FC<Props> = ({ onSelectBrand, userName }) => {
           <button 
             key={brand.id}
             onClick={() => onSelectBrand(brand)}
-            className="group relative h-[420px] rounded-[2rem] overflow-hidden bg-white border border-slate-100 hover:border-indigo-200 hover:shadow-2xl hover:shadow-indigo-500/10 transition-all text-left"
+            className="group relative h-[420px] rounded-[2rem] overflow-hidden bg-gradient-to-br from-white to-slate-50 border border-slate-200 hover:border-indigo-400 hover:shadow-xl hover:shadow-indigo-500/10 transition-all text-left hover:scale-[1.01]"
           >
             {/* Visual Background/Texture representation */}
             <div className={`absolute inset-0 opacity-10 group-hover:opacity-20 transition-opacity pointer-events-none ${

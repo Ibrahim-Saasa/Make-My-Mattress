@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { UserRole } from '../types';
 
@@ -11,7 +10,7 @@ const IdentityScreen: React.FC<Props> = ({ onSelectRole }) => {
   const [gst, setGst] = useState('');
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#F8FAFC] p-6">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-indigo-50 p-6">
       <div className="max-w-6xl w-full grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
         
         {/* Left Side: Brand Story & Visual Identity */}
@@ -65,12 +64,12 @@ const IdentityScreen: React.FC<Props> = ({ onSelectRole }) => {
         </div>
 
         {/* Right Side: Identity Cards (CMO Refined) */}
-        <div className="bg-white p-10 rounded-[3.5rem] shadow-2xl shadow-indigo-500/5 border border-slate-100 space-y-6">
+        <div className="bg-white p-10 rounded-[3.5rem] shadow-2xl shadow-indigo-500/10 border border-slate-100 space-y-6">
           <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-4 text-center">Identity Verification</p>
           
           <button 
             onClick={() => onSelectRole(UserRole.END_USER)}
-            className="w-full group p-8 rounded-3xl border border-slate-100 hover:border-indigo-600 hover:shadow-2xl hover:shadow-indigo-500/10 transition-all text-left bg-[#FBFCFE]"
+            className="w-full group p-8 rounded-3xl border border-slate-200 hover:border-indigo-600 hover:shadow-xl hover:shadow-indigo-500/10 transition-all text-left bg-gradient-to-br from-slate-50 to-white hover:scale-[1.01]"
           >
             <div className="flex justify-between items-center">
               <div>
@@ -83,7 +82,7 @@ const IdentityScreen: React.FC<Props> = ({ onSelectRole }) => {
             </div>
           </button>
 
-          <div className={`w-full bg-[#FBFCFE] rounded-3xl border transition-all duration-500 overflow-hidden ${selected === UserRole.DEALER ? 'border-brand-amber shadow-2xl shadow-amber-500/10' : 'border-slate-100'}`}>
+          <div className={`w-full bg-gradient-to-br from-slate-50 to-white rounded-3xl border transition-all duration-500 overflow-hidden ${selected === UserRole.DEALER ? 'border-brand-amber shadow-2xl shadow-amber-500/10' : 'border-slate-200'}`}>
             <button 
               onClick={() => setSelected(UserRole.DEALER)}
               className="w-full p-8 text-left group"

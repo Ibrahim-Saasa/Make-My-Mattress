@@ -63,7 +63,7 @@ const SignupScreen: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white p-6">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-indigo-50 p-6">
       <div className="max-w-md w-full space-y-8">
         {/* Branding */}
         <div className="text-center space-y-4">
@@ -107,7 +107,7 @@ const SignupScreen: React.FC = () => {
             <button
               type="button"
               onClick={() => setMethod('EMAIL')}
-              className={`flex-1 py-3 rounded-2xl text-sm font-bold transition-all border ${
+              className={`flex-1 py-3 rounded-2xl text-sm font-bold transition-all border hover:scale-[1.01] ${
                 method === 'EMAIL' ? 'bg-indigo-600 text-white border-indigo-600 shadow-lg' : 'bg-slate-50 text-slate-500 border-slate-200'
               }`}
             >
@@ -116,7 +116,7 @@ const SignupScreen: React.FC = () => {
             <button
               type="button"
               onClick={() => setMethod('PHONE')}
-              className={`flex-1 py-3 rounded-2xl text-sm font-bold transition-all border ${
+              className={`flex-1 py-3 rounded-2xl text-sm font-bold transition-all border hover:scale-[1.01] ${
                 method === 'PHONE' ? 'bg-indigo-600 text-white border-indigo-600 shadow-lg' : 'bg-slate-50 text-slate-500 border-slate-200'
               }`}
             >

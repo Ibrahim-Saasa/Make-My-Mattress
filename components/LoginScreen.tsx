@@ -106,7 +106,7 @@ const LoginScreen: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white p-6 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-indigo-50 p-6 relative overflow-hidden">
       
       {/* Simulated SMS Notification (Mock Push) */}
       <div className={`fixed top-6 left-1/2 -translate-x-1/2 w-[90%] max-w-sm z-[100] transition-all duration-700 ease-out ${
@@ -148,7 +148,7 @@ const LoginScreen: React.FC = () => {
             <button
               type="button"
               onClick={() => setStep('PHONE_INPUT')}
-              className={`flex-1 py-3 rounded-2xl text-sm font-bold transition-all border ${
+              className={`flex-1 py-3 rounded-2xl text-sm font-bold transition-all border hover:scale-[1.01] ${
                 step === 'PHONE_INPUT' || step === 'OTP_VERIFICATION' ? 'bg-indigo-600 text-white border-indigo-600 shadow-lg' : 'bg-slate-50 text-slate-500 border-slate-200'
               }`}
             >
@@ -157,7 +157,7 @@ const LoginScreen: React.FC = () => {
             <button
               type="button"
               onClick={() => setStep('EMAIL_PASSWORD')}
-              className={`flex-1 py-3 rounded-2xl text-sm font-bold transition-all border ${
+              className={`flex-1 py-3 rounded-2xl text-sm font-bold transition-all border hover:scale-[1.01] ${
                 step === 'EMAIL_PASSWORD' ? 'bg-indigo-600 text-white border-indigo-600 shadow-lg' : 'bg-slate-50 text-slate-500 border-slate-200'
               }`}
             >
