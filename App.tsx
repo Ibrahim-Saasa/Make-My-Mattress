@@ -37,6 +37,7 @@ const App: React.FC = () => {
   const [isAiConsultantOpen, setIsAiConsultantOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [isRoleDetermined, setIsRoleDetermined] = useState(false); // New state
 
   useEffect(() => {
     if (isLoading) {
@@ -48,6 +49,7 @@ const App: React.FC = () => {
       if (location.pathname !== '/login' && location.pathname !== '/signup') {
         navigate('/login', { replace: true });
       }
+      setIsRoleDetermined(true); // Role is "undetermined" because no session, so we can proceed
       return;
     }
 
@@ -64,6 +66,9 @@ const App: React.FC = () => {
         if (location.pathname !== '/identity') {
           navigate('/identity', { replace: true });
         }
+        setUserRole(null);
+        setUserName(null);
+        setIsRoleDetermined(true);
         return;
       }
 
@@ -73,9 +78,9 @@ const App: React.FC = () => {
         if (location.pathname !== '/identity') {
           navigate('/identity', { replace: true });
         }
-        // Explicitly clear role if not found to prevent accidental redirects
         setUserRole(null); 
         setUserName(null);
+        setIsRoleDetermined(true);
         return;
       }
 
@@ -96,7 +101,7 @@ const App: React.FC = () => {
         else if (role === UserRole.DEALER) navigate('/dealer-dashboard', { replace: true });
         else navigate('/brand-hall', { replace: true }); // Default for END_USER
       }
-      // If user has a role and is already on their correct page, do nothing.
+      setIsRoleDetermined(true); // Role is now determined, can render routes
     };
 
     fetchProfileAndRedirect();
@@ -140,10 +145,11 @@ const App: React.FC = () => {
     await supabase.auth.signOut();
     setUserRole(null);
     setUserName(null);
+    setIsRoleDetermined(false); // Reset role determination on logout
     navigate('/login');
   };
 
-  if (isLoading) {
+  if (isLoading || !isRoleDetermined) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#FDFDFD] text-slate-900">
         Loading application...
