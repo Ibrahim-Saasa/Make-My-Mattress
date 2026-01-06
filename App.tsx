@@ -16,6 +16,7 @@ import FactoryKanban from './components/FactoryKanban';
 import DealerDashboard from './components/DealerDashboard';
 import CheckoutScreen from './components/CheckoutScreen';
 import CartDrawer from './components/CartDrawer';
+import ProfilePage from './components/ProfilePage'; // Import the new ProfilePage
 import { UserRole, BrandMetadata, PricingResult, Cart } from './types';
 
 interface CartItem {
@@ -30,6 +31,7 @@ const App: React.FC = () => {
   const navigate = useNavigate();
 
   const [userRole, setUserRole] = useState<UserRole | null>(null);
+  const [userName, setUserName] = useState<string | null>(null); // New state for user's first name
   const [selectedBrand, setSelectedBrand] = useState<BrandMetadata | null>(null);
   const [isAiConsultantOpen, setIsAiConsultantOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -43,16 +45,16 @@ const App: React.FC = () => {
         const fetchProfile = async () => {
           const { data, error } = await supabase
             .from('profiles')
-            .select('role')
+            .select('role, first_name') // Fetch first_name as well
             .eq('id', session.user.id)
             .single();
 
           if (error && error.code !== 'PGRST116') { // PGRST116 means no rows found
             console.error('Error fetching profile:', error);
-            // If there's an actual error (not just no profile), still go to identity to allow selection
             navigate('/identity', { replace: true });
           } else if (data && data.role) { // Profile exists AND role is set
             setUserRole(data.role as UserRole);
+            setUserName(data.first_name || null); // Set user name
             // Redirect based on role if already set
             if (data.role === UserRole.TECHNICIAN) navigate('/technician-portal', { replace: true });
             else if (data.role === UserRole.SUPER_ADMIN) navigate('/admin-capitol', { replace: true });
@@ -106,6 +108,7 @@ const App: React.FC = () => {
   const handleLogout = async () => {
     await supabase.auth.signOut();
     setUserRole(null);
+    setUserName(null); // Clear user name on logout
     navigate('/login');
   };
 
@@ -117,7 +120,7 @@ const App: React.FC = () => {
     );
   }
 
-  const isIndustrialScreen = ['/admin-capitol', '/factory-kanban', '/technician-portal', '/dealer-dashboard', '/service-booker', '/login', '/checkout', '/signup'].some(path => location.pathname.startsWith(path));
+  const isIndustrialScreen = ['/admin-capitol', '/factory-kanban', '/technician-portal', '/dealer-dashboard', '/service-booker', '/login', '/checkout', '/signup', '/profile'].some(path => location.pathname.startsWith(path));
 
   return (
     <div className="min-h-screen bg-[#FDFDFD] text-slate-900 overflow-x-hidden font-sans">
@@ -129,6 +132,15 @@ const App: React.FC = () => {
               <span className="font-bold tracking-tight text-slate-800 uppercase text-sm">Hindustan Mattress Co.</span>
             </div>
             <div className="flex items-center gap-6">
+              {userName && ( // Display "Hello, User" if userName is available
+                <span className="text-sm font-bold text-slate-600">Hello, {userName}!</span>
+              )}
+              <button 
+                onClick={() => navigate('/profile')} // Navigate to profile page
+                className="p-2 text-slate-400 hover:text-indigo-600 transition-colors"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+              </button>
               <button 
                 onClick={() => setIsCartOpen(true)}
                 className="relative p-2 text-slate-400 hover:text-indigo-600 transition-colors"
@@ -154,6 +166,7 @@ const App: React.FC = () => {
           <Route path="/login" element={<LoginScreen />} />
           <Route path="/signup" element={<SignupScreen />} />
           <Route path="/identity" element={<IdentityScreen onSelectRole={handleRoleSelection} />} />
+          <Route path="/profile" element={<ProfilePage />} /> {/* New Profile Page Route */}
           <Route path="/brand-hall" element={<BrandHall onSelectBrand={brand => { setSelectedBrand(brand); navigate('/configurator'); }} />} />
           <Route path="/configurator" element={selectedBrand ? (
             <SmartConfigurator 
