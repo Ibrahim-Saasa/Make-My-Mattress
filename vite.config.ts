@@ -11,8 +11,9 @@ export default defineConfig(({ mode }) => {
       },
       plugins: [react()],
       define: {
-        'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY),
-        'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY)
+        // Expose environment variables to your client-side code
+        // Vite automatically exposes VITE_ prefixed variables via import.meta.env
+        // No need for custom process.env definitions if using VITE_ prefix directly
       },
       resolve: {
         alias: {

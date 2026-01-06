@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { GoogleGenAI } from "@google/genai";
 
@@ -17,7 +16,9 @@ const LoginScreen: React.FC<Props> = ({ onLoginSuccess }) => {
   const [error, setError] = useState('');
   const [mockSms, setMockSms] = useState<{ show: boolean; message: string }>({ show: false, message: '' });
 
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  // Check for API key before initializing GoogleGenAI
+  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+  const ai = apiKey ? new GoogleGenAI({ apiKey }) : null;
 
   const triggerSmsSimulation = (message: string) => {
     setMockSms({ show: true, message });
@@ -27,6 +28,10 @@ const LoginScreen: React.FC<Props> = ({ onLoginSuccess }) => {
 
   const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!ai) {
+      setError("API Key is not configured. Please set VITE_GEMINI_API_KEY in .env.local");
+      return;
+    }
     if (phone.length < 10) {
       setError("Please enter a valid 10-digit number");
       return;

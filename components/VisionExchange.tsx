@@ -1,4 +1,3 @@
-
 import { GoogleGenAI } from "@google/genai";
 import React, { useState } from 'react';
 
@@ -9,10 +8,21 @@ interface Props {
 const VisionExchange: React.FC<Props> = ({ onResult }) => {
   const [image, setImage] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [apiError, setApiError] = useState<string | null>(null);
+
+  // Check for API key before initializing GoogleGenAI
+  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+  const ai = apiKey ? new GoogleGenAI({ apiKey }) : null;
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
+    if (!ai) {
+      setApiError("API Key is not configured. Please set VITE_GEMINI_API_KEY in .env.local");
+      return;
+    }
+    setApiError(null); // Clear previous API error
 
     const reader = new FileReader();
     reader.onloadend = () => {
@@ -25,8 +35,11 @@ const VisionExchange: React.FC<Props> = ({ onResult }) => {
   const analyzeImage = async (base64: string) => {
     setIsAnalyzing(true);
     try {
-      // Always initialize with named apiKey parameter
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+      if (!ai) {
+        setApiError("API Key is not configured. Please set VITE_GEMINI_API_KEY in .env.local");
+        setIsAnalyzing(false);
+        return;
+      }
       const base64Data = base64.split(',')[1];
       
       const response = await ai.models.generateContent({
@@ -37,16 +50,15 @@ const VisionExchange: React.FC<Props> = ({ onResult }) => {
             { text: "Analyze this old mattress. Detect: 1. Size (Single/Double/King). 2. Physical condition (Torn/Sagging/Stained). 3. Based on condition, suggest a buyback exchange value between ₹500 and ₹5000. Return only raw JSON string with keys: size, condition, value." }
           ]
         }
-        // Removed responseMimeType as it is not supported for gemini-2.5-flash-image (nano banana series)
       });
 
-      // Use response.text property access
       const text = response.text || '{}';
       const jsonStr = text.replace(/```json|```/g, '').trim();
       const data = JSON.parse(jsonStr);
       onResult(data);
     } catch (error) {
       console.error("Vision Analysis Error:", error);
+      setApiError("Error analyzing image with AI. Please try again.");
     } finally {
       setIsAnalyzing(false);
     }
@@ -62,6 +74,12 @@ const VisionExchange: React.FC<Props> = ({ onResult }) => {
         onChange={handleFileChange}
       />
       
+      {apiError && (
+        <div className="bg-red-100 text-red-700 p-3 rounded-lg text-sm mb-4">
+          {apiError}
+        </div>
+      )}
+
       {isAnalyzing ? (
         <div className="space-y-4">
           <div className="w-12 h-12 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto"></div>

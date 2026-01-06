@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { GoogleGenAI } from "@google/genai";
 import { SLEEP_CONSULTANT_PROMPT } from '../constants';
@@ -10,14 +9,28 @@ const SleepConsultant: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ i
   ]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [apiError, setApiError] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  // Check for API key before initializing GoogleGenAI
+  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+  const ai = apiKey ? new GoogleGenAI({ apiKey }) : null;
+
   useEffect(() => {
+    if (!apiKey) {
+      setApiError("API Key is not configured. Please set VITE_GEMINI_API_KEY in .env.local");
+    } else {
+      setApiError(null);
+    }
     scrollRef.current?.scrollTo(0, scrollRef.current.scrollHeight);
-  }, [messages]);
+  }, [messages, apiKey]);
 
   const handleSend = async () => {
     if (!input.trim() || isTyping) return;
+    if (!ai) {
+      setApiError("API Key is not configured. Please set VITE_GEMINI_API_KEY in .env.local");
+      return;
+    }
 
     const userMsg = input;
     setInput('');
@@ -25,7 +38,6 @@ const SleepConsultant: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ i
     setIsTyping(true);
 
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
       const response = await ai.models.generateContent({
         model: 'gemini-3-flash-preview',
         contents: [...messages, { role: 'user', text: userMsg }].map(m => ({
@@ -67,6 +79,11 @@ const SleepConsultant: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ i
       </div>
 
       <div ref={scrollRef} className="flex-1 overflow-y-auto p-6 space-y-4 bg-slate-50/50">
+        {apiError && (
+          <div className="bg-red-100 text-red-700 p-3 rounded-lg text-sm text-center">
+            {apiError}
+          </div>
+        )}
         {messages.map((m, i) => (
           <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
             <div className={`max-w-[85%] p-4 rounded-2xl text-sm leading-relaxed shadow-sm ${
@@ -99,7 +116,7 @@ const SleepConsultant: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ i
           />
           <button 
             onClick={handleSend}
-            disabled={isTyping}
+            disabled={isTyping || !ai}
             className="bg-indigo-600 text-white p-3 rounded-xl hover:bg-indigo-700 transition-colors disabled:opacity-50"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
