@@ -1,37 +1,27 @@
-import React, { useState, useEffect } from 'react';
-import { GoogleGenAI } from "@google/genai";
-
-interface Props {
-  onLoginSuccess: () => void;
-}
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useSession } from '../src/contexts/SessionContext'; // Corrected import path
 
 type LoginStep = 'PHONE' | 'OTP';
 
-const LoginScreen: React.FC<Props> = ({ onLoginSuccess }) => {
+const LoginScreen: React.FC = () => {
+  const { supabase } = useSession();
+  const navigate = useNavigate();
+
   const [step, setStep] = useState<LoginStep>('PHONE');
   const [phone, setPhone] = useState('');
   const [otpInput, setOtpInput] = useState('');
-  const [generatedOtp, setGeneratedOtp] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [mockSms, setMockSms] = useState<{ show: boolean; message: string }>({ show: false, message: '' });
 
-  // Check for API key before initializing GoogleGenAI
-  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-  const ai = apiKey ? new GoogleGenAI({ apiKey }) : null;
-
   const triggerSmsSimulation = (message: string) => {
     setMockSms({ show: true, message });
-    // Hide notification after 8 seconds
     setTimeout(() => setMockSms(prev => ({ ...prev, show: false })), 8000);
   };
 
   const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!ai) {
-      setError("API Key is not configured. Please set VITE_GEMINI_API_KEY in .env.local");
-      return;
-    }
     if (phone.length < 10) {
       setError("Please enter a valid 10-digit number");
       return;
@@ -41,46 +31,47 @@ const LoginScreen: React.FC<Props> = ({ onLoginSuccess }) => {
     setIsLoading(true);
 
     try {
-      // Use Gemini to generate a professional SMS and a secure OTP
-      const response = await ai.models.generateContent({
-        model: 'gemini-3-flash-preview',
-        contents: `Generate a 4-digit numeric OTP for a mattress company called "Hindustan Mattress Co". 
-                   Return a JSON object with two keys: "otp" (the 4 digit string) and "sms" (a professional SMS message including the code).`,
-        config: {
-          responseMimeType: "application/json"
-        }
+      const { error } = await supabase.auth.signInWithOtp({
+        phone: `+91${phone}`,
       });
 
-      const data = JSON.parse(response.text || '{}');
-      if (data.otp && data.sms) {
-        setGeneratedOtp(data.otp);
-        setStep('OTP');
-        triggerSmsSimulation(data.sms);
-      } else {
-        throw new Error("Invalid AI Response");
+      if (error) {
+        throw error;
       }
-    } catch (err) {
-      console.error("OTP Generation Error:", err);
-      setError("SMS Gateway is busy. Please try again.");
+
+      setStep('OTP');
+      triggerSmsSimulation(`Your OTP for Hindustan Mattress Co. is: [Check your phone for the actual OTP]`); // Supabase sends actual OTP
+    } catch (err: any) {
+      console.error("OTP Send Error:", err);
+      setError(err.message || "Failed to send OTP. Please try again.");
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleVerifyOtp = (e: React.FormEvent) => {
+  const handleVerifyOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Artificial delay for realism
-    setTimeout(() => {
-      if (otpInput === generatedOtp) {
-        setMockSms({ show: false, message: '' });
-        onLoginSuccess();
-      } else {
-        setError("Invalid OTP. Please check the simulated SMS notification.");
-        setIsLoading(false);
+    try {
+      const { error } = await supabase.auth.verifyOtp({
+        phone: `+91${phone}`,
+        token: otpInput,
+        type: 'sms',
+      });
+
+      if (error) {
+        throw error;
       }
-    }, 8000);
+
+      setMockSms({ show: false, message: '' });
+      navigate('/identity', { replace: true }); // Redirect to identity screen after successful login
+    } catch (err: any) {
+      console.error("OTP Verification Error:", err);
+      setError(err.message || "Invalid OTP. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -168,10 +159,10 @@ const LoginScreen: React.FC<Props> = ({ onLoginSuccess }) => {
                   <div className="flex justify-center gap-4">
                     <input 
                       type="text"
-                      maxLength={4}
+                      maxLength={6} // OTPs are typically 6 digits for Supabase
                       value={otpInput}
                       onChange={(e) => setOtpInput(e.target.value.replace(/\D/g, ''))}
-                      placeholder="• • • •"
+                      placeholder="• • • • • •"
                       className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-6 font-black text-4xl text-center tracking-[0.5em] focus:outline-none focus:border-indigo-600 transition-colors placeholder:text-slate-200"
                     />
                   </div>
@@ -180,7 +171,7 @@ const LoginScreen: React.FC<Props> = ({ onLoginSuccess }) => {
 
                   <button 
                     type="submit"
-                    disabled={isLoading || otpInput.length < 4}
+                    disabled={isLoading || otpInput.length < 6} // OTPs are typically 6 digits for Supabase
                     className="w-full bg-brand-amber text-brand-navy py-5 rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-amber-500/20 hover:brightness-110 active:scale-[0.98] transition-all flex items-center justify-center"
                   >
                     {isLoading ? (
@@ -193,7 +184,7 @@ const LoginScreen: React.FC<Props> = ({ onLoginSuccess }) => {
                 
                 <div className="text-center mt-6">
                   <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                    Didn't receive code? <span className="text-indigo-600 cursor-pointer">Resend SMS</span>
+                    Didn't receive code? <span className="text-indigo-600 cursor-pointer" onClick={handleSendOtp}>Resend SMS</span>
                   </p>
                 </div>
               </div>

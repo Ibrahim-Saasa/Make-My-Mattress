@@ -1,4 +1,3 @@
-
 export enum UserRole {
   SUPER_ADMIN = 'SUPER_ADMIN',
   DEALER = 'DEALER',
@@ -195,4 +194,14 @@ export interface Cart {
     is_custom: boolean;
   }>;
   applied_service_credit: number;
+}
+
+// Added Profile interface for Supabase user profiles
+export interface Profile {
+  id: string;
+  first_name?: string;
+  last_name?: string;
+  avatar_url?: string;
+  role?: UserRole; // Added role to profile
+  updated_at?: string;
 }

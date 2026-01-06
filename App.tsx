@@ -1,5 +1,6 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Routes, Route, useNavigate, Navigate } from 'react-router-dom';
+import { useSession } from './src/contexts/SessionContext'; // Corrected import path
 import LoginScreen from './components/LoginScreen';
 import IdentityScreen from './components/IdentityScreen';
 import BrandHall from './components/BrandHall';
@@ -16,8 +17,6 @@ import CheckoutScreen from './components/CheckoutScreen';
 import CartDrawer from './components/CartDrawer';
 import { UserRole, BrandMetadata, PricingResult, Cart } from './types';
 
-type AppScreen = 'LOGIN' | 'IDENTITY' | 'BRAND_HALL' | 'CONFIGURATOR' | 'PDP' | 'SERVICE_HUB' | 'SERVICE_BOOKER' | 'TECHNICIAN_PORTAL' | 'ADMIN_CAPITOL' | 'FACTORY_KANBAN' | 'DEALER_DASHBOARD' | 'CHECKOUT';
-
 interface CartItem {
   brand: BrandMetadata;
   dimensions: string;
@@ -26,29 +25,69 @@ interface CartItem {
 }
 
 const App: React.FC = () => {
-  const [screen, setScreen] = useState<AppScreen>('LOGIN');
+  const { session, isLoading, supabase } = useSession();
+  const navigate = useNavigate();
+
   const [userRole, setUserRole] = useState<UserRole | null>(null);
   const [selectedBrand, setSelectedBrand] = useState<BrandMetadata | null>(null);
   const [isAiConsultantOpen, setIsAiConsultantOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
 
-  const navigateTo = (nextScreen: AppScreen) => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    setScreen(nextScreen);
-  };
+  useEffect(() => {
+    if (!isLoading) {
+      if (!session) {
+        navigate('/login', { replace: true });
+      } else {
+        // Fetch user profile to determine role
+        const fetchProfile = async () => {
+          const { data, error } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('id', session.user.id)
+            .single();
 
-  const handleLoginSuccess = () => {
-    navigateTo('IDENTITY');
-  };
+          if (error && error.code !== 'PGRST116') { // PGRST116 means no rows found
+            console.error('Error fetching profile:', error);
+            // If profile doesn't exist, redirect to identity screen
+            navigate('/identity', { replace: true });
+          } else if (data) {
+            setUserRole(data.role as UserRole);
+            // Redirect based on role if already set
+            if (data.role === UserRole.TECHNICIAN) navigate('/technician-portal', { replace: true });
+            else if (data.role === UserRole.SUPER_ADMIN) navigate('/admin-capitol', { replace: true });
+            else if (data.role === UserRole.FACTORY_MANAGER) navigate('/factory-kanban', { replace: true });
+            else if (data.role === UserRole.DEALER) navigate('/dealer-dashboard', { replace: true });
+            else navigate('/brand-hall', { replace: true });
+          } else {
+            // No profile found, go to identity screen
+            navigate('/identity', { replace: true });
+          }
+        };
+        fetchProfile();
+      }
+    }
+  }, [session, isLoading, navigate, supabase]);
 
-  const handleRoleSelection = (role: UserRole) => {
+  const handleRoleSelection = async (role: UserRole) => {
     setUserRole(role);
-    if (role === UserRole.TECHNICIAN) navigateTo('TECHNICIAN_PORTAL');
-    else if (role === UserRole.SUPER_ADMIN) navigateTo('ADMIN_CAPITOL');
-    else if (role === UserRole.FACTORY_MANAGER) navigateTo('FACTORY_KANBAN');
-    else if (role === UserRole.DEALER) navigateTo('DEALER_DASHBOARD');
-    else navigateTo('BRAND_HALL');
+    if (session) {
+      // Update user profile with selected role
+      const { error } = await supabase
+        .from('profiles')
+        .upsert({ id: session.user.id, role: role }, { onConflict: 'id' });
+
+      if (error) {
+        console.error('Error updating user role:', error);
+        // Handle error, maybe show a toast
+      }
+    }
+
+    if (role === UserRole.TECHNICIAN) navigate('/technician-portal');
+    else if (role === UserRole.SUPER_ADMIN) navigate('/admin-capitol');
+    else if (role === UserRole.FACTORY_MANAGER) navigate('/factory-kanban');
+    else if (role === UserRole.DEALER) navigate('/dealer-dashboard');
+    else navigate('/brand-hall');
   };
 
   const handleAddToCart = (brand: BrandMetadata, params: any, pricing: PricingResult) => {
@@ -66,14 +105,28 @@ const App: React.FC = () => {
     setCartItems(prev => prev.filter(item => item.id !== id));
   };
 
-  const isIndustrialScreen = ['ADMIN_CAPITOL', 'FACTORY_KANBAN', 'TECHNICIAN_PORTAL', 'DEALER_DASHBOARD', 'SERVICE_BOOKER', 'LOGIN', 'CHECKOUT'].includes(screen);
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setUserRole(null);
+    navigate('/login');
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#FDFDFD] text-slate-900">
+        Loading application...
+      </div>
+    );
+  }
+
+  const isIndustrialScreen = ['/admin-capitol', '/factory-kanban', '/technician-portal', '/dealer-dashboard', '/service-booker', '/login', '/checkout'].some(path => location.pathname.startsWith(path));
 
   return (
     <div className="min-h-screen bg-[#FDFDFD] text-slate-900 overflow-x-hidden font-sans">
-      {screen !== 'IDENTITY' && screen !== 'LOGIN' && !isIndustrialScreen && (
+      {location.pathname !== '/identity' && location.pathname !== '/login' && !isIndustrialScreen && (
         <header className="fixed top-0 w-full z-40 bg-white/80 backdrop-blur-xl border-b border-slate-100 px-6 py-4">
           <div className="max-w-7xl mx-auto flex items-center justify-between">
-            <div className="flex items-center gap-2 cursor-pointer group" onClick={() => navigateTo('BRAND_HALL')}>
+            <div className="flex items-center gap-2 cursor-pointer group" onClick={() => navigate('/brand-hall')}>
               <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold group-hover:bg-indigo-700 transition-colors">M</div>
               <span className="font-bold tracking-tight text-slate-800 uppercase text-sm">Hindustan Mattress Co.</span>
             </div>
@@ -92,39 +145,42 @@ const App: React.FC = () => {
                 )}
               </button>
               <button onClick={() => setIsAiConsultantOpen(true)} className="flex items-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-600 rounded-full text-xs font-bold hover:bg-indigo-600 hover:text-white transition-all border border-indigo-100">ASK SLEEP EXPERT</button>
-              <button onClick={() => navigateTo('LOGIN')} className="text-xs font-bold text-slate-400 hover:text-indigo-600 uppercase tracking-widest transition-colors">Logout</button>
+              <button onClick={handleLogout} className="text-xs font-bold text-slate-400 hover:text-indigo-600 uppercase tracking-widest transition-colors">Logout</button>
             </div>
           </div>
         </header>
       )}
 
-      <main className={`${(screen !== 'IDENTITY' && screen !== 'LOGIN' && !isIndustrialScreen) ? 'pt-24' : ''}`}>
-        {screen === 'LOGIN' && <LoginScreen onLoginSuccess={handleLoginSuccess} />}
-        {screen === 'IDENTITY' && <IdentityScreen onSelectRole={handleRoleSelection} />}
-        {screen === 'BRAND_HALL' && <BrandHall onSelectBrand={brand => { setSelectedBrand(brand); navigateTo('CONFIGURATOR'); }} />}
-        {screen === 'CONFIGURATOR' && selectedBrand && (
-          <SmartConfigurator 
-            brand={selectedBrand} 
-            userRole={userRole!} 
-            onNext={(params, pricing) => handleAddToCart(selectedBrand, params, pricing)} 
-            onBack={() => navigateTo('BRAND_HALL')} 
-            onBookService={() => navigateTo('SERVICE_HUB')} 
-          />
-        )}
-        {screen === 'CHECKOUT' && cartItems.length > 0 && (
-          <CheckoutScreen 
-            cartItems={cartItems} 
-            onBack={() => navigateTo('CONFIGURATOR')} 
-            onOrderSuccess={() => { setCartItems([]); navigateTo('BRAND_HALL'); }}
-          />
-        )}
-        {screen === 'PDP' && selectedBrand && <ProductDetailPage brand={selectedBrand} userRole={userRole!} onBack={() => navigateTo('CONFIGURATOR')} />}
-        {screen === 'SERVICE_HUB' && <ServiceHub onBack={() => navigateTo('CONFIGURATOR')} onSelect={() => navigateTo('SERVICE_BOOKER')} />}
-        {screen === 'SERVICE_BOOKER' && <ServiceBooker onBack={() => navigateTo('SERVICE_HUB')} onSuccess={() => navigateTo('CONFIGURATOR')} />}
-        {screen === 'TECHNICIAN_PORTAL' && <TechnicianPortal onBack={() => navigateTo('LOGIN')} />}
-        {screen === 'ADMIN_CAPITOL' && <AdminCapitol />}
-        {screen === 'FACTORY_KANBAN' && <FactoryKanban />}
-        {screen === 'DEALER_DASHBOARD' && <DealerDashboard onBack={() => navigateTo('BRAND_HALL')} />}
+      <main className={`${(location.pathname !== '/identity' && location.pathname !== '/login' && !isIndustrialScreen) ? 'pt-24' : ''}`}>
+        <Routes>
+          <Route path="/login" element={<LoginScreen />} />
+          <Route path="/identity" element={<IdentityScreen onSelectRole={handleRoleSelection} />} />
+          <Route path="/brand-hall" element={<BrandHall onSelectBrand={brand => { setSelectedBrand(brand); navigate('/configurator'); }} />} />
+          <Route path="/configurator" element={selectedBrand ? (
+            <SmartConfigurator 
+              brand={selectedBrand} 
+              userRole={userRole!} 
+              onNext={(params, pricing) => handleAddToCart(selectedBrand, params, pricing)} 
+              onBack={() => navigate('/brand-hall')} 
+              onBookService={() => navigate('/service-hub')} 
+            />
+          ) : <Navigate to="/brand-hall" />} />
+          <Route path="/checkout" element={cartItems.length > 0 ? (
+            <CheckoutScreen 
+              cartItems={cartItems} 
+              onBack={() => navigate('/configurator')} 
+              onOrderSuccess={() => { setCartItems([]); navigate('/brand-hall'); }}
+            />
+          ) : <Navigate to="/brand-hall" />} />
+          <Route path="/pdp" element={selectedBrand ? <ProductDetailPage brand={selectedBrand} userRole={userRole!} onBack={() => navigate('/configurator')} /> : <Navigate to="/brand-hall" />} />
+          <Route path="/service-hub" element={<ServiceHub onBack={() => navigate('/configurator')} onSelect={() => navigate('/service-booker')} />} />
+          <Route path="/service-booker" element={<ServiceBooker onBack={() => navigate('/service-hub')} onSuccess={() => navigate('/configurator')} />} />
+          <Route path="/technician-portal" element={<TechnicianPortal onBack={handleLogout} />} />
+          <Route path="/admin-capitol" element={<AdminCapitol />} />
+          <Route path="/factory-kanban" element={<FactoryKanban />} />
+          <Route path="/dealer-dashboard" element={<DealerDashboard onBack={() => navigate('/brand-hall')} />} />
+          <Route path="/" element={session ? <Navigate to="/brand-hall" /> : <Navigate to="/login" />} />
+        </Routes>
       </main>
 
       <SleepConsultant isOpen={isAiConsultantOpen} onClose={() => setIsAiConsultantOpen(false)} />
@@ -133,7 +189,7 @@ const App: React.FC = () => {
         onClose={() => setIsCartOpen(false)} 
         items={cartItems}
         onRemove={removeItem}
-        onCheckout={() => { setIsCartOpen(false); navigateTo('CHECKOUT'); }}
+        onCheckout={() => { setIsCartOpen(false); navigate('/checkout'); }}
       />
     </div>
   );
