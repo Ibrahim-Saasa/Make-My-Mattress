@@ -1,17 +1,20 @@
-
 import React from 'react';
 import { BRANDS } from '../constants';
 import { BrandMetadata } from '../types';
 
 interface Props {
   onSelectBrand: (brand: BrandMetadata) => void;
+  userName: string | null; // New prop for user's name
 }
 
-const BrandHall: React.FC<Props> = ({ onSelectBrand }) => {
+const BrandHall: React.FC<Props> = ({ onSelectBrand, userName }) => {
   return (
     <div className="max-w-7xl mx-auto px-6 py-12">
       <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
         <div>
+          {userName && (
+            <p className="text-lg font-bold text-indigo-600 mb-2">Hello, {userName}!</p>
+          )}
           <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">Select Your Sleep Series</h2>
           <p className="text-slate-500 mt-2">Engineered sub-brands optimized for specific comfort profiles.</p>
         </div>

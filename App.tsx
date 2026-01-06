@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Routes, Route, useNavigate, Navigate, useLocation } from 'react-router-dom'; // Import useLocation
+import { Routes, Route, useNavigate, Navigate, useLocation } from 'react-router-dom';
 import { useSession } from './src/contexts/SessionContext';
 import LoginScreen from './components/LoginScreen';
 import SignupScreen from './components/SignupScreen';
@@ -29,7 +29,7 @@ interface CartItem {
 const App: React.FC = () => {
   const { session, isLoading, supabase } = useSession();
   const navigate = useNavigate();
-  const location = useLocation(); // Initialize useLocation hook
+  const location = useLocation();
 
   const [userRole, setUserRole] = useState<UserRole | null>(null);
   const [userName, setUserName] = useState<string | null>(null);
@@ -41,7 +41,6 @@ const App: React.FC = () => {
   useEffect(() => {
     if (!isLoading) {
       if (!session) {
-        // Only redirect to login if not already on login/signup
         if (location.pathname !== '/login' && location.pathname !== '/signup') {
           navigate('/login', { replace: true });
         }
@@ -53,9 +52,8 @@ const App: React.FC = () => {
             .eq('id', session.user.id)
             .single();
 
-          if (error && error.code !== 'PGRST116') { // PGRST116 means no rows found
+          if (error && error.code !== 'PGRST116') {
             console.error('Error fetching profile:', error);
-            // If there's an error fetching profile, and they are not already on /identity, redirect there.
             if (location.pathname !== '/identity') {
               navigate('/identity', { replace: true });
             }
@@ -63,8 +61,6 @@ const App: React.FC = () => {
             setUserRole(data.role as UserRole);
             setUserName(data.first_name || null);
             
-            // Only redirect if the current path is one of the initial entry points
-            // or if the user is on brand-hall but should be on a specific dashboard
             const initialEntryPaths = ['/', '/login', '/signup', '/identity'];
             const shouldRedirectFromBrandHall = (data.role !== UserRole.END_USER && location.pathname === '/brand-hall');
 
@@ -73,9 +69,9 @@ const App: React.FC = () => {
               else if (data.role === UserRole.SUPER_ADMIN) navigate('/admin-capitol', { replace: true });
               else if (data.role === UserRole.FACTORY_MANAGER) navigate('/factory-kanban', { replace: true });
               else if (data.role === UserRole.DEALER) navigate('/dealer-dashboard', { replace: true });
-              else navigate('/brand-hall', { replace: true }); // Default for END_USER
+              else navigate('/brand-hall', { replace: true });
             }
-          } else { // No profile found (PGRST116) OR profile exists but role is NULL
+          } else {
             if (location.pathname !== '/identity') {
               navigate('/identity', { replace: true });
             }
@@ -84,7 +80,7 @@ const App: React.FC = () => {
         fetchProfile();
       }
     }
-  }, [session, isLoading, navigate, supabase, location.pathname]); // Added location.pathname to dependencies
+  }, [session, isLoading, navigate, supabase, location.pathname]);
 
   const handleRoleSelection = async (role: UserRole) => {
     setUserRole(role);
@@ -182,7 +178,7 @@ const App: React.FC = () => {
           <Route path="/signup" element={<SignupScreen />} />
           <Route path="/identity" element={<IdentityScreen onSelectRole={handleRoleSelection} />} />
           <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/brand-hall" element={<BrandHall onSelectBrand={brand => { setSelectedBrand(brand); navigate('/configurator'); }} />} />
+          <Route path="/brand-hall" element={<BrandHall onSelectBrand={brand => { setSelectedBrand(brand); navigate('/configurator'); }} userName={userName} />} />
           <Route path="/configurator" element={selectedBrand ? (
             <SmartConfigurator 
               brand={selectedBrand} 
