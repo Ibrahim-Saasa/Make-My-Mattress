@@ -11,8 +11,8 @@
     <style>
         body { 
           font-family: 'Inter', sans-serif; 
-          /* More pronounced background for comfort theme */
-          background: linear-gradient(to bottom right, #E0E7FF, #F0F4F8); 
+          /* Base background, will be overridden by CSS variables */
+          background-color: #FDFDFD; 
         }
         h1, h2, h3, .brand-header {
           font-family: 'Plus Jakarta Sans', sans-serif;
@@ -26,9 +26,77 @@
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #f8fafc; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-    </style>
+
+        /* Light Theme Defaults (CSS Variables) */
+        :root {
+          --color-background: #E0E7FF; /* Lighter blue for overall app background */
+          --color-card-background: #FFFFFF;
+          --color-card-background-hover: #F0F4F8;
+          --color-text-primary: #1E293B; /* slate-900 */
+          --color-text-secondary: #475569; /* slate-600 */
+          --color-text-tertiary: #64748B; /* slate-500 */
+          --color-border: #E2E8F0; /* slate-200 */
+          --color-input-bg: #F1F5F9; /* slate-100 */
+          --color-input-border: #CBD5E1; /* slate-300 */
+          --color-shadow-light: rgba(0,0,0,0.05);
+          --color-shadow-medium: rgba(0,0,0,0.1);
+          --color-shadow-strong: rgba(0,0,0,0.2);
+        }
+
+        /* Dark Theme Overrides (CSS Variables) */
+        html.dark {
+          --color-background: #0F172A; /* slate-950 */
+          --color-card-background: #1E293B; /* slate-900 */
+          --color-card-background-hover: #334155; /* slate-800 */
+          --color-text-primary: #F8FAFC; /* slate-50 */
+          --color-text-secondary: #94A3B8; /* slate-400 */
+          --color-text-tertiary: #64748B; /* slate-500 */
+          --color-border: #334155; /* slate-800 */
+          --color-input-bg: #1E293B; /* slate-900 */
+          --color-input-border: #475569; /* slate-600 */
+          --color-shadow-light: rgba(255,255,255,0.05);
+          --color-shadow-medium: rgba(255,255,255,0.1);
+          --color-shadow-strong: rgba(255,255,255,0.2);
+
+          /* Moonlight Glow and Faint Stars */
+          background-image: 
+            /* Moonlight glow from corners */
+            radial-gradient(circle 800px at top left, rgba(100, 100, 255, 0.08), transparent),
+            radial-gradient(circle 800px at bottom right, rgba(100, 100, 255, 0.08), transparent),
+            /* Faint stars - multiple small radial gradients */
+            radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,0.3), transparent),
+            radial-gradient(1px 1px at 30% 70%, rgba(255,255,255,0.3), transparent),
+            radial-gradient(1px 1px at 80% 40%, rgba(255,255,255,0.3), transparent),
+            radial-gradient(1px 1px at 50% 90%, rgba(255,255,255,0.3), transparent),
+            radial-gradient(1px 1px at 70% 10%, rgba(255,255,255,0.3), transparent),
+            radial-gradient(1px 1px at 20% 50%, rgba(255,255,255,0.3), transparent),
+            radial-gradient(1px 1px at 90% 60%, rgba(255,255,255,0.3), transparent),
+            radial-gradient(1px 1px at 40% 30%, rgba(255,255,255,0.3), transparent),
+            radial-gradient(1px 1px at 60% 80%, rgba(255,255,255,0.3), transparent),
+            radial-gradient(1px 1px at 5% 95%, rgba(255,255,255,0.3), transparent),
+            radial-gradient(1px 1px at 95% 5%, rgba(255,255,255,0.3), transparent);
+          background-attachment: fixed; /* Keep stars fixed when scrolling */
+        }
+
+        /* Apply CSS variables to Tailwind-like classes */
+        .bg-theme-background { background-color: var(--color-background); }
+        .bg-theme-card { background-color: var(--color-card-background); }
+        .hover\\:bg-theme-card-hover:hover { background-color: var(--color-card-background-hover); }
+        .text-theme-primary { color: var(--color-text-primary); }
+        .text-theme-secondary { color: var(--color-text-secondary); }
+        .text-theme-tertiary { color: var(--color-text-tertiary); }
+        .border-theme-border { border-color: var(--color-border); }
+        .bg-theme-input { background-color: var(--color-input-bg); }
+        .border-theme-input { border-color: var(--color-input-border); }
+        .shadow-theme-light { box-shadow: 0 1px 2px var(--color-shadow-light); }
+        .shadow-theme-medium { box-shadow: 0 4px 6px var(--color-shadow-medium); }
+        .shadow-theme-strong { box-shadow: 0 10px 15px var(--color-shadow-strong); }
+        .shadow-theme-xl { box-shadow: 0 20px 25px -5px var(--color-shadow-strong), 0 8px 10px -6px var(--color-shadow-medium); }
+        .shadow-theme-2xl { box-shadow: 0 25px 50px -12px var(--color-shadow-strong); }
+        .shadow-theme-3xl { box-shadow: 0 35px 60px -15px var(--color-shadow-strong); }
+      </style>
 </head>
-<body class="bg-[#F8FAFC] text-slate-900 antialiased">
+<body class="bg-theme-background text-theme-primary antialiased">
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
 </body>

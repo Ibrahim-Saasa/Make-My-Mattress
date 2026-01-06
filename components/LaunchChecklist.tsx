@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 
 const LaunchChecklist: React.FC = () => {
@@ -20,17 +19,17 @@ const LaunchChecklist: React.FC = () => {
   };
 
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-[3rem] p-10 mt-12">
+    <div className="bg-theme-card border border-theme-border rounded-[3rem] p-10 mt-12">
       <div className="flex justify-between items-center mb-10">
         <div>
-          <h3 className="text-xl font-black text-white uppercase italic tracking-tighter">Operation Bedrock</h3>
-          <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mt-1">90-Day Roadmap Tracker</p>
+          <h3 className="text-xl font-black text-theme-primary uppercase italic tracking-tighter">Operation Bedrock</h3>
+          <p className="text-xs text-theme-secondary font-bold uppercase tracking-widest mt-1">90-Day Roadmap Tracker</p>
         </div>
         <div className="text-right">
            <span className="text-3xl font-black text-brand-amber">
               {Math.round((completed.size / tasks.length) * 100)}%
            </span>
-           <p className="text-[10px] text-slate-500 font-bold uppercase">Launch Readiness</p>
+           <p className="text-[10px] text-theme-secondary font-bold uppercase">Launch Readiness</p>
         </div>
       </div>
 
@@ -40,20 +39,20 @@ const LaunchChecklist: React.FC = () => {
             key={task.id}
             onClick={() => toggle(task.id)}
             className={`flex items-center gap-6 p-6 rounded-3xl border cursor-pointer transition-all ${
-              completed.has(task.id) ? 'bg-emerald-500/10 border-emerald-500/30' : 'bg-slate-800/50 border-slate-800 hover:border-slate-700'
+              completed.has(task.id) ? 'bg-emerald-500/10 border-emerald-500/30' : 'bg-theme-input/50 border-theme-border hover:border-theme-secondary'
             }`}
           >
             <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${
-              completed.has(task.id) ? 'bg-emerald-500 border-emerald-500' : 'border-slate-600'
+              completed.has(task.id) ? 'bg-emerald-500 border-emerald-500' : 'border-theme-secondary'
             }`}>
               {completed.has(task.id) && <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" /></svg>}
             </div>
             <div>
               <div className="flex items-center gap-3 mb-1">
-                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Week {task.week}</span>
-                <h4 className={`text-sm font-bold ${completed.has(task.id) ? 'text-slate-400 line-through' : 'text-white'}`}>{task.title}</h4>
+                <span className="text-[10px] font-black text-theme-secondary uppercase tracking-widest">Week {task.week}</span>
+                <h4 className={`text-sm font-bold ${completed.has(task.id) ? 'text-theme-secondary line-through' : 'text-theme-primary'}`}>{task.title}</h4>
               </div>
-              <p className="text-xs text-slate-500">{task.desc}</p>
+              <p className="text-xs text-theme-secondary">{task.desc}</p>
             </div>
           </div>
         ))}

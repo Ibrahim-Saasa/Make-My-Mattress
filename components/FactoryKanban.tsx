@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { ProductionStage } from '../types';
 import { ProductionEngine } from '../services/productionEngine';
@@ -25,13 +24,13 @@ const FactoryKanban: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-900 p-8 flex flex-col h-screen overflow-hidden">
+    <div className="min-h-screen bg-theme-background p-8 flex flex-col h-screen overflow-hidden text-theme-primary">
       <div className="flex justify-between items-center mb-8 flex-shrink-0">
         <div>
-          <h2 className="text-4xl font-black text-white tracking-tighter italic uppercase">Shop Floor <span className="text-amber-500">Live</span></h2>
-          <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">Hindustan Mattress Co. Production Line</p>
+          <h2 className="text-4xl font-black text-theme-primary tracking-tighter italic uppercase">Shop Floor <span className="text-amber-500">Live</span></h2>
+          <p className="text-[10px] font-bold text-theme-secondary uppercase tracking-widest mt-1">Hindustan Mattress Co. Production Line</p>
         </div>
-        <div className="flex items-center gap-4 text-slate-400 text-[10px] font-bold uppercase tracking-widest bg-slate-800 px-4 py-2 rounded-xl">
+        <div className="flex items-center gap-4 text-theme-secondary text-[10px] font-bold uppercase tracking-widest bg-theme-input px-4 py-2 rounded-xl">
            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.5)]"></span>
            Active Terminal #F1
         </div>
@@ -41,7 +40,7 @@ const FactoryKanban: React.FC = () => {
         {columns.map(col => (
           <div key={col.id} className="flex-shrink-0 w-80 flex flex-col snap-start">
             <div className={`flex items-center justify-between border-b-4 border-${col.color}-500/30 pb-4 mb-6`}>
-              <h3 className="text-xs font-black text-slate-500 uppercase tracking-[0.2em]">{col.label}</h3>
+              <h3 className="text-xs font-black text-theme-secondary uppercase tracking-[0.2em]">{col.label}</h3>
               <span className={`bg-${col.color}-500/10 text-${col.color}-500 text-[10px] font-bold px-2 py-0.5 rounded-full`}>
                 {orders.filter(o => o.stage === col.id).length}
               </span>
@@ -51,12 +50,12 @@ const FactoryKanban: React.FC = () => {
               {orders.filter(o => o.stage === col.id).map(order => (
                 <div 
                   key={order.id} 
-                  className="bg-slate-800 p-6 rounded-[2rem] border border-slate-700 shadow-xl active:scale-95 transition-all group relative overflow-hidden"
+                  className="bg-theme-card p-6 rounded-[2rem] border border-theme-border shadow-xl active:scale-95 transition-all group relative overflow-hidden"
                 >
                    <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-indigo-500/10 to-transparent pointer-events-none"></div>
                    
-                   <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">{order.id}</div>
-                   <h4 className="text-lg font-black text-white mb-6 leading-tight">{order.model}</h4>
+                   <div className="text-[10px] font-bold text-theme-secondary uppercase tracking-widest mb-1">{order.id}</div>
+                   <h4 className="text-lg font-black text-theme-primary mb-6 leading-tight">{order.model}</h4>
                    
                    <div className="flex gap-2">
                       <button 
@@ -74,7 +73,7 @@ const FactoryKanban: React.FC = () => {
                 </div>
               ))}
               {orders.filter(o => o.stage === col.id).length === 0 && (
-                <div className="h-full border-2 border-dashed border-slate-800 rounded-[2rem] flex items-center justify-center text-[10px] font-bold text-slate-700 uppercase tracking-widest">
+                <div className="h-full border-2 border-dashed border-theme-border rounded-[2rem] flex items-center justify-center text-[10px] font-bold text-theme-tertiary uppercase tracking-widest">
                    No Active Load
                 </div>
               )}

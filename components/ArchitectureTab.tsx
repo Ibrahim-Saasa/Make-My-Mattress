@@ -1,4 +1,3 @@
-
 import React from 'react';
 import CodeBlock from './CodeBlock';
 
@@ -76,7 +75,7 @@ async function submit_dimensions(requestId, L, B) {
           <div className="w-2 h-6 bg-indigo-500 rounded-full"></div>
           Service Requests Extended Schema
         </h3>
-        <p className="text-slate-400 mb-4">Architecture for handling measurements, repairs (SAC 9987), and real-time dimension sync.</p>
+        <p className="text-theme-secondary mb-4">Architecture for handling measurements, repairs (SAC 9987), and real-time dimension sync.</p>
         <CodeBlock title="SQL Definitions" code={sqlSchema} language="sql" />
       </section>
 
@@ -85,7 +84,7 @@ async function submit_dimensions(requestId, L, B) {
           <div className="w-2 h-6 bg-emerald-500 rounded-full"></div>
           The "Magic Sync" Algorithm
         </h3>
-        <p className="text-slate-400 mb-4">How technician input directly modifies the customer's digital cart and financial credit.</p>
+        <p className="text-theme-secondary mb-4">How technician input directly modifies the customer's digital cart and financial credit.</p>
         <CodeBlock title="Cart Sync Logic" code={syncLogic} language="javascript" />
       </section>
     </div>

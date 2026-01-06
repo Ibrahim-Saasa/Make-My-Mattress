@@ -101,49 +101,49 @@ const ProfilePage: React.FC = () => {
 
   if (isLoadingSession || isLoading) { // Use both loading states
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#FDFDFD] text-slate-900">
+      <div className="min-h-screen flex items-center justify-center bg-theme-background text-theme-primary">
         Loading profile...
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-white p-6 md:p-12">
+    <div className="min-h-screen bg-theme-background p-6 md:p-12">
       <div className="max-w-2xl mx-auto">
         <div className="flex justify-between items-center mb-12">
-          <button onClick={() => navigate(-1)} className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 hover:bg-indigo-600 hover:text-white transition-all">
+          <button onClick={() => navigate(-1)} className="w-10 h-10 rounded-full bg-theme-input flex items-center justify-center text-theme-secondary hover:bg-indigo-600 hover:text-white transition-all">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" /></svg>
           </button>
-          <h2 className="text-3xl font-black text-slate-900 tracking-tight">Your Profile</h2>
+          <h2 className="text-3xl font-black text-theme-primary tracking-tight">Your Profile</h2>
           <div className="w-10 h-10"></div> {/* Spacer */}
         </div>
 
-        <div className="bg-slate-50 border border-slate-100 p-8 rounded-[2.5rem] space-y-8">
+        <div className="bg-theme-card border border-theme-border p-8 rounded-[2.5rem] space-y-8">
           <div className="text-center">
             <h3 className="text-2xl font-black text-indigo-600">Hello, {firstName || 'User'}!</h3>
-            <p className="text-sm text-slate-500 mt-2">Manage your personal details here.</p>
+            <p className="text-sm text-theme-secondary mt-2">Manage your personal details here.</p>
           </div>
 
           <form onSubmit={handleSaveProfile} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block">First Name</label>
+                <label className="text-[10px] font-bold text-theme-secondary uppercase tracking-widest mb-2 block">First Name</label>
                 <input
                   type="text"
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
-                  className="w-full bg-white border border-slate-200 rounded-2xl px-6 py-4 font-bold focus:outline-none focus:border-indigo-600 transition-colors"
+                  className="w-full bg-theme-input border border-theme-border rounded-2xl px-6 py-4 font-bold focus:outline-none focus:border-indigo-600 transition-colors text-theme-primary"
                   placeholder="John"
                   required
                 />
               </div>
               <div>
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block">Last Name</label>
+                <label className="text-[10px] font-bold text-theme-secondary uppercase tracking-widest mb-2 block">Last Name</label>
                 <input
                   type="text"
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
-                  className="w-full bg-white border border-slate-200 rounded-2xl px-6 py-4 font-bold focus:outline-none focus:border-indigo-600 transition-colors"
+                  className="w-full bg-theme-input border border-theme-border rounded-2xl px-6 py-4 font-bold focus:outline-none focus:border-indigo-600 transition-colors text-theme-primary"
                   placeholder="Doe"
                   required
                 />
@@ -151,24 +151,24 @@ const ProfilePage: React.FC = () => {
             </div>
 
             <div>
-              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block">Email</label>
+              <label className="text-[10px] font-bold text-theme-secondary uppercase tracking-widest mb-2 block">Email</label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-white border border-slate-200 rounded-2xl px-6 py-4 font-bold focus:outline-none focus:border-indigo-600 transition-colors"
+                className="w-full bg-theme-input border border-theme-border rounded-2xl px-6 py-4 font-bold focus:outline-none focus:border-indigo-600 transition-colors text-theme-primary"
                 placeholder="john.doe@example.com"
                 required
               />
             </div>
 
             <div>
-              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block">Date of Birth</label>
+              <label className="text-[10px] font-bold text-theme-secondary uppercase tracking-widest mb-2 block">Date of Birth</label>
               <input
                 type="date"
                 value={dateOfBirth}
                 onChange={(e) => setDateOfBirth(e.target.value)}
-                className="w-full bg-white border border-slate-200 rounded-2xl px-6 py-4 font-bold focus:outline-none focus:border-indigo-600 transition-colors"
+                className="w-full bg-theme-input border border-theme-border rounded-2xl px-6 py-4 font-bold focus:outline-none focus:border-indigo-600 transition-colors text-theme-primary"
               />
             </div>
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, useNavigate, Navigate, useLocation } from 'react-router-dom';
 import { useSession } from './src/contexts/SessionContext';
+import { useTheme } from './src/contexts/ThemeContext'; // Import useTheme
 import LoginScreen from './components/LoginScreen';
 import SignupScreen from './components/SignupScreen';
 import IdentityScreen from './components/IdentityScreen';
@@ -28,6 +29,7 @@ interface CartItem {
 
 const App: React.FC = () => {
   const { session, isLoading, supabase } = useSession();
+  const { theme, toggleTheme } = useTheme(); // Use theme context
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -151,7 +153,7 @@ const App: React.FC = () => {
 
   if (isLoading || !isRoleDetermined) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#FDFDFD] text-slate-900">
+      <div className="min-h-screen flex items-center justify-center bg-theme-background text-theme-primary">
         Loading application...
       </div>
     );
@@ -160,39 +162,57 @@ const App: React.FC = () => {
   const isIndustrialScreen = ['/admin-capitol', '/factory-kanban', '/technician-portal', '/dealer-dashboard', '/service-booker', '/login', '/checkout', '/signup'].some(path => location.pathname.startsWith(path));
 
   return (
-    <div className="min-h-screen bg-[#FDFDFD] text-slate-900 overflow-x-hidden font-sans">
+    <div className="min-h-screen bg-theme-background text-theme-primary overflow-x-hidden font-sans">
       {location.pathname !== '/identity' && location.pathname !== '/login' && location.pathname !== '/signup' && !isIndustrialScreen && (
-        <header className="fixed top-0 w-full z-40 bg-white/80 backdrop-blur-xl border-b border-slate-100 px-6 py-4">
+        <header className="fixed top-0 w-full z-40 bg-theme-card backdrop-blur-xl border-b border-theme-border px-6 py-4">
           <div className="max-w-7xl mx-auto flex items-center justify-between">
             <div className="flex items-center gap-2 cursor-pointer group" onClick={() => navigate('/brand-hall')}>
               <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold group-hover:bg-indigo-700 transition-colors">M</div>
-              <span className="font-bold tracking-tight text-slate-800 uppercase text-sm">Hindustan Mattress Co.</span>
+              <span className="font-bold tracking-tight text-theme-primary uppercase text-sm">Hindustan Mattress Co.</span>
             </div>
             <div className="flex items-center gap-6">
               {userName && (
-                <span className="text-sm font-bold text-slate-600">Hello, {userName}!</span>
+                <span className="text-sm font-bold text-theme-secondary">Hello, {userName}!</span>
               )}
               <button 
                 onClick={() => navigate('/profile')}
-                className="p-2 text-slate-400 hover:text-indigo-600 transition-colors"
+                className="p-2 text-theme-secondary hover:text-indigo-600 transition-colors"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
               </button>
               <button 
                 onClick={() => setIsCartOpen(true)}
-                className="relative p-2 text-slate-400 hover:text-indigo-600 transition-colors"
+                className="relative p-2 text-theme-secondary hover:text-indigo-600 transition-colors"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                 </svg>
                 {cartItems.length > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-brand-amber text-brand-navy text-[10px] font-black w-5 h-5 rounded-full flex items-center justify-center border-2 border-white">
+                  <span className="absolute -top-1 -right-1 bg-brand-amber text-brand-navy text-[10px] font-black w-5 h-5 rounded-full flex items-center justify-center border-2 border-theme-card">
                     {cartItems.length}
                   </span>
                 )}
               </button>
               <button onClick={() => setIsAiConsultantOpen(true)} className="flex items-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-600 rounded-full text-xs font-bold hover:bg-indigo-600 hover:text-white transition-all border border-indigo-100">ASK SLEEP EXPERT</button>
-              <button onClick={handleLogout} className="text-xs font-bold text-slate-400 hover:text-indigo-600 uppercase tracking-widest transition-colors">Logout</button>
+              
+              {/* Theme Toggle Button */}
+              <button 
+                onClick={toggleTheme} 
+                className="p-2 text-theme-secondary hover:text-indigo-600 transition-colors"
+                title={theme === 'light' ? 'Switch to Dark Mode' : 'Switch to Light Mode'}
+              >
+                {theme === 'light' ? (
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                  </svg>
+                ) : (
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 3v1m0 16v1m9-9h1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                  </svg>
+                )}
+              </button>
+
+              <button onClick={handleLogout} className="text-xs font-bold text-theme-secondary hover:text-indigo-600 uppercase tracking-widest transition-colors">Logout</button>
             </div>
           </div>
         </header>
