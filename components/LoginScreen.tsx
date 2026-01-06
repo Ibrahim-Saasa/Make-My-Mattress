@@ -38,11 +38,16 @@ const LoginScreen: React.FC = () => {
       });
 
       if (error) {
-        throw error;
+        // Check for the specific "unsupported phone provider" error
+        if (error.message.includes('unsupported phone provider')) {
+          setError("SMS provider not configured. Please set up Twilio or another provider in your Supabase project settings (Authentication -> SMS).");
+        } else {
+          throw error;
+        }
+      } else {
+        setStep('OTP_VERIFICATION'); // Move to OTP verification step
+        triggerSmsSimulation(`Your OTP for Hindustan Mattress Co. is: [Check your phone for the actual OTP]`); // Supabase sends actual OTP
       }
-
-      // No change in step, just show SMS simulation
-      triggerSmsSimulation(`Your OTP for Hindustan Mattress Co. is: [Check your phone for the actual OTP]`); // Supabase sends actual OTP
     } catch (err: any) {
       console.error("OTP Send Error:", err);
       setError(err.message || "Failed to send OTP. Please try again.");
@@ -192,48 +197,51 @@ const LoginScreen: React.FC = () => {
                   </button>
                 </form>
               </div>
-              <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
-                <div className="space-y-2">
-                  <div className="flex justify-between items-center mb-2">
-                    <h2 className="text-sm font-bold text-slate-400 uppercase tracking-widest">Verify Identity</h2>
-                    <button onClick={() => setStep('PHONE_OTP')} className="text-[10px] font-black text-indigo-600 uppercase tracking-widest">Change Number</button>
-                  </div>
-                  <p className="text-xs text-slate-500 mb-6">We've sent a code to <span className="text-slate-900 font-bold">+91 {phone}</span></p>
-                  
-                  <form onSubmit={handleVerifyOtp} className="space-y-6">
-                    <div className="flex justify-center gap-4">
-                      <input 
-                        type="text"
-                        maxLength={6} // OTPs are typically 6 digits for Supabase
-                        value={otpInput}
-                        onChange={(e) => setOtpInput(e.target.value.replace(/\D/g, ''))}
-                        placeholder="• • • • • •"
-                        className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-6 font-black text-4xl text-center tracking-[0.5em] focus:outline-none focus:border-indigo-600 transition-colors placeholder:text-slate-200"
-                      />
+              {/* OTP Verification Section */}
+              {step === 'OTP_VERIFICATION' && (
+                <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center mb-2">
+                      <h2 className="text-sm font-bold text-slate-400 uppercase tracking-widest">Verify Identity</h2>
+                      <button onClick={() => setStep('PHONE_OTP')} className="text-[10px] font-black text-indigo-600 uppercase tracking-widest">Change Number</button>
                     </div>
+                    <p className="text-xs text-slate-500 mb-6">We've sent a code to <span className="text-slate-900 font-bold">+91 {phone}</span></p>
+                    
+                    <form onSubmit={handleVerifyOtp} className="space-y-6">
+                      <div className="flex justify-center gap-4">
+                        <input 
+                          type="text"
+                          maxLength={6} // OTPs are typically 6 digits for Supabase
+                          value={otpInput}
+                          onChange={(e) => setOtpInput(e.target.value.replace(/\D/g, ''))}
+                          placeholder="• • • • • •"
+                          className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-6 font-black text-4xl text-center tracking-[0.5em] focus:outline-none focus:border-indigo-600 transition-colors placeholder:text-slate-200"
+                        />
+                      </div>
 
-                    {error && <p className="text-xs font-bold text-red-500 text-center">{error}</p>}
+                      {error && <p className="text-xs font-bold text-red-500 text-center">{error}</p>}
 
-                    <button 
-                      type="submit"
-                      disabled={isLoading || otpInput.length < 6} // OTPs are typically 6 digits for Supabase
-                      className="w-full bg-brand-amber text-brand-navy py-5 rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-amber-500/20 hover:brightness-110 active:scale-[0.98] transition-all flex items-center justify-center"
-                    >
-                      {isLoading ? (
-                        <div className="w-6 h-6 border-2 border-brand-navy/30 border-t-brand-navy rounded-full animate-spin"></div>
-                      ) : (
-                        "VERIFY & ENTER"
-                      )}
-                    </button>
-                  </form>
-                  
-                  <div className="text-center mt-6">
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                      Didn't receive code? <span className="text-indigo-600 cursor-pointer" onClick={handleSendOtp}>Resend SMS</span>
-                    </p>
+                      <button 
+                        type="submit"
+                        disabled={isLoading || otpInput.length < 6} // OTPs are typically 6 digits for Supabase
+                        className="w-full bg-brand-amber text-brand-navy py-5 rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-amber-500/20 hover:brightness-110 active:scale-[0.98] transition-all flex items-center justify-center"
+                      >
+                        {isLoading ? (
+                          <div className="w-6 h-6 border-2 border-brand-navy/30 border-t-brand-navy rounded-full animate-spin"></div>
+                        ) : (
+                          "VERIFY & ENTER"
+                        )}
+                      </button>
+                    </form>
+                    
+                    <div className="text-center mt-6">
+                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                        Didn't receive code? <span className="text-indigo-600 cursor-pointer" onClick={handleSendOtp}>Resend SMS</span>
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
             </div>
           ) : (
             <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
