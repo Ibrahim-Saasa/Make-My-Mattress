@@ -120,7 +120,8 @@ const App: React.FC = () => {
     );
   }
 
-  const isIndustrialScreen = ['/admin-capitol', '/factory-kanban', '/technician-portal', '/dealer-dashboard', '/service-booker', '/login', '/checkout', '/signup', '/profile'].some(path => location.pathname.startsWith(path));
+  // Removed '/profile' from the isIndustrialScreen check
+  const isIndustrialScreen = ['/admin-capitol', '/factory-kanban', '/technician-portal', '/dealer-dashboard', '/service-booker', '/login', '/checkout', '/signup'].some(path => location.pathname.startsWith(path));
 
   return (
     <div className="min-h-screen bg-[#FDFDFD] text-slate-900 overflow-x-hidden font-sans">
