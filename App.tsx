@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, useNavigate, Navigate } from 'react-router-dom';
-import { useSession } from './src/contexts/SessionContext'; // Corrected import path
+import { useSession } from './src/contexts/SessionContext';
 import LoginScreen from './components/LoginScreen';
-import SignupScreen from './components/SignupScreen'; // Import the new SignupScreen
+import SignupScreen from './components/SignupScreen';
 import IdentityScreen from './components/IdentityScreen';
 import BrandHall from './components/BrandHall';
 import SmartConfigurator from './components/SmartConfigurator';
@@ -40,7 +40,6 @@ const App: React.FC = () => {
       if (!session) {
         navigate('/login', { replace: true });
       } else {
-        // Fetch user profile to determine role
         const fetchProfile = async () => {
           const { data, error } = await supabase
             .from('profiles')
@@ -50,18 +49,17 @@ const App: React.FC = () => {
 
           if (error && error.code !== 'PGRST116') { // PGRST116 means no rows found
             console.error('Error fetching profile:', error);
-            // If profile doesn't exist, redirect to identity screen
+            // If there's an actual error (not just no profile), still go to identity to allow selection
             navigate('/identity', { replace: true });
-          } else if (data) {
+          } else if (data && data.role) { // Profile exists AND role is set
             setUserRole(data.role as UserRole);
             // Redirect based on role if already set
             if (data.role === UserRole.TECHNICIAN) navigate('/technician-portal', { replace: true });
             else if (data.role === UserRole.SUPER_ADMIN) navigate('/admin-capitol', { replace: true });
             else if (data.role === UserRole.FACTORY_MANAGER) navigate('/factory-kanban', { replace: true });
             else if (data.role === UserRole.DEALER) navigate('/dealer-dashboard', { replace: true });
-            else navigate('/brand-hall', { replace: true });
-          } else {
-            // No profile found, go to identity screen
+            else navigate('/brand-hall', { replace: true }); // Default for END_USER or other roles
+          } else { // No profile found (PGRST116) OR profile exists but role is NULL
             navigate('/identity', { replace: true });
           }
         };
@@ -73,7 +71,6 @@ const App: React.FC = () => {
   const handleRoleSelection = async (role: UserRole) => {
     setUserRole(role);
     if (session) {
-      // Update user profile with selected role
       const { error } = await supabase
         .from('profiles')
         .upsert({ id: session.user.id, role: role }, { onConflict: 'id' });
@@ -155,7 +152,7 @@ const App: React.FC = () => {
       <main className={`${(location.pathname !== '/identity' && location.pathname !== '/login' && location.pathname !== '/signup' && !isIndustrialScreen) ? 'pt-24' : ''}`}>
         <Routes>
           <Route path="/login" element={<LoginScreen />} />
-          <Route path="/signup" element={<SignupScreen />} /> {/* New Signup Route */}
+          <Route path="/signup" element={<SignupScreen />} />
           <Route path="/identity" element={<IdentityScreen onSelectRole={handleRoleSelection} />} />
           <Route path="/brand-hall" element={<BrandHall onSelectBrand={brand => { setSelectedBrand(brand); navigate('/configurator'); }} />} />
           <Route path="/configurator" element={selectedBrand ? (
