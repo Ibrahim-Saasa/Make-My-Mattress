@@ -1,0 +1,8 @@
+{
+  "name": "Hindustan Mattress Co. - AI Powered Ecosystem",
+  "description": "Technical documentation and AI-integrated prototype for the 'Make My Mattress' ecosystem, featuring an AI Sleep Consultant and Vision-based mattress analysis.",
+  "requestFramePermissions": [
+    "camera",
+    "geolocation"
+  ]
+}
