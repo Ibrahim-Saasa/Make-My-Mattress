@@ -39,47 +39,67 @@ const App: React.FC = () => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
 
   useEffect(() => {
-    if (!isLoading) {
-      if (!session) {
-        if (location.pathname !== '/login' && location.pathname !== '/signup') {
-          navigate('/login', { replace: true });
-        }
-      } else {
-        const fetchProfile = async () => {
-          const { data, error } = await supabase
-            .from('profiles')
-            .select('role, first_name')
-            .eq('id', session.user.id)
-            .single();
-
-          if (error && error.code !== 'PGRST116') {
-            console.error('Error fetching profile:', error);
-            if (location.pathname !== '/identity') {
-              navigate('/identity', { replace: true });
-            }
-          } else if (data && data.role) {
-            setUserRole(data.role as UserRole);
-            setUserName(data.first_name || null);
-            
-            const initialEntryPaths = ['/', '/login', '/signup', '/identity'];
-            const shouldRedirectFromBrandHall = (data.role !== UserRole.END_USER && location.pathname === '/brand-hall');
-
-            if (initialEntryPaths.includes(location.pathname) || shouldRedirectFromBrandHall) {
-              if (data.role === UserRole.TECHNICIAN) navigate('/technician-portal', { replace: true });
-              else if (data.role === UserRole.SUPER_ADMIN) navigate('/admin-capitol', { replace: true });
-              else if (data.role === UserRole.FACTORY_MANAGER) navigate('/factory-kanban', { replace: true });
-              else if (data.role === UserRole.DEALER) navigate('/dealer-dashboard', { replace: true });
-              else navigate('/brand-hall', { replace: true });
-            }
-          } else {
-            if (location.pathname !== '/identity') {
-              navigate('/identity', { replace: true });
-            }
-          }
-        };
-        fetchProfile();
-      }
+    if (isLoading) {
+      return; // Still loading session, do nothing
     }
+
+    if (!session) {
+      // User is not authenticated, redirect to login if not already there
+      if (location.pathname !== '/login' && location.pathname !== '/signup') {
+        navigate('/login', { replace: true });
+      }
+      return;
+    }
+
+    const fetchProfileAndRedirect = async () => {
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .select('role, first_name')
+        .eq('id', session.user.id)
+        .single();
+
+      if (profileError && profileError.code !== 'PGRST116') {
+        // Real error fetching profile, log and ensure user is on identity to resolve
+        console.error('Error fetching profile:', profileError);
+        if (location.pathname !== '/identity') {
+          navigate('/identity', { replace: true });
+        }
+        return;
+      }
+
+      if (!profileData || !profileData.role) {
+        // Profile exists but no role, or profile doesn't exist (PGRST116)
+        // User needs to select a role. Ensure they are on /identity and stop further redirection.
+        if (location.pathname !== '/identity') {
+          navigate('/identity', { replace: true });
+        }
+        // Explicitly clear role if not found to prevent accidental redirects
+        setUserRole(null); 
+        setUserName(null);
+        return;
+      }
+
+      // Profile with role found
+      const role = profileData.role as UserRole;
+      setUserRole(role);
+      setUserName(profileData.first_name || null);
+
+      const initialEntryPaths = ['/', '/login', '/signup', '/identity'];
+      const shouldRedirectFromBrandHall = (role !== UserRole.END_USER && location.pathname === '/brand-hall');
+
+      // Only redirect if the current path is one of the initial entry points
+      // or if a non-END_USER is on /brand-hall (which they shouldn't be).
+      if (initialEntryPaths.includes(location.pathname) || shouldRedirectFromBrandHall) {
+        if (role === UserRole.TECHNICIAN) navigate('/technician-portal', { replace: true });
+        else if (role === UserRole.SUPER_ADMIN) navigate('/admin-capitol', { replace: true });
+        else if (role === UserRole.FACTORY_MANAGER) navigate('/factory-kanban', { replace: true });
+        else if (role === UserRole.DEALER) navigate('/dealer-dashboard', { replace: true });
+        else navigate('/brand-hall', { replace: true }); // Default for END_USER
+      }
+      // If user has a role and is already on their correct page, do nothing.
+    };
+
+    fetchProfileAndRedirect();
   }, [session, isLoading, navigate, supabase, location.pathname]);
 
   const handleRoleSelection = async (role: UserRole) => {
