@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Routes, Route, useNavigate, Navigate } from 'react-router-dom';
+import { Routes, Route, useNavigate, Navigate, useLocation } from 'react-router-dom'; // Import useLocation
 import { useSession } from './src/contexts/SessionContext';
 import LoginScreen from './components/LoginScreen';
 import SignupScreen from './components/SignupScreen';
@@ -16,7 +16,7 @@ import FactoryKanban from './components/FactoryKanban';
 import DealerDashboard from './components/DealerDashboard';
 import CheckoutScreen from './components/CheckoutScreen';
 import CartDrawer from './components/CartDrawer';
-import ProfilePage from './components/ProfilePage'; // Import the new ProfilePage
+import ProfilePage from './components/ProfilePage';
 import { UserRole, BrandMetadata, PricingResult, Cart } from './types';
 
 interface CartItem {
@@ -29,9 +29,10 @@ interface CartItem {
 const App: React.FC = () => {
   const { session, isLoading, supabase } = useSession();
   const navigate = useNavigate();
+  const location = useLocation(); // Initialize useLocation hook
 
   const [userRole, setUserRole] = useState<UserRole | null>(null);
-  const [userName, setUserName] = useState<string | null>(null); // New state for user's first name
+  const [userName, setUserName] = useState<string | null>(null);
   const [selectedBrand, setSelectedBrand] = useState<BrandMetadata | null>(null);
   const [isAiConsultantOpen, setIsAiConsultantOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -40,35 +41,50 @@ const App: React.FC = () => {
   useEffect(() => {
     if (!isLoading) {
       if (!session) {
-        navigate('/login', { replace: true });
+        // Only redirect to login if not already on login/signup
+        if (location.pathname !== '/login' && location.pathname !== '/signup') {
+          navigate('/login', { replace: true });
+        }
       } else {
         const fetchProfile = async () => {
           const { data, error } = await supabase
             .from('profiles')
-            .select('role, first_name') // Fetch first_name as well
+            .select('role, first_name')
             .eq('id', session.user.id)
             .single();
 
           if (error && error.code !== 'PGRST116') { // PGRST116 means no rows found
             console.error('Error fetching profile:', error);
-            navigate('/identity', { replace: true });
-          } else if (data && data.role) { // Profile exists AND role is set
+            // If there's an error fetching profile, and they are not already on /identity, redirect there.
+            if (location.pathname !== '/identity') {
+              navigate('/identity', { replace: true });
+            }
+          } else if (data && data.role) {
             setUserRole(data.role as UserRole);
-            setUserName(data.first_name || null); // Set user name
-            // Redirect based on role if already set
-            if (data.role === UserRole.TECHNICIAN) navigate('/technician-portal', { replace: true });
-            else if (data.role === UserRole.SUPER_ADMIN) navigate('/admin-capitol', { replace: true });
-            else if (data.role === UserRole.FACTORY_MANAGER) navigate('/factory-kanban', { replace: true });
-            else if (data.role === UserRole.DEALER) navigate('/dealer-dashboard', { replace: true });
-            else navigate('/brand-hall', { replace: true }); // Default for END_USER or other roles
+            setUserName(data.first_name || null);
+            
+            // Only redirect if the current path is one of the initial entry points
+            // or if the user is on brand-hall but should be on a specific dashboard
+            const initialEntryPaths = ['/', '/login', '/signup', '/identity'];
+            const shouldRedirectFromBrandHall = (data.role !== UserRole.END_USER && location.pathname === '/brand-hall');
+
+            if (initialEntryPaths.includes(location.pathname) || shouldRedirectFromBrandHall) {
+              if (data.role === UserRole.TECHNICIAN) navigate('/technician-portal', { replace: true });
+              else if (data.role === UserRole.SUPER_ADMIN) navigate('/admin-capitol', { replace: true });
+              else if (data.role === UserRole.FACTORY_MANAGER) navigate('/factory-kanban', { replace: true });
+              else if (data.role === UserRole.DEALER) navigate('/dealer-dashboard', { replace: true });
+              else navigate('/brand-hall', { replace: true }); // Default for END_USER
+            }
           } else { // No profile found (PGRST116) OR profile exists but role is NULL
-            navigate('/identity', { replace: true });
+            if (location.pathname !== '/identity') {
+              navigate('/identity', { replace: true });
+            }
           }
         };
         fetchProfile();
       }
     }
-  }, [session, isLoading, navigate, supabase]);
+  }, [session, isLoading, navigate, supabase, location.pathname]); // Added location.pathname to dependencies
 
   const handleRoleSelection = async (role: UserRole) => {
     setUserRole(role);
@@ -79,7 +95,6 @@ const App: React.FC = () => {
 
       if (error) {
         console.error('Error updating user role:', error);
-        // Handle error, maybe show a toast
       }
     }
 
@@ -108,7 +123,7 @@ const App: React.FC = () => {
   const handleLogout = async () => {
     await supabase.auth.signOut();
     setUserRole(null);
-    setUserName(null); // Clear user name on logout
+    setUserName(null);
     navigate('/login');
   };
 
@@ -120,7 +135,6 @@ const App: React.FC = () => {
     );
   }
 
-  // Removed '/profile' from the isIndustrialScreen check
   const isIndustrialScreen = ['/admin-capitol', '/factory-kanban', '/technician-portal', '/dealer-dashboard', '/service-booker', '/login', '/checkout', '/signup'].some(path => location.pathname.startsWith(path));
 
   return (
@@ -133,11 +147,11 @@ const App: React.FC = () => {
               <span className="font-bold tracking-tight text-slate-800 uppercase text-sm">Hindustan Mattress Co.</span>
             </div>
             <div className="flex items-center gap-6">
-              {userName && ( // Display "Hello, User" if userName is available
+              {userName && (
                 <span className="text-sm font-bold text-slate-600">Hello, {userName}!</span>
               )}
               <button 
-                onClick={() => navigate('/profile')} // Navigate to profile page
+                onClick={() => navigate('/profile')}
                 className="p-2 text-slate-400 hover:text-indigo-600 transition-colors"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
@@ -167,7 +181,7 @@ const App: React.FC = () => {
           <Route path="/login" element={<LoginScreen />} />
           <Route path="/signup" element={<SignupScreen />} />
           <Route path="/identity" element={<IdentityScreen onSelectRole={handleRoleSelection} />} />
-          <Route path="/profile" element={<ProfilePage />} /> {/* New Profile Page Route */}
+          <Route path="/profile" element={<ProfilePage />} />
           <Route path="/brand-hall" element={<BrandHall onSelectBrand={brand => { setSelectedBrand(brand); navigate('/configurator'); }} />} />
           <Route path="/configurator" element={selectedBrand ? (
             <SmartConfigurator 
