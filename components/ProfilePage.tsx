@@ -4,7 +4,7 @@ import { useSession } from '../src/contexts/SessionContext';
 import { Profile } from '../types';
 
 const ProfilePage: React.FC = () => {
-  const { session, supabase } = useSession();
+  const { session, isLoading: isLoadingSession, supabase } = useSession(); // Renamed isLoading to isLoadingSession to avoid conflict
   const navigate = useNavigate();
 
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -12,12 +12,17 @@ const ProfilePage: React.FC = () => {
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [dateOfBirth, setDateOfBirth] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true); // Local loading state for profile data
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
   useEffect(() => {
+    if (isLoadingSession) {
+      // Wait for the session context to finish loading
+      return;
+    }
+
     if (!session) {
       navigate('/login');
       return;
@@ -45,7 +50,7 @@ const ProfilePage: React.FC = () => {
     };
 
     fetchProfile();
-  }, [session, supabase, navigate]);
+  }, [session, isLoadingSession, supabase, navigate]); // Added isLoadingSession to dependency array
 
   const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -94,7 +99,7 @@ const ProfilePage: React.FC = () => {
     }
   };
 
-  if (isLoading) {
+  if (isLoadingSession || isLoading) { // Use both loading states
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#FDFDFD] text-slate-900">
         Loading profile...
