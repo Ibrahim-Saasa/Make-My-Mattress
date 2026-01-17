@@ -113,7 +113,7 @@ const SmartConfigurator: React.FC<Props> = ({ brand, userRole, onNext, onBack, o
             <label className="text-[10px] font-bold text-theme-secondary uppercase tracking-widest">Comfort Profile</label>
             <span className="text-[10px] font-bold text-indigo-600">Thickness Variation</span>
           </div>
-          <div className="flex gap-3 overflow-x-auto pb-2 snap-x">
+          <div className="flex gap-3 overflow-x-auto pb-4 px-4 -mx-4 snap-x"> {/* Added px-4 -mx-4 and changed pb-2 to pb-4 */}
             {THICKNESS_STEPS.map(t => (
               <button 
                 key={t}
