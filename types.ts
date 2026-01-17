@@ -205,3 +205,18 @@ export interface Profile {
   role?: UserRole; // Added role to profile
   updated_at?: string;
 }
+
+// New interface for Sleep Profile
+export interface SleepProfile {
+  id?: string; // Optional for new profiles
+  user_id: string;
+  sleep_position: 'side' | 'back' | 'stomach' | 'combination' | '';
+  firmness_preference: 'soft' | 'medium' | 'firm' | 'very_firm' | '';
+  body_type: 'light' | 'average' | 'heavy' | '';
+  sleep_temperature: 'hot' | 'cool' | 'normal' | '';
+  health_concerns: string[]; // e.g., ['back_pain', 'allergies']
+  partner_disturbance: boolean;
+  budget_preference: 'economical' | 'standard' | 'luxury' | '';
+  created_at?: string;
+  updated_at?: string;
+}
