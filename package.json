@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "@google/genai": "^1.34.0",
@@ -16,8 +18,13 @@
     "react-router-dom": "^7.11.0"
   },
   "devDependencies": {
+    "@storybook/addon-essentials": "^7.6.21",
+    "@storybook/addon-interactions": "^7.6.21",
+    "@storybook/react-vite": "^7.6.21",
+    "@storybook/testing-library": "^0.0.13",
     "@types/node": "^22.14.0",
     "@vitejs/plugin-react": "^5.0.0",
+    "storybook": "^7.6.21",
     "typescript": "~5.8.2",
     "vite": "^6.2.0"
   }
