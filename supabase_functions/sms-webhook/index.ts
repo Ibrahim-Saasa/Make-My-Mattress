@@ -46,14 +46,17 @@ async function verifySignature(reqBody: string, signature: string | null, secret
 async function sendViaFast2SMS(phone: string, message: string) {
   const apiKey = Deno.env.get("FAST2SMS_API_KEY");
   const endpoint = Deno.env.get("FAST2SMS_ENDPOINT") || "https://www.fast2sms.com/dev/bulkV2";
+  const senderId = Deno.env.get("FAST2SMS_SENDER_ID");
   if (!apiKey) throw new Error("FAST2SMS_API_KEY not configured");
 
-  // NOTE: Fast2SMS expects a specific body; adapt as needed. This is a simple example.
-  const body = {
+  // Fast2SMS v3 expects fields like: route, numbers (comma-separated), message, and optional sender_id
+  const body: Record<string, any> = {
     route: "v3",
     numbers: phone,
     message: message,
   };
+
+  if (senderId) body.sender_id = senderId;
 
   const resp = await fetch(endpoint, {
     method: "POST",
@@ -65,7 +68,10 @@ async function sendViaFast2SMS(phone: string, message: string) {
   });
 
   const data = await resp.json().catch(() => ({}));
-  return { ok: resp.ok, data };
+
+  // Fast2SMS returns a structure with `return` or `status` fields; normalize success check
+  const ok = resp.ok && (data?.return === true || data?.status === "success" || resp.status === 200);
+  return { ok, data, rawStatus: resp.status };
 }
 
 async function sendViaGupshup(phone: string, message: string) {
