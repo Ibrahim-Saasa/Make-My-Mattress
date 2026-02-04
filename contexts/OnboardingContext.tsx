@@ -27,16 +27,32 @@ export const OnboardingProvider: React.FC<{ children: ReactNode }> = ({
   const startQuiz = () => setQuizInProgress(true);
 
   const saveQuizResult = async (payload: any) => {
-    // Persistence stub: wire to Supabase or API
-    // Example: await apiService.post('/api/quiz-results', payload)
-    // For now, we simply log and clear state
-    // eslint-disable-next-line no-console
-    console.log('saveQuizResult', payload);
-    setQuizInProgress(false);
+    try {
+      // Persist via quizService -> supabase
+      const { saveResultToSupabase } = await import("../services/quizService");
+      const res = await saveResultToSupabase(payload);
+      // eslint-disable-next-line no-console
+      console.log("Quiz saved:", res);
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error("Failed to save quiz result:", err);
+      // consider adding retry or local persistence here
+    } finally {
+      setQuizInProgress(false);
+    }
   };
 
   return (
-    <OnboardingContext.Provider value={{ step: "start", guest, setGuest, quizInProgress, startQuiz, saveQuizResult }}>
+    <OnboardingContext.Provider
+      value={{
+        step: "start",
+        guest,
+        setGuest,
+        quizInProgress,
+        startQuiz,
+        saveQuizResult,
+      }}
+    >
       {children}
     </OnboardingContext.Provider>
   );
