@@ -1,0 +1,28 @@
+{
+  "variant": "friendly_expert_minimal",
+  "splashCTA": "Take the Sleep Quiz — get a tailored recommendation",
+  "intro": "Short, science-backed questions to find the best mattress for you.",
+  "helper": "Use arrow keys + Enter to choose. Esc to cancel.",
+  "progressPrefix": "Question",
+  "feedback": {
+    "nicePick": "Good choice — this suggests we prioritize pressure relief.",
+    "recorded": "Recorded.",
+    "done": "Nice — here’s your recommended match."
+  },
+  "result": {
+    "headlinePrefix": "Recommended:",
+    "ctaStudio": "Try in Studio",
+    "ctaSave": "Save result",
+    "ctaShare": "Share"
+  },
+  "altVariants": {
+    "short": {
+      "splashCTA": "Find your mattress — 8 quick steps",
+      "intro": "Complete the quiz for a personalized recommendation.",
+      "helper": "Use arrows + Enter to select.",
+      "progressPrefix": "",
+      "feedback": { "nicePick": "Recorded.", "done": "Done." },
+      "result": { "headlinePrefix": "Recommendation:", "ctaStudio": "View options", "ctaSave": "Save" }
+    }
+  }
+}

@@ -220,3 +220,35 @@ export interface SleepProfile {
   created_at?: string;
   updated_at?: string;
 }
+
+// Quiz-specific types
+export type TagWeights = Record<string, number>;
+
+export interface QuizOption {
+  id: string;
+  label: string;
+  weights: TagWeights;
+}
+
+export interface QuizQuestion {
+  id: string;
+  text: string;
+  options: QuizOption[];
+}
+
+export interface QuizAnswer {
+  question_id: string;
+  answer_id: string;
+}
+
+export interface QuizResult {
+  id?: string;
+  user_id?: string;
+  anonymous_session_id?: string;
+  answers: QuizAnswer[];
+  tag_scores: TagWeights;
+  top_tags: string[];
+  recommended_type: string;
+  recommended_models?: string[];
+  created_at?: string;
+}
