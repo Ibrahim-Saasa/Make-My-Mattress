@@ -1,4 +1,9 @@
-import type { Preview, StoryFn } from "@storybook/react";
+type StoryFn = (args?: any) => any;
+
+type Preview = {
+  decorators?: any[];
+  parameters?: any;
+};
 
 export const parameters = {
   actions: { argTypesRegex: "^on[A-Z].*" },
@@ -7,9 +12,7 @@ export const parameters = {
 };
 
 export const decorators = [
-  (Story: StoryFn) => (
-    <Story />
-  ),
+  (Story: StoryFn) => Story(),
 ];
 
 export default { decorators, parameters } as Preview;
