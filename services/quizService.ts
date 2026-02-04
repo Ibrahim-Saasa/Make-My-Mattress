@@ -1,4 +1,4 @@
-import questions from "../data/quizQuestions.json";
+import questions from "../src/data/quizQuestions.json";
 import { QuizAnswer, TagWeights } from "../types";
 import { supabase } from "../src/integrations/supabase/client";
 
