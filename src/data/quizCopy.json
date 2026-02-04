@@ -22,7 +22,11 @@
       "helper": "Use arrows + Enter to select.",
       "progressPrefix": "",
       "feedback": { "nicePick": "Recorded.", "done": "Done." },
-      "result": { "headlinePrefix": "Recommendation:", "ctaStudio": "View options", "ctaSave": "Save" }
+      "result": {
+        "headlinePrefix": "Recommendation:",
+        "ctaStudio": "View options",
+        "ctaSave": "Save"
+      }
     }
   }
 }

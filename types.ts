@@ -1,24 +1,24 @@
 export enum UserRole {
-  SUPER_ADMIN = 'SUPER_ADMIN',
-  DEALER = 'DEALER',
-  TECHNICIAN = 'TECHNICIAN',
-  FACTORY_MANAGER = 'FACTORY_MANAGER',
-  CUSTOMER_SUPPORT = 'CUSTOMER_SUPPORT',
-  END_USER = 'END_USER'
+  SUPER_ADMIN = "SUPER_ADMIN",
+  DEALER = "DEALER",
+  TECHNICIAN = "TECHNICIAN",
+  FACTORY_MANAGER = "FACTORY_MANAGER",
+  CUSTOMER_SUPPORT = "CUSTOMER_SUPPORT",
+  END_USER = "END_USER",
 }
 
 export enum ProductionStage {
-  NEW = 'NEW',
-  CUTTING = 'CUTTING',
-  STITCHING = 'STITCHING',
-  QC_PASSED = 'QC_PASSED',
-  DISPATCHED = 'DISPATCHED'
+  NEW = "NEW",
+  CUTTING = "CUTTING",
+  STITCHING = "STITCHING",
+  QC_PASSED = "QC_PASSED",
+  DISPATCHED = "DISPATCHED",
 }
 
 export enum ShippingCarrier {
-  AIR_COURIER = 'AIR_COURIER',
-  SURFACE_CARGO = 'SURFACE_CARGO',
-  DEALER_FLEET = 'DEALER_FLEET'
+  AIR_COURIER = "AIR_COURIER",
+  SURFACE_CARGO = "SURFACE_CARGO",
+  DEALER_FLEET = "DEALER_FLEET",
 }
 
 export interface Address {
@@ -39,7 +39,7 @@ export interface ShippingManifest {
   volumetric_weight: number;
   assigned_carrier: ShippingCarrier;
   tracking_number: string;
-  status: 'READY' | 'PICKED_UP' | 'TRANSIT' | 'DELIVERED';
+  status: "READY" | "PICKED_UP" | "TRANSIT" | "DELIVERED";
 }
 
 export interface ProductionLog {
@@ -49,7 +49,7 @@ export interface ProductionLog {
   started_at: string;
   completed_at?: string;
   operator_id: string;
-  qc_status?: 'PASSED' | 'FAILED';
+  qc_status?: "PASSED" | "FAILED";
 }
 
 export interface OrderAnalytics {
@@ -65,21 +65,21 @@ export interface LedgerEntry {
   commission: number;
   tax_deducted: number;
   net_payout: number;
-  status: 'PAID' | 'PENDING';
+  status: "PAID" | "PENDING";
 }
 
 export enum ServiceType {
-  MEASURE = 'MEASURE',
-  REPAIR = 'REPAIR',
-  DISPOSAL = 'DISPOSAL'
+  MEASURE = "MEASURE",
+  REPAIR = "REPAIR",
+  DISPOSAL = "DISPOSAL",
 }
 
 export enum RequestStatus {
-  PENDING = 'PENDING',
-  ASSIGNED = 'ASSIGNED',
-  ARRIVED = 'ARRIVED',
-  COMPLETED = 'COMPLETED',
-  CANCELLED = 'CANCELLED'
+  PENDING = "PENDING",
+  ASSIGNED = "ASSIGNED",
+  ARRIVED = "ARRIVED",
+  COMPLETED = "COMPLETED",
+  CANCELLED = "CANCELLED",
 }
 
 export interface ServiceRequest {
@@ -117,7 +117,7 @@ export interface PricingResult {
   discountedPrice: number;
   taxAmount: number;
   totalPrice: number;
-  invoiceType: 'B2B_GST' | 'B2C_RETAIL';
+  invoiceType: "B2B_GST" | "B2C_RETAIL";
   surgeApplied: boolean;
   surgeAmount: number;
   appliedCoupon?: string;
@@ -134,7 +134,7 @@ export interface MattressParams {
   thickness: number;
   userType?: UserRole;
   materialRate?: number;
-  demandLevel?: 'LOW' | 'NORMAL' | 'PEAK';
+  demandLevel?: "LOW" | "NORMAL" | "PEAK";
   coupon_code?: string;
   dealer_auth_code?: string;
 }
@@ -149,7 +149,7 @@ export interface BrandMetadata {
 }
 
 export interface ChatMessage {
-  role: 'user' | 'model';
+  role: "user" | "model";
   text: string;
 }
 
@@ -210,13 +210,13 @@ export interface Profile {
 export interface SleepProfile {
   id?: string; // Optional for new profiles
   user_id: string;
-  sleep_position: 'side' | 'back' | 'stomach' | 'combination' | '';
-  firmness_preference: 'soft' | 'medium' | 'firm' | 'very_firm' | '';
-  body_type: 'light' | 'average' | 'heavy' | '';
-  sleep_temperature: 'hot' | 'cool' | 'normal' | '';
+  sleep_position: "side" | "back" | "stomach" | "combination" | "";
+  firmness_preference: "soft" | "medium" | "firm" | "very_firm" | "";
+  body_type: "light" | "average" | "heavy" | "";
+  sleep_temperature: "hot" | "cool" | "normal" | "";
   health_concerns: string[]; // e.g., ['back_pain', 'allergies']
   partner_disturbance: boolean;
-  budget_preference: 'economical' | 'standard' | 'luxury' | '';
+  budget_preference: "economical" | "standard" | "luxury" | "";
   created_at?: string;
   updated_at?: string;
 }

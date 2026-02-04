@@ -9,7 +9,9 @@ export default {
 
 export const Default = () => <SleepQuiz />;
 
-export const ShortVariant = () => <SleepQuiz copyOverride={shortCopy.altVariants.short} />;
+export const ShortVariant = () => (
+  <SleepQuiz copyOverride={shortCopy.altVariants.short} />
+);
 
 Default.storyName = "Start";
 ShortVariant.storyName = "Start (Short Variant)";

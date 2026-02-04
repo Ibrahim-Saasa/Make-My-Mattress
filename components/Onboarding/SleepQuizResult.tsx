@@ -7,7 +7,9 @@ const SleepQuizResult: React.FC = () => {
   const payload = (location.state as any)?.result;
 
   const headline = payload?.recommended_type || "Recommended Mattress";
-  const blurb = payload?.recommended_models?.join(", ") || "We couldn't compute a recommendation yet.";
+  const blurb =
+    payload?.recommended_models?.join(", ") ||
+    "We couldn't compute a recommendation yet.";
 
   return (
     <div className="p-6 max-w-2xl mx-auto text-center">

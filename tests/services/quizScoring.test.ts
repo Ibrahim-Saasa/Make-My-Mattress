@@ -1,4 +1,8 @@
-import { scoreAnswers, recommendFromScores, buildResultPayload } from "../../services/quizService";
+import {
+  scoreAnswers,
+  recommendFromScores,
+  buildResultPayload,
+} from "../../services/quizService";
 
 describe("quiz scoring", () => {
   it("scores simple answers and recommends", () => {

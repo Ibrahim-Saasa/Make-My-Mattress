@@ -23,6 +23,8 @@
     "@storybook/react-vite": "^7.6.21",
     "@storybook/testing-library": "^0.0.13",
     "@types/node": "^22.14.0",
+    "@types/react": "^19.2.11",
+    "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.0.0",
     "storybook": "^7.6.21",
     "typescript": "~5.8.2",

@@ -11,7 +11,8 @@ interface SleepQuizProps {
 }
 
 const SleepQuiz: React.FC<SleepQuizProps> = ({ copyOverride }) => {
-  const copy = copyOverride || defaultCopy;  const navigate = useNavigate();
+  const copy = copyOverride || defaultCopy;
+  const navigate = useNavigate();
   const { startQuiz, saveQuizResult } = useOnboarding();
 
   const qs = questions as any[];
@@ -52,7 +53,7 @@ const SleepQuiz: React.FC<SleepQuizProps> = ({ copyOverride }) => {
 
   const handleSubmit = async () => {
     const payloadAnswers: QuizAnswer[] = Object.entries(answers).map(
-      ([question_id, answer_id]) => ({ question_id, answer_id })
+      ([question_id, answer_id]) => ({ question_id, answer_id }),
     );
     const payload = buildResultPayload(payloadAnswers, undefined, null);
     if (saveQuizResult) await saveQuizResult(payload);
@@ -60,7 +61,11 @@ const SleepQuiz: React.FC<SleepQuizProps> = ({ copyOverride }) => {
   };
 
   return (
-    <div className="p-6 max-w-2xl mx-auto" role="region" aria-labelledby="quiz-heading">
+    <div
+      className="p-6 max-w-2xl mx-auto"
+      role="region"
+      aria-labelledby="quiz-heading"
+    >
       <h2 id="quiz-heading" className="text-2xl font-bold">
         {copy.splashCTA}
       </h2>
@@ -76,7 +81,7 @@ const SleepQuiz: React.FC<SleepQuizProps> = ({ copyOverride }) => {
             <button
               key={o.id}
               onClick={() => handleSelect(o.id)}
-              className={`text-left p-3 border rounded transition ${selected === o.id ? 'border-indigo-600 bg-indigo-50' : 'bg-white'}`}
+              className={`text-left p-3 border rounded transition ${selected === o.id ? "border-indigo-600 bg-indigo-50" : "bg-white"}`}
               aria-pressed={selected === o.id}
             >
               {o.label}
@@ -85,12 +90,19 @@ const SleepQuiz: React.FC<SleepQuizProps> = ({ copyOverride }) => {
         </div>
 
         <div className="mt-4 flex items-center justify-between">
-          <button onClick={handleBack} disabled={index === 0} className="px-3 py-2 rounded bg-gray-100">
+          <button
+            onClick={handleBack}
+            disabled={index === 0}
+            className="px-3 py-2 rounded bg-gray-100"
+          >
             Back
           </button>
           <div className="flex items-center gap-3">
-            <button onClick={handleNext} className="px-4 py-2 bg-indigo-600 text-white rounded">
-              {index + 1 === total ? 'Finish' : 'Next'}
+            <button
+              onClick={handleNext}
+              className="px-4 py-2 bg-indigo-600 text-white rounded"
+            >
+              {index + 1 === total ? "Finish" : "Next"}
             </button>
           </div>
         </div>

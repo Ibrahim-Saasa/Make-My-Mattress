@@ -27,13 +27,23 @@ function hexEncode(buffer: ArrayBuffer) {
     .join("");
 }
 
-async function verifySignature(reqBody: string, signature: string | null, secret: string | undefined) {
+async function verifySignature(
+  reqBody: string,
+  signature: string | null,
+  secret: string | undefined,
+) {
   if (!secret) return false;
   if (!signature) return false;
 
   // Compute HMAC-SHA256 hex
   const enc = new TextEncoder();
-  const key = await crypto.subtle.importKey("raw", enc.encode(secret), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
+  const key = await crypto.subtle.importKey(
+    "raw",
+    enc.encode(secret),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"],
+  );
   const sig = await crypto.subtle.sign("HMAC", key, enc.encode(reqBody));
   const hex = hexEncode(sig);
 
@@ -45,7 +55,8 @@ async function verifySignature(reqBody: string, signature: string | null, secret
 
 async function sendViaFast2SMS(phone: string, message: string) {
   const apiKey = Deno.env.get("FAST2SMS_API_KEY");
-  const endpoint = Deno.env.get("FAST2SMS_ENDPOINT") || "https://www.fast2sms.com/dev/bulkV2";
+  const endpoint =
+    Deno.env.get("FAST2SMS_ENDPOINT") || "https://www.fast2sms.com/dev/bulkV2";
   const senderId = Deno.env.get("FAST2SMS_SENDER_ID");
   if (!apiKey) throw new Error("FAST2SMS_API_KEY not configured");
 
@@ -70,15 +81,21 @@ async function sendViaFast2SMS(phone: string, message: string) {
   const data = await resp.json().catch(() => ({}));
 
   // Fast2SMS returns a structure with `return` or `status` fields; normalize success check
-  const ok = resp.ok && (data?.return === true || data?.status === "success" || resp.status === 200);
+  const ok =
+    resp.ok &&
+    (data?.return === true ||
+      data?.status === "success" ||
+      resp.status === 200);
   return { ok, data, rawStatus: resp.status };
 }
 
 async function sendViaGupshup(phone: string, message: string) {
   const appId = Deno.env.get("GUPSHUP_APP_ID");
   const appSecret = Deno.env.get("GUPSHUP_APP_SECRET");
-  const endpoint = Deno.env.get("GUPSHUP_ENDPOINT") || "https://api.gupshup.io/sm/api/v1/msg";
-  if (!appId || !appSecret) throw new Error("GUPSHUP credentials not configured");
+  const endpoint =
+    Deno.env.get("GUPSHUP_ENDPOINT") || "https://api.gupshup.io/sm/api/v1/msg";
+  if (!appId || !appSecret)
+    throw new Error("GUPSHUP credentials not configured");
 
   const body = {
     channel: "sms",
@@ -102,23 +119,32 @@ async function sendViaGupshup(phone: string, message: string) {
 
 serve(async (req: Request) => {
   try {
-    if (req.method !== "POST") return new Response("Method not allowed", { status: 405 });
+    if (req.method !== "POST")
+      return new Response("Method not allowed", { status: 405 });
 
     const text = await req.text();
-    const sigHeader = req.headers.get("x-supabase-signature") || req.headers.get("x-webhook-signature");
+    const sigHeader =
+      req.headers.get("x-supabase-signature") ||
+      req.headers.get("x-webhook-signature");
     const secret = Deno.env.get("SUPABASE_SMS_SECRET");
 
     const okSig = await verifySignature(text, sigHeader, secret);
     if (!okSig) {
       console.warn("Invalid signature for SMS webhook");
-      return new Response(JSON.stringify({ error: "invalid signature" }), { status: 401 });
+      return new Response(JSON.stringify({ error: "invalid signature" }), {
+        status: 401,
+      });
     }
 
     const payload = JSON.parse(text);
     const phone = payload.phone || payload.to;
     const token = payload.token || payload.otp || payload.code;
 
-    if (!phone || !token) return new Response(JSON.stringify({ error: "phone and token required" }), { status: 400 });
+    if (!phone || !token)
+      return new Response(
+        JSON.stringify({ error: "phone and token required" }),
+        { status: 400 },
+      );
 
     // Rate limiting per phone (best-effort, per instance)
     const now = Date.now();
@@ -130,7 +156,9 @@ serve(async (req: Request) => {
     state.count += 1;
     rateMap.set(phone, state);
     if (state.count > MAX_PER_WINDOW) {
-      return new Response(JSON.stringify({ error: "rate limit" }), { status: 429 });
+      return new Response(JSON.stringify({ error: "rate limit" }), {
+        status: 429,
+      });
     }
 
     const message = `Your verification code is ${token}. It expires in 10 minutes.`;
@@ -142,17 +170,28 @@ serve(async (req: Request) => {
     } else if (provider === "gupshup") {
       res = await sendViaGupshup(phone, message);
     } else {
-      return new Response(JSON.stringify({ error: "unsupported provider" }), { status: 500 });
+      return new Response(JSON.stringify({ error: "unsupported provider" }), {
+        status: 500,
+      });
     }
 
     if (!res.ok) {
       console.error("Provider failed", res.data);
-      return new Response(JSON.stringify({ error: "provider error", detail: res.data }), { status: 502 });
+      return new Response(
+        JSON.stringify({ error: "provider error", detail: res.data }),
+        { status: 502 },
+      );
     }
 
-    return new Response(JSON.stringify({ ok: true, provider: provider, result: res.data }), { status: 200 });
+    return new Response(
+      JSON.stringify({ ok: true, provider: provider, result: res.data }),
+      { status: 200 },
+    );
   } catch (err) {
     console.error("sms-webhook error", err);
-    return new Response(JSON.stringify({ error: "internal_error", message: String(err) }), { status: 500 });
+    return new Response(
+      JSON.stringify({ error: "internal_error", message: String(err) }),
+      { status: 500 },
+    );
   }
 });

@@ -3,17 +3,37 @@
     "id": "q1",
     "text": "What's your primary sleep position?",
     "options": [
-      { "id": "side", "label": "Side", "weights": { "pressure_relief": 3, "soft": 1 } },
-      { "id": "back", "label": "Back", "weights": { "support": 3, "medium": 2 } },
-      { "id": "stomach", "label": "Stomach", "weights": { "firm": 3, "support": 2 } },
-      { "id": "combination", "label": "Combination", "weights": { "medium": 3, "adaptability": 2 } }
+      {
+        "id": "side",
+        "label": "Side",
+        "weights": { "pressure_relief": 3, "soft": 1 }
+      },
+      {
+        "id": "back",
+        "label": "Back",
+        "weights": { "support": 3, "medium": 2 }
+      },
+      {
+        "id": "stomach",
+        "label": "Stomach",
+        "weights": { "firm": 3, "support": 2 }
+      },
+      {
+        "id": "combination",
+        "label": "Combination",
+        "weights": { "medium": 3, "adaptability": 2 }
+      }
     ]
   },
   {
     "id": "q2",
     "text": "Which firmness do you prefer?",
     "options": [
-      { "id": "soft", "label": "Soft", "weights": { "soft": 4, "pressure_relief": 2 } },
+      {
+        "id": "soft",
+        "label": "Soft",
+        "weights": { "soft": 4, "pressure_relief": 2 }
+      },
       { "id": "medium", "label": "Medium", "weights": { "medium": 4 } },
       { "id": "firm", "label": "Firm", "weights": { "firm": 4, "support": 2 } }
     ]
@@ -24,7 +44,11 @@
     "options": [
       { "id": "light", "label": "Light", "weights": { "soft": 1 } },
       { "id": "average", "label": "Average", "weights": { "medium": 2 } },
-      { "id": "heavy", "label": "Heavy", "weights": { "firm": 3, "support": 2 } }
+      {
+        "id": "heavy",
+        "label": "Heavy",
+        "weights": { "firm": 3, "support": 2 }
+      }
     ]
   },
   {
@@ -40,8 +64,16 @@
     "id": "q5",
     "text": "Do you have pain or pressure points?",
     "options": [
-      { "id": "back_pain", "label": "Back pain", "weights": { "support": 3, "pressure_relief": 2 } },
-      { "id": "joint_pain", "label": "Joint pain", "weights": { "pressure_relief": 3 } },
+      {
+        "id": "back_pain",
+        "label": "Back pain",
+        "weights": { "support": 3, "pressure_relief": 2 }
+      },
+      {
+        "id": "joint_pain",
+        "label": "Joint pain",
+        "weights": { "pressure_relief": 3 }
+      },
       { "id": "none", "label": "No", "weights": { "balanced": 2 } }
     ]
   },
@@ -57,7 +89,11 @@
     "id": "q7",
     "text": "How important is mattress longevity to you?",
     "options": [
-      { "id": "very", "label": "Very important", "weights": { "durability": 3 } },
+      {
+        "id": "very",
+        "label": "Very important",
+        "weights": { "durability": 3 }
+      },
       { "id": "some", "label": "Somewhat", "weights": { "balanced": 1 } },
       { "id": "not", "label": "Not important", "weights": { "value": 2 } }
     ]

@@ -8,7 +8,9 @@ declare const Deno: {
 };
 
 declare module "https://deno.land/std@0.201.0/http/server.ts" {
-  export function serve(handler: (req: Request) => Promise<Response> | Response): void;
+  export function serve(
+    handler: (req: Request) => Promise<Response> | Response,
+  ): void;
 }
 
 // btoa/atob may not be available in Node TS environment used by the editor

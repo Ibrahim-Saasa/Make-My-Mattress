@@ -11,8 +11,6 @@ export const parameters = {
   layout: "centered",
 };
 
-export const decorators = [
-  (Story: StoryFn) => Story(),
-];
+export const decorators = [(Story: StoryFn) => Story()];
 
 export default { decorators, parameters } as Preview;
