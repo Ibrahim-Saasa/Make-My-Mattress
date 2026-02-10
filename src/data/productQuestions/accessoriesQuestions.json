@@ -1,0 +1,70 @@
+[
+  {
+    "id": "q1",
+    "text": "What type of accessory interests you?",
+    "options": [
+      {
+        "id": "mattress_protector",
+        "label": "Mattress Protector",
+        "weights": { "type_protector": 3 }
+      },
+      {
+        "id": "mattress_topper",
+        "label": "Mattress Topper",
+        "weights": { "type_topper": 3 }
+      },
+      {
+        "id": "comforter",
+        "label": "Comforter / Quilt",
+        "weights": { "type_comforter": 3 }
+      },
+      { "id": "blanket", "label": "Blanket", "weights": { "type_blanket": 3 } }
+    ]
+  },
+  {
+    "id": "q2",
+    "text": "What's the primary purpose?",
+    "options": [
+      {
+        "id": "protection",
+        "label": "Protection / Durability",
+        "weights": { "purpose_protection": 3 }
+      },
+      {
+        "id": "comfort",
+        "label": "Extra Comfort",
+        "weights": { "purpose_comfort": 3 }
+      },
+      {
+        "id": "temperature",
+        "label": "Temperature Control",
+        "weights": { "purpose_temperature": 3 }
+      }
+    ]
+  },
+  {
+    "id": "q3",
+    "text": "Do you have allergies or sensitivities?",
+    "options": [
+      { "id": "yes", "label": "Yes", "weights": { "hypoallergenic": 3 } },
+      { "id": "no", "label": "No", "weights": { "standard": 2 } }
+    ]
+  },
+  {
+    "id": "q4",
+    "text": "Budget preference?",
+    "options": [
+      {
+        "id": "economical",
+        "label": "Budget",
+        "weights": { "price_budget": 3 }
+      },
+      {
+        "id": "standard",
+        "label": "Standard",
+        "weights": { "price_standard": 3 }
+      },
+      { "id": "premium", "label": "Premium", "weights": { "price_premium": 3 } }
+    ]
+  }
+]

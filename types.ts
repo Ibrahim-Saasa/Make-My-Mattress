@@ -252,3 +252,46 @@ export interface QuizResult {
   recommended_models?: string[];
   created_at?: string;
 }
+
+// Product Preference types
+export type ProductCategory =
+  | "mattress"
+  | "pillow"
+  | "bedsheet"
+  | "accessories";
+
+export interface ProductCategoryConfig {
+  id: ProductCategory;
+  label: string;
+  icon?: string;
+  description?: string;
+}
+
+export interface ProductPreferenceResponse {
+  id?: string;
+  user_id: string;
+  product_category: ProductCategory;
+  answers: QuizAnswer[];
+  tag_scores: TagWeights;
+  top_tags: string[];
+  recommended_products?: Array<{
+    product_id: string;
+    name: string;
+    match_score: number;
+  }>;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface ProductRecommendation {
+  id: string;
+  product_id?: string;
+  name: string;
+  category: ProductCategory;
+  match_score: number;
+  matchScore?: number; // Alias for match_score
+  description?: string;
+  price?: number;
+  rating?: number;
+  sku?: string;
+}
