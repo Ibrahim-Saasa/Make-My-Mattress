@@ -373,19 +373,37 @@ const LoginScreen: React.FC = () => {
             </div>
           )}
 
-          <div className="text-center mt-6">
+          <div className="text-center mt-6 space-y-3">
             <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
               Don't have an account?{" "}
               <span
-                className="text-indigo-700 cursor-pointer"
+                className="text-indigo-700 cursor-pointer hover:underline"
                 onClick={() => navigate("/signup")}
               >
                 Sign up here
               </span>
             </p>
+
+            <div className="flex items-center justify-center gap-2 py-2">
+              <div className="flex-1 h-px bg-slate-200"></div>
+              <span className="text-[9px] font-bold text-slate-400 uppercase">
+                or
+              </span>
+              <div className="flex-1 h-px bg-slate-200"></div>
+            </div>
+
+            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+              Are you an admin?{" "}
+              <span
+                className="text-red-600 cursor-pointer hover:underline font-black"
+                onClick={() => navigate("/admin-login")}
+              >
+                Access Capitol
+              </span>
+            </p>
           </div>
 
-          <p className="text-[11px] text-center text-slate-500 leading-relaxed font-medium">
+          <p className="text-[11px] text-center text-slate-500 leading-relaxed font-medium mt-6">
             By continuing, you agree to our{" "}
             <span className="text-indigo-700 underline cursor-pointer">
               Terms & Privacy Policy
