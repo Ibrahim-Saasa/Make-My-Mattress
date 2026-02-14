@@ -1,0 +1,96 @@
+[
+  {
+    "id": "q1",
+    "text": "What's your preferred pillow firmness?",
+    "options": [
+      {
+        "id": "soft",
+        "label": "Soft / Plush",
+        "weights": { "firmness_soft": 3 }
+      },
+      {
+        "id": "medium",
+        "label": "Medium",
+        "weights": { "firmness_medium": 3 }
+      },
+      { "id": "firm", "label": "Firm", "weights": { "firmness_firm": 3 } }
+    ]
+  },
+  {
+    "id": "q2",
+    "text": "What's your sleep position?",
+    "options": [
+      {
+        "id": "side",
+        "label": "Side sleeper",
+        "weights": { "height_tall": 2, "support_high": 2 }
+      },
+      {
+        "id": "back",
+        "label": "Back sleeper",
+        "weights": { "height_medium": 2, "support_medium": 2 }
+      },
+      {
+        "id": "stomach",
+        "label": "Stomach sleeper",
+        "weights": { "height_low": 2 }
+      }
+    ]
+  },
+  {
+    "id": "q3",
+    "text": "Do you experience neck pain?",
+    "options": [
+      {
+        "id": "yes",
+        "label": "Yes",
+        "weights": { "orthopedic": 3, "support_high": 2 }
+      },
+      {
+        "id": "sometimes",
+        "label": "Sometimes",
+        "weights": { "support_medium": 2 }
+      },
+      { "id": "no", "label": "No", "weights": { "comfort": 2 } }
+    ]
+  },
+  {
+    "id": "q4",
+    "text": "Material preference?",
+    "options": [
+      {
+        "id": "memory_foam",
+        "label": "Memory Foam",
+        "weights": { "material_memory_foam": 3 }
+      },
+      { "id": "latex", "label": "Latex", "weights": { "material_latex": 3 } },
+      {
+        "id": "feather",
+        "label": "Feather / Down",
+        "weights": { "material_feather": 3 }
+      },
+      {
+        "id": "polyester",
+        "label": "Polyester",
+        "weights": { "material_polyester": 3 }
+      }
+    ]
+  },
+  {
+    "id": "q5",
+    "text": "Budget preference?",
+    "options": [
+      {
+        "id": "economical",
+        "label": "Budget",
+        "weights": { "price_budget": 3 }
+      },
+      {
+        "id": "standard",
+        "label": "Standard",
+        "weights": { "price_standard": 3 }
+      },
+      { "id": "premium", "label": "Premium", "weights": { "price_premium": 3 } }
+    ]
+  }
+]

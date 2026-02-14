@@ -1,0 +1,81 @@
+[
+  {
+    "id": "q1",
+    "text": "What's your preferred bedsheet material?",
+    "options": [
+      {
+        "id": "cotton",
+        "label": "Cotton",
+        "weights": { "material_cotton": 3 }
+      },
+      { "id": "linen", "label": "Linen", "weights": { "material_linen": 3 } },
+      { "id": "silk", "label": "Silk", "weights": { "material_silk": 3 } },
+      {
+        "id": "cotton_blend",
+        "label": "Cotton Blend",
+        "weights": { "material_blend": 3 }
+      }
+    ]
+  },
+  {
+    "id": "q2",
+    "text": "Preferred thread count?",
+    "options": [
+      {
+        "id": "low",
+        "label": "Lower (200-400)",
+        "weights": { "breathability": 2 }
+      },
+      {
+        "id": "medium",
+        "label": "Medium (400-800)",
+        "weights": { "balance": 3 }
+      },
+      {
+        "id": "high",
+        "label": "Higher (800+)",
+        "weights": { "comfort_soft": 3 }
+      }
+    ]
+  },
+  {
+    "id": "q3",
+    "text": "Do you sleep hot or cool?",
+    "options": [
+      {
+        "id": "hot",
+        "label": "Hot",
+        "weights": { "cooling": 3, "breathability": 2 }
+      },
+      { "id": "neutral", "label": "Neutral", "weights": { "balance": 2 } },
+      { "id": "cool", "label": "Cool", "weights": { "warmth": 2 } }
+    ]
+  },
+  {
+    "id": "q4",
+    "text": "Bed size?",
+    "options": [
+      { "id": "single", "label": "Single", "weights": { "size_single": 3 } },
+      { "id": "double", "label": "Double", "weights": { "size_double": 3 } },
+      { "id": "queen", "label": "Queen", "weights": { "size_queen": 3 } },
+      { "id": "king", "label": "King", "weights": { "size_king": 3 } }
+    ]
+  },
+  {
+    "id": "q5",
+    "text": "Budget preference?",
+    "options": [
+      {
+        "id": "economical",
+        "label": "Budget",
+        "weights": { "price_budget": 3 }
+      },
+      {
+        "id": "standard",
+        "label": "Standard",
+        "weights": { "price_standard": 3 }
+      },
+      { "id": "premium", "label": "Premium", "weights": { "price_premium": 3 } }
+    ]
+  }
+]
