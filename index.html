@@ -1,103 +1,248 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Make My Mattress | Hindustan Mattress Co.</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:ital,wght@0,400;0,700;0,800;1,800&display=swap" rel="stylesheet">
-    <style>
-        body { 
-          font-family: 'Inter', sans-serif; 
-          /* Base background, will be overridden by CSS variables */
-          background-color: #FDFDFD; 
-        }
-        h1, h2, h3, .brand-header {
-          font-family: 'Plus Jakarta Sans', sans-serif;
-        }
-        .bg-brand-navy { background-color: #1E1B4B; }
-        .text-brand-navy { color: #1E1B4B; }
-        .bg-brand-amber { background-color: #F59E0B; }
-        .border-brand-amber { border-color: #F59E0B; }
-        
-        /* Custom scrollbar */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #f8fafc; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Make My Mattress | Hindustan Mattress Co.</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:ital,wght@0,400;0,700;0,800;1,800&display=swap"
+    rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      /* Base background, will be overridden by CSS variables */
+      background-color: #FDFDFD;
+    }
 
-        /* Light Theme Defaults (CSS Variables) */
-        :root {
-          --color-background: #E0E7FF; /* Lighter blue for overall app background */
-          --color-card-background: #FFFFFF;
-          --color-card-background-hover: #F0F4F8;
-          --color-text-primary: #1E293B; /* slate-900 */
-          --color-text-secondary: #475569; /* slate-600 */
-          --color-text-tertiary: #64748B; /* slate-500 */
-          --color-border: #E2E8F0; /* slate-200 */
-          --color-input-bg: #F1F5F9; /* slate-100 */
-          --color-input-border: #CBD5E1; /* slate-300 */
-          --color-shadow-light: rgba(0,0,0,0.05);
-          --color-shadow-medium: rgba(0,0,0,0.1);
-          --color-shadow-strong: rgba(0,0,0,0.2);
-        }
+    h1,
+    h2,
+    h3,
+    .brand-header {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
 
-        /* Dark Theme Overrides (CSS Variables) */
-        html.dark {
-          --color-background: #0F172A; /* slate-950 */
-          --color-card-background: #1E293B; /* slate-900 */
-          --color-card-background-hover: #334155; /* slate-800 */
-          --color-text-primary: #F8FAFC; /* slate-50 */
-          --color-text-secondary: #94A3B8; /* slate-400 */
-          --color-text-tertiary: #64748B; /* slate-500 */
-          --color-border: #334155; /* slate-800 */
-          --color-input-bg: #1E293B; /* slate-900 */
-          --color-input-border: #475569; /* slate-600 */
-          --color-shadow-light: rgba(255,255,255,0.05);
-          --color-shadow-medium: rgba(255,255,255,0.1);
-          --color-shadow-strong: rgba(255,255,255,0.2);
+    .bg-brand-navy {
+      background-color: #1E1B4B;
+    }
 
-          /* Moonlight Glow and Faint Stars */
-          background-image: 
-            /* Moonlight glow from corners */
-            radial-gradient(circle 800px at top left, rgba(100, 100, 255, 0.08), transparent),
-            radial-gradient(circle 800px at bottom right, rgba(100, 100, 255, 0.08), transparent),
-            /* Faint stars - multiple small radial gradients */
-            radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,0.3), transparent),
-            radial-gradient(1px 1px at 30% 70%, rgba(255,255,255,0.3), transparent),
-            radial-gradient(1px 1px at 80% 40%, rgba(255,255,255,0.3), transparent),
-            radial-gradient(1px 1px at 50% 90%, rgba(255,255,255,0.3), transparent),
-            radial-gradient(1px 1px at 70% 10%, rgba(255,255,255,0.3), transparent),
-            radial-gradient(1px 1px at 20% 50%, rgba(255,255,255,0.3), transparent),
-            radial-gradient(1px 1px at 90% 60%, rgba(255,255,255,0.3), transparent),
-            radial-gradient(1px 1px at 40% 30%, rgba(255,255,255,0.3), transparent),
-            radial-gradient(1px 1px at 60% 80%, rgba(255,255,255,0.3), transparent),
-            radial-gradient(1px 1px at 5% 95%, rgba(255,255,255,0.3), transparent),
-            radial-gradient(1px 1px at 95% 5%, rgba(255,255,255,0.3), transparent);
-          background-attachment: fixed; /* Keep stars fixed when scrolling */
-        }
+    .text-brand-navy {
+      color: #1E1B4B;
+    }
 
-        /* Apply CSS variables to Tailwind-like classes */
-        .bg-theme-background { background-color: var(--color-background); }
-        .bg-theme-card { background-color: var(--color-card-background); }
-        .hover\\:bg-theme-card-hover:hover { background-color: var(--color-card-background-hover); }
-        .text-theme-primary { color: var(--color-text-primary); }
-        .text-theme-secondary { color: var(--color-text-secondary); }
-        .text-theme-tertiary { color: var(--color-text-tertiary); }
-        .border-theme-border { border-color: var(--color-border); }
-        .bg-theme-input { background-color: var(--color-input-bg); }
-        .border-theme-input { border-color: var(--color-input-border); }
-        .shadow-theme-light { box-shadow: 0 1px 2px var(--color-shadow-light); }
-        .shadow-theme-medium { box-shadow: 0 4px 6px var(--color-shadow-medium); }
-        .shadow-theme-strong { box-shadow: 0 10px 15px var(--color-shadow-strong); }
-        .shadow-theme-xl { box-shadow: 0 20px 25px -5px var(--color-shadow-strong), 0 8px 10px -6px var(--color-shadow-medium); }
-        .shadow-theme-2xl { box-shadow: 0 25px 50px -12px var(--color-shadow-strong); }
-        .shadow-theme-3xl { box-shadow: 0 35px 60px -15px var(--color-shadow-strong); }
-      </style>
+    .bg-brand-amber {
+      background-color: #F59E0B;
+    }
+
+    .border-brand-amber {
+      border-color: #F59E0B;
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #f8fafc;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 10px;
+    }
+
+    /* Light Theme Defaults (CSS Variables) - ENHANCED PREMIUM SYSTEM */
+    :root {
+      /* Backgrounds - Premium gradients and surfaces */
+      --color-background: linear-gradient(135deg, #FDFDFE 0%, #F9FAFB 100%);
+      --color-background-solid: #FDFDFE;
+      --color-card-background: #FFFFFF;
+      --color-card-background-hover: #F9FAFB;
+
+      /* Text - Enhanced contrast and hierarchy */
+      --color-text-primary: #111827;
+      /* neutral-900 */
+      --color-text-secondary: #4B5563;
+      /* neutral-600 */
+      --color-text-tertiary: #9CA3AF;
+      /* neutral-400 */
+      --color-text-muted: #D1D5DB;
+      /* neutral-300 */
+
+      /* Interactive colors */
+      --color-primary: #6366F1;
+      /* Indigo */
+      --color-primary-hover: #4F46E5;
+      --color-secondary: #EC4899;
+      /* Rose */
+      --color-tertiary: #14B8A6;
+      /* Teal */
+      --color-accent: #F59E0B;
+      /* Amber */
+
+      /* Borders and dividers */
+      --color-border: #E5E7EB;
+      /* neutral-200 */
+      --color-border-focus: #6366F1;
+      /* Primary on focus */
+
+      /* Inputs and forms */
+      --color-input-bg: #F9FAFB;
+      /* neutral-50 */
+      --color-input-border: #D1D5DB;
+      /* neutral-300 */
+      --color-input-border-focus: #6366F1;
+
+      /* Shadows - Premium depth system */
+      --color-shadow-light: rgba(0, 0, 0, 0.04);
+      --color-shadow-medium: rgba(0, 0, 0, 0.08);
+      --color-shadow-strong: rgba(0, 0, 0, 0.12);
+      --color-shadow-xl: rgba(0, 0, 0, 0.16);
+
+      /* Status colors */
+      --color-success: #22C55E;
+      --color-warning: #F59E0B;
+      --color-error: #EC4899;
+      --color-info: #6366F1;
+    }
+
+    /* Dark Theme Overrides (CSS Variables) - ENHANCED PREMIUM SYSTEM */
+    html.dark {
+      --color-background: linear-gradient(135deg, #0F172A 0%, #1A1F3A 100%);
+      --color-background-solid: #0F172A;
+      --color-card-background: #1E293B;
+      --color-card-background-hover: #334155;
+
+      --color-text-primary: #F8FAFC;
+      /* neutral-50 */
+      --color-text-secondary: #CBD5E1;
+      /* neutral-300 */
+      --color-text-tertiary: #94A3B8;
+      /* neutral-400 */
+      --color-text-muted: #64748B;
+      /* neutral-500 */
+
+      /* Interactive colors (brighter in dark mode) */
+      --color-primary: #818CF8;
+      /* Indigo-400 */
+      --color-primary-hover: #6366F1;
+      --color-secondary: #F472B6;
+      /* Rose-300 */
+      --color-tertiary: #2DD4BF;
+      /* Teal-300 */
+      --color-accent: #FCD34D;
+      /* Amber-300 */
+
+      --color-border: #334155;
+      /* neutral-700 */
+      --color-border-focus: #818CF8;
+
+      --color-input-bg: #1E293B;
+      --color-input-border: #475569;
+      /* neutral-600 */
+      --color-input-border-focus: #818CF8;
+
+      --color-shadow-light: rgba(255, 255, 255, 0.04);
+      --color-shadow-medium: rgba(255, 255, 255, 0.08);
+      --color-shadow-strong: rgba(255, 255, 255, 0.12);
+      --color-shadow-xl: rgba(255, 255, 255, 0.16);
+
+      --color-success: #4ADE80;
+      --color-warning: #FCD34D;
+      --color-error: #F472B6;
+      --color-info: #818CF8;
+
+      /* Moonlight Glow and Faint Stars */
+      background-image:
+        /* Moonlight glow from corners */
+        radial-gradient(circle 800px at top left, rgba(100, 100, 255, 0.08), transparent),
+        radial-gradient(circle 800px at bottom right, rgba(100, 100, 255, 0.08), transparent),
+        /* Faint stars - multiple small radial gradients */
+        radial-gradient(1px 1px at 10% 20%, rgba(255, 255, 255, 0.3), transparent),
+        radial-gradient(1px 1px at 30% 70%, rgba(255, 255, 255, 0.3), transparent),
+        radial-gradient(1px 1px at 80% 40%, rgba(255, 255, 255, 0.3), transparent),
+        radial-gradient(1px 1px at 50% 90%, rgba(255, 255, 255, 0.3), transparent),
+        radial-gradient(1px 1px at 70% 10%, rgba(255, 255, 255, 0.3), transparent),
+        radial-gradient(1px 1px at 20% 50%, rgba(255, 255, 255, 0.3), transparent),
+        radial-gradient(1px 1px at 90% 60%, rgba(255, 255, 255, 0.3), transparent),
+        radial-gradient(1px 1px at 40% 30%, rgba(255, 255, 255, 0.3), transparent),
+        radial-gradient(1px 1px at 60% 80%, rgba(255, 255, 255, 0.3), transparent),
+        radial-gradient(1px 1px at 5% 95%, rgba(255, 255, 255, 0.3), transparent),
+        radial-gradient(1px 1px at 95% 5%, rgba(255, 255, 255, 0.3), transparent);
+      background-attachment: fixed;
+      /* Keep stars fixed when scrolling */
+    }
+
+    /* Apply CSS variables to Tailwind-like classes */
+    .bg-theme-background {
+      background-color: var(--color-background);
+    }
+
+    .bg-theme-card {
+      background-color: var(--color-card-background);
+    }
+
+    .hover\\:bg-theme-card-hover:hover {
+      background-color: var(--color-card-background-hover);
+    }
+
+    .text-theme-primary {
+      color: var(--color-text-primary);
+    }
+
+    .text-theme-secondary {
+      color: var(--color-text-secondary);
+    }
+
+    .text-theme-tertiary {
+      color: var(--color-text-tertiary);
+    }
+
+    .border-theme-border {
+      border-color: var(--color-border);
+    }
+
+    .bg-theme-input {
+      background-color: var(--color-input-bg);
+    }
+
+    .border-theme-input {
+      border-color: var(--color-input-border);
+    }
+
+    .shadow-theme-light {
+      box-shadow: 0 1px 2px var(--color-shadow-light);
+    }
+
+    .shadow-theme-medium {
+      box-shadow: 0 4px 6px var(--color-shadow-medium);
+    }
+
+    .shadow-theme-strong {
+      box-shadow: 0 10px 15px var(--color-shadow-strong);
+    }
+
+    .shadow-theme-xl {
+      box-shadow: 0 20px 25px -5px var(--color-shadow-strong), 0 8px 10px -6px var(--color-shadow-medium);
+    }
+
+    .shadow-theme-2xl {
+      box-shadow: 0 25px 50px -12px var(--color-shadow-strong);
+    }
+
+    .shadow-theme-3xl {
+      box-shadow: 0 35px 60px -15px var(--color-shadow-strong);
+    }
+  </style>
 </head>
+
 <body class="bg-theme-background text-theme-primary antialiased">
-    <div id="root"></div>
-    <script type="module" src="/index.tsx"></script>
+  <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
 </body>
+
 </html>

@@ -10,7 +10,9 @@ import { useSession } from "./src/contexts/SessionContext";
 import { useTheme } from "./src/contexts/ThemeContext"; // Import useTheme
 import LoginScreen from "./components/LoginScreen";
 import SignupScreen from "./components/SignupScreen";
+import AdminLoginScreen from "./components/AdminLoginScreen";
 import IdentityScreen from "./components/IdentityScreen";
+import ProtectedAdminRoute from "./components/ProtectedAdminRoute";
 import BrandHall from "./components/BrandHall";
 import SmartConfigurator from "./components/SmartConfigurator";
 import ProductDetailPage from "./components/ProductDetailPage";
@@ -28,6 +30,7 @@ import DealerDashboard from "./components/DealerDashboard";
 import CheckoutScreen from "./components/CheckoutScreen";
 import CartDrawer from "./components/CartDrawer";
 import ProfilePage from "./components/ProfilePage";
+import ResetPage from "./components/ResetPage";
 import { ProductWizardProvider } from "./contexts/ProductWizardContext";
 import ProductWizardModal from "./components/ProductWizard/ProductWizardModal";
 import ProductWizardFloatingButton from "./components/ProductWizard/ProductWizardFloatingButton";
@@ -41,7 +44,7 @@ interface CartItem {
 }
 
 const App: React.FC = () => {
-  const { session, isLoading, supabase } = useSession();
+  const { session, isLoading, supabase, clearSession } = useSession();
   const { theme, toggleTheme } = useTheme(); // Use theme context
   const navigate = useNavigate();
   const location = useLocation();
@@ -61,12 +64,34 @@ const App: React.FC = () => {
       return; // Still loading session, do nothing
     }
 
+    // FIRST: Check if user is trying to access admin routes without authentication
+    if (!session && location.pathname === "/admin-capitol") {
+      console.warn(
+        "Unauthorized access attempt to /admin-capitol, redirecting to /admin-login",
+      );
+      navigate("/admin-login", { replace: true });
+      setIsRoleDetermined(true);
+      return;
+    }
+
     if (!session) {
       // User is not authenticated, redirect to login if not already there
-      if (location.pathname !== "/login" && location.pathname !== "/signup") {
+      if (
+        location.pathname !== "/login" &&
+        location.pathname !== "/signup" &&
+        location.pathname !== "/admin-login" &&
+        location.pathname !== "/reset"
+      ) {
         navigate("/login", { replace: true });
       }
       setIsRoleDetermined(true); // Role is "undetermined" because no session, so we can proceed
+      return;
+    }
+
+    // Session exists, validate it's still valid
+    if (!session.user) {
+      navigate("/login", { replace: true });
+      setIsRoleDetermined(true);
       return;
     }
 
@@ -106,7 +131,14 @@ const App: React.FC = () => {
       setUserRole(role);
       setUserName(profileData.first_name || null);
 
-      const initialEntryPaths = ["/", "/login", "/signup", "/identity"];
+      const initialEntryPaths = [
+        "/",
+        "/login",
+        "/signup",
+        "/identity",
+        "/admin-login",
+        "/reset",
+      ];
       const shouldRedirectFromBrandHall =
         role !== UserRole.END_USER && location.pathname === "/brand-hall";
 
@@ -171,11 +203,11 @@ const App: React.FC = () => {
   };
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
+    await clearSession();
     setUserRole(null);
     setUserName(null);
-    setIsRoleDetermined(false); // Reset role determination on logout
-    navigate("/login");
+    setIsRoleDetermined(false);
+    navigate("/login", { replace: true });
   };
 
   if (isLoading || !isRoleDetermined) {
@@ -329,6 +361,8 @@ const App: React.FC = () => {
           <Routes>
             <Route path="/login" element={<LoginScreen />} />
             <Route path="/signup" element={<SignupScreen />} />
+            <Route path="/admin-login" element={<AdminLoginScreen />} />
+            <Route path="/reset" element={<ResetPage />} />
             <Route
               path="/identity"
               element={<IdentityScreen onSelectRole={handleRoleSelection} />}
@@ -417,7 +451,14 @@ const App: React.FC = () => {
               path="/technician-portal"
               element={<TechnicianPortal onBack={handleLogout} />}
             />
-            <Route path="/admin-capitol" element={<AdminCapitol />} />
+            <Route
+              path="/admin-capitol"
+              element={
+                <ProtectedAdminRoute>
+                  <AdminCapitol />
+                </ProtectedAdminRoute>
+              }
+            />
             <Route path="/factory-kanban" element={<FactoryKanban />} />
             <Route
               path="/dealer-dashboard"
