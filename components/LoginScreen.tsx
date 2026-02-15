@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useSession } from "../src/contexts/SessionContext"; // Corrected import path
+import { useSession } from "../src/contexts/SessionContext";
+import { Button, Card, Input, Label } from "./UI";
 
 type LoginStep = "PHONE_INPUT" | "OTP_VERIFICATION" | "EMAIL_PASSWORD";
 
@@ -113,8 +114,29 @@ const LoginScreen: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-6 relative overflow-hidden">
-      {/* Simulated SMS Notification (Mock Push) */}
+    <div
+      className="min-h-screen flex flex-col items-center justify-center p-6 relative overflow-hidden antialiased font-sans text-slate-100"
+      style={{
+        background:
+          "linear-gradient(135deg,#041229 0%, #0b3b66 45%, #153f6f 100%)",
+      }}
+    >
+      {/* Subtle radial shine */}
+      <div
+        className="absolute -top-24 -left-24 w-96 h-96 rounded-full opacity-20 blur-3xl pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(closest-side at 15% 15%, rgba(255,255,255,0.12), rgba(255,255,255,0) 40%)",
+        }}
+      />
+      <div
+        className="absolute -bottom-32 -right-24 w-[420px] h-[420px] rounded-full opacity-10 blur-2xl pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(closest-side at 85% 85%, rgba(255,255,255,0.06), rgba(255,255,255,0) 30%)",
+        }}
+      />
+      {/* SMS Notification Toast */}
       <div
         className={`fixed top-6 left-1/2 -translate-x-1/2 w-[90%] max-w-sm z-[100] transition-all duration-700 ease-out ${
           mockSms.show
@@ -122,43 +144,53 @@ const LoginScreen: React.FC = () => {
             : "-translate-y-32 opacity-0"
         }`}
       >
-        <div className="bg-slate-900 text-white p-5 rounded-[2rem] shadow-2xl border border-white/10 flex gap-4 items-start">
-          <div className="w-10 h-10 bg-indigo-600 rounded-2xl flex items-center justify-center flex-shrink-0">
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+        <Card variant="glass">
+          <div className="flex gap-4 items-start">
+            <div
+              className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+              style={{
+                background:
+                  "linear-gradient(135deg,#041229 0%, #0b3b66 45%, #153f6f 100%)",
+              }}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
-              />
-            </svg>
-          </div>
-          <div className="flex-1">
-            <div className="flex justify-between items-center mb-1">
-              <span className="text-[10px] font-black uppercase tracking-widest text-indigo-400">
-                MESSAGES • NOW
-              </span>
-              <span className="text-[10px] text-slate-500 font-bold">
-                SIM 1
-              </span>
+              <svg
+                className="w-5 h-5 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
+                />
+              </svg>
             </div>
-            <p className="text-xs font-medium leading-relaxed text-slate-200">
-              {mockSms.message}
-            </p>
+            <div className="flex-1">
+              <div className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-1">
+                Messages • Now
+              </div>
+              <p className="text-sm text-slate-900 leading-relaxed">
+                {mockSms.message}
+              </p>
+            </div>
           </div>
-        </div>
+        </Card>
       </div>
 
-      <div className="max-w-md w-full space-y-12 transition-all duration-500 bg-white p-10 rounded-[3.5rem] shadow-2xl shadow-indigo-500/20 border border-slate-200">
-        {/* Branding */}
+      {/* Main Login Card */}
+      <Card variant="elevated" className="w-full max-w-md space-y-6 p-8">
+        {/* Header */}
         <div className="text-center space-y-4">
           <div className="flex justify-center">
-            <div className="w-20 h-20 bg-indigo-700 rounded-[2rem] flex items-center justify-center text-white shadow-2xl shadow-indigo-700/30 animate-pulse">
+            <div
+              className="w-20 h-20 rounded-2xl flex items-center justify-center text-white shadow-lg"
+              style={{
+                background:
+                  "linear-gradient(135deg,#041229 0%, #0b3b66 45%, #153f6f 100%)",
+              }}
+            >
               <svg
                 className="w-12 h-12"
                 fill="none"
@@ -174,244 +206,276 @@ const LoginScreen: React.FC = () => {
               </svg>
             </div>
           </div>
-          <h1 className="text-3xl font-black text-indigo-900 tracking-tighter uppercase italic">
-            Make My Mattress
-          </h1>
+          <div>
+            <h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-50">
+              Make My Mattress
+            </h1>
+            <p className="text-sm text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">
+              Sleep experience designed for clarity and comfort.
+            </p>
+          </div>
         </div>
 
-        <div className="space-y-8">
-          <div className="flex gap-4">
-            <button
-              type="button"
-              onClick={() => setStep("PHONE_INPUT")}
-              className={`flex-1 py-3 rounded-2xl text-sm font-bold transition-all border hover:scale-[1.02] ${
-                step === "PHONE_INPUT" || step === "OTP_VERIFICATION"
-                  ? "bg-indigo-700 text-white border-indigo-700 shadow-lg shadow-indigo-500/20"
-                  : "bg-slate-100 text-slate-600 border-slate-300 shadow-sm"
-              }`}
-            >
-              Login with Phone
-            </button>
-            <button
-              type="button"
-              onClick={() => setStep("EMAIL_PASSWORD")}
-              className={`flex-1 py-3 rounded-2xl text-sm font-bold transition-all border hover:scale-[1.02] ${
-                step === "EMAIL_PASSWORD"
-                  ? "bg-indigo-700 text-white border-indigo-700 shadow-lg shadow-indigo-500/20"
-                  : "bg-slate-100 text-slate-600 border-slate-300 shadow-sm"
-              }`}
-            >
-              Login with Email
-            </button>
-          </div>
+        {/* Step Selector */}
+        <div className="grid grid-cols-2 gap-3 bg-slate-100 rounded-lg p-1">
+          <button
+            type="button"
+            onClick={() => setStep("PHONE_INPUT")}
+            className={`px-4 py-2 rounded-md text-sm font-semibold transition-all ${
+              step === "PHONE_INPUT" || step === "OTP_VERIFICATION"
+                ? "bg-white text-indigo-600 shadow-sm"
+                : "text-slate-600 dark:text-slate-300"
+            }`}
+          >
+            Phone
+          </button>
+          <button
+            type="button"
+            onClick={() => setStep("EMAIL_PASSWORD")}
+            className={`px-4 py-2 rounded-md text-sm font-semibold transition-all ${
+              step === "EMAIL_PASSWORD"
+                ? "bg-white text-indigo-600 shadow-sm"
+                : "text-slate-600 dark:text-slate-300"
+            }`}
+          >
+            Email
+          </button>
+        </div>
 
-          {step === "PHONE_INPUT" && (
-            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-              <div className="space-y-2">
-                <h2 className="text-sm font-bold text-slate-500 uppercase tracking-widest">
-                  Login to start building
-                </h2>
-                <form onSubmit={handleSendOtp} className="space-y-6">
-                  <div className="relative">
-                    <span className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-500 font-bold text-sm">
-                      +91{" "}
-                    </span>
-                    <input
-                      type="tel"
-                      maxLength={10}
-                      value={phone}
-                      onChange={(e) =>
-                        setPhone(e.target.value.replace(/\D/g, ""))
-                      }
-                      placeholder="Enter Mobile Number"
-                      className="w-full bg-slate-100 border border-slate-300 rounded-2xl pl-14 pr-6 py-5 font-bold text-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-800 transition-colors shadow-sm"
-                    />
-                  </div>
-
-                  {error && (
-                    <p className="text-xs font-bold text-red-600 px-2">
-                      {error}
-                    </p>
-                  )}
-
-                  <button
-                    type="submit"
-                    disabled={isLoading}
-                    className="w-full bg-indigo-700 text-white py-5 rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-indigo-700/30 hover:bg-indigo-800 active:scale-[0.98] transition-all flex items-center justify-center"
-                  >
-                    {isLoading ? (
-                      <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                    ) : (
-                      "SEND OTP"
-                    )}
-                  </button>
-                </form>
-              </div>
+        {/* Login Forms */}
+        {step === "PHONE_INPUT" && (
+          <div className="space-y-5 animate-in fade-in slide-in-from-bottom-4 duration-300">
+            <div>
+              <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-50 mb-1">
+                Login to get started
+              </h2>
+              <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                Enter your phone number to continue
+              </p>
             </div>
-          )}
 
-          {step === "OTP_VERIFICATION" && (
-            <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
-              <div className="space-y-2">
-                <div className="flex justify-between items-center mb-2">
-                  <h2 className="text-sm font-bold text-slate-500 uppercase tracking-widest">
-                    Verify Identity
-                  </h2>
-                  <button
-                    onClick={() => setStep("PHONE_INPUT")}
-                    className="text-[10px] font-black text-indigo-700 uppercase tracking-widest"
-                  >
-                    Change Number
-                  </button>
-                </div>
-                <p className="text-xs text-slate-600 mb-6">
-                  We've sent a code to{" "}
-                  <span className="text-slate-900 font-bold">+91 {phone}</span>
-                </p>
-
-                <form onSubmit={handleVerifyOtp} className="space-y-6">
-                  <div className="flex justify-center gap-4">
-                    <input
-                      type="text"
-                      maxLength={6} // OTPs are typically 6 digits for Supabase
-                      value={otpInput}
-                      onChange={(e) =>
-                        setOtpInput(e.target.value.replace(/\D/g, ""))
-                      }
-                      placeholder="• • • • • •"
-                      className="w-full bg-slate-100 border border-slate-300 rounded-2xl py-6 font-black text-4xl text-center tracking-[0.5em] text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-700 transition-colors shadow-sm"
-                    />
+            <form onSubmit={handleSendOtp} className="space-y-5">
+              <div>
+                <Label htmlFor="phone" className="dark:text-slate-200">
+                  Mobile number
+                </Label>
+                <div className="flex gap-2 mt-2 w-full">
+                  <div className="flex items-center px-4 py-4 bg-slate-100 rounded-xl border border-slate-300 flex-shrink-0 w-20 justify-center">
+                    <span className="text-slate-600 font-semibold">+91</span>
                   </div>
-
-                  {error && (
-                    <p className="text-xs font-bold text-red-600 text-center">
-                      {error}
-                    </p>
-                  )}
-
-                  <button
-                    type="submit"
-                    disabled={isLoading || otpInput.length < 6} // OTPs are typically 6 digits for Supabase
-                    className="w-full bg-brand-amber text-brand-navy py-5 rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-amber-500/30 hover:brightness-110 active:scale-[0.98] transition-all flex items-center justify-center"
-                  >
-                    {isLoading ? (
-                      <div className="w-6 h-6 border-2 border-brand-navy/30 border-t-brand-navy rounded-full animate-spin"></div>
-                    ) : (
-                      "VERIFY & ENTER"
-                    )}
-                  </button>
-                </form>
-
-                <div className="text-center mt-6">
-                  <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-                    Didn't receive code?{" "}
-                    <span
-                      className="text-indigo-700 cursor-pointer"
-                      onClick={handleSendOtp}
-                    >
-                      Resend SMS
-                    </span>
-                  </p>
+                  <Input
+                    id="phone"
+                    variant="large"
+                    type="tel"
+                    maxLength={10}
+                    value={phone}
+                    onChange={(e) =>
+                      setPhone(e.target.value.replace(/\D/g, ""))
+                    }
+                    placeholder="9876543210"
+                    className="flex-1 w-full"
+                    autoFocus
+                  />
                 </div>
               </div>
-            </div>
-          )}
 
-          {step === "EMAIL_PASSWORD" && (
-            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-              <div className="space-y-2">
-                <h2 className="text-sm font-bold text-slate-500 uppercase tracking-widest">
-                  Login with Email
-                </h2>
-                <form onSubmit={handleEmailLogin} className="space-y-6">
-                  <div>
-                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2 block">
-                      Email
-                    </label>
-                    <input
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="w-full bg-slate-100 border border-slate-300 rounded-2xl px-6 py-4 font-bold text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-700 transition-colors shadow-sm"
-                      placeholder="john.doe@example.com"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2 block">
-                      Password
-                    </label>
-                    <input
-                      type="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="w-full bg-slate-100 border border-slate-300 rounded-2xl px-6 py-4 font-bold text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-700 transition-colors shadow-sm"
-                      placeholder="••••••••"
-                      required
-                    />
-                  </div>
+              {error && (
+                <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+                  <p className="text-sm text-red-700">{error}</p>
+                </div>
+              )}
 
-                  {error && (
-                    <p className="text-xs font-bold text-red-600 px-2">
-                      {error}
-                    </p>
-                  )}
-
-                  <button
-                    type="submit"
-                    disabled={isLoading}
-                    className="w-full bg-indigo-700 text-white py-5 rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-indigo-700/30 hover:bg-indigo-800 active:scale-[0.98] transition-all flex items-center justify-center"
-                  >
-                    {isLoading ? (
-                      <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                    ) : (
-                      "LOGIN"
-                    )}
-                  </button>
-                </form>
-              </div>
-            </div>
-          )}
-
-          <div className="text-center mt-6 space-y-3">
-            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-              Don't have an account?{" "}
-              <span
-                className="text-indigo-700 cursor-pointer hover:underline"
-                onClick={() => navigate("/signup")}
+              <Button
+                type="submit"
+                variant="primary"
+                fullWidth
+                isLoading={isLoading}
+                size="lg"
               >
-                Sign up here
-              </span>
-            </p>
-
-            <div className="flex items-center justify-center gap-2 py-2">
-              <div className="flex-1 h-px bg-slate-200"></div>
-              <span className="text-[9px] font-bold text-slate-400 uppercase">
-                or
-              </span>
-              <div className="flex-1 h-px bg-slate-200"></div>
-            </div>
-
-            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-              Are you an admin?{" "}
-              <span
-                className="text-red-600 cursor-pointer hover:underline font-black"
-                onClick={() => navigate("/admin-login")}
-              >
-                Access Capitol
-              </span>
-            </p>
+                Send OTP
+              </Button>
+            </form>
           </div>
+        )}
 
-          <p className="text-[11px] text-center text-slate-500 leading-relaxed font-medium mt-6">
+        {step === "OTP_VERIFICATION" && (
+          <div className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-300">
+            <div>
+              <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-50 mb-1">
+                Verify your number
+              </h2>
+              <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                We sent a code to{" "}
+                <span className="font-semibold text-slate-50">+91 {phone}</span>
+              </p>
+            </div>
+
+            <form onSubmit={handleVerifyOtp} className="space-y-5">
+              <div>
+                <Label htmlFor="otp" className="dark:text-slate-200">
+                  Verification Code
+                </Label>
+                <Input
+                  id="otp"
+                  variant="large"
+                  type="text"
+                  maxLength={6}
+                  value={otpInput}
+                  onChange={(e) =>
+                    setOtpInput(e.target.value.replace(/\D/g, ""))
+                  }
+                  placeholder="000000"
+                  className="font-mono text-center text-lg tracking-[0.5em] mt-2"
+                  autoFocus
+                />
+              </div>
+
+              {error && (
+                <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+                  <p className="text-sm text-red-700">{error}</p>
+                </div>
+              )}
+
+              <Button
+                type="submit"
+                variant="primary"
+                fullWidth
+                isLoading={isLoading}
+                disabled={otpInput.length < 6}
+                size="lg"
+              >
+                Verify & Continue
+              </Button>
+            </form>
+
+            <div className="text-center">
+              <button
+                type="button"
+                onClick={() => setStep("PHONE_INPUT")}
+                className="text-sm text-indigo-600 hover:underline font-medium"
+              >
+                Use a different number
+              </button>
+            </div>
+
+            <div className="text-center">
+              <p className="text-xs text-slate-600">
+                Didn't get a code?{" "}
+                <button
+                  type="button"
+                  onClick={handleSendOtp}
+                  className="text-indigo-600 hover:underline font-semibold"
+                >
+                  Resend
+                </button>
+              </p>
+            </div>
+          </div>
+        )}
+
+        {step === "EMAIL_PASSWORD" && (
+          <div className="space-y-5 animate-in fade-in slide-in-from-bottom-4 duration-300">
+            <div>
+              <h2 className="text-lg font-semibold text-slate-800 mb-1">
+                Login with email
+              </h2>
+              <p className="text-sm text-slate-600 leading-relaxed">
+                Use your email and password
+              </p>
+            </div>
+
+            <form onSubmit={handleEmailLogin} className="space-y-5">
+              <div>
+                <Label htmlFor="email">Email Address</Label>
+                <Input
+                  id="email"
+                  variant="large"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="you@example.com"
+                  className="mt-2"
+                  autoFocus
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  id="password"
+                  variant="large"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="mt-2"
+                />
+              </div>
+
+              {error && (
+                <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+                  <p className="text-sm text-red-700">{error}</p>
+                </div>
+              )}
+
+              <Button
+                type="submit"
+                variant="primary"
+                fullWidth
+                isLoading={isLoading}
+                size="lg"
+              >
+                Login
+              </Button>
+            </form>
+          </div>
+        )}
+
+        {/* Divider */}
+        <div className="flex items-center gap-3 my-6">
+          <div className="flex-1 h-px bg-slate-200"></div>
+          <span className="text-xs text-slate-500 uppercase font-semibold">
+            or
+          </span>
+          <div className="flex-1 h-px bg-slate-200"></div>
+        </div>
+
+        {/* Footer Links */}
+        <div className="space-y-3">
+          <p className="text-center text-sm text-slate-600">
+            Don't have an account?{" "}
+            <button
+              type="button"
+              onClick={() => navigate("/signup")}
+              className="text-indigo-600 hover:underline font-semibold"
+            >
+              Sign up
+            </button>
+          </p>
+
+          <p className="text-center text-sm text-slate-600">
+            Admin user?{" "}
+            <button
+              type="button"
+              onClick={() => navigate("/admin-login")}
+              className="text-rose-600 hover:underline font-bold"
+            >
+              Access Capitol
+            </button>
+          </p>
+
+          <p className="text-center text-xs text-slate-500 leading-relaxed">
             By continuing, you agree to our{" "}
-            <span className="text-indigo-700 underline cursor-pointer">
-              Terms & Privacy Policy
-            </span>
-            .
+            <button type="button" className="text-indigo-600 hover:underline">
+              Terms
+            </button>
+            {" & "}
+            <button type="button" className="text-indigo-600 hover:underline">
+              Privacy Policy
+            </button>
           </p>
         </div>
-      </div>
+      </Card>
     </div>
   );
 };

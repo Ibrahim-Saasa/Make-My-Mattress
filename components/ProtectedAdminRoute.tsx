@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { useSession } from "../src/contexts/SessionContext";
 import { UserRole } from "../types";
 
@@ -13,16 +13,32 @@ const ProtectedAdminRoute: React.FC<ProtectedAdminRouteProps> = ({
   requiredRole = UserRole.SUPER_ADMIN,
 }) => {
   const { session, supabase, isLoading } = useSession();
+  const navigate = useNavigate();
   const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null);
 
   useEffect(() => {
+    // If still loading session, wait
     if (isLoading) return;
 
+    // First check: no session at all = not authorized
     if (!session) {
+      console.warn(
+        "ProtectedAdminRoute: No session found, redirecting to admin-login",
+      );
       setIsAuthorized(false);
       return;
     }
 
+    // Second check: session exists but no user = not authorized
+    if (!session.user) {
+      console.warn(
+        "ProtectedAdminRoute: Session has no user, redirecting to admin-login",
+      );
+      setIsAuthorized(false);
+      return;
+    }
+
+    // Third check: verify user has admin role
     const checkAdminAccess = async () => {
       try {
         const { data: profileData, error } = await supabase
@@ -31,16 +47,30 @@ const ProtectedAdminRoute: React.FC<ProtectedAdminRouteProps> = ({
           .eq("id", session.user.id)
           .single();
 
-        if (error || !profileData) {
+        if (error) {
+          console.error("ProtectedAdminRoute: Error fetching profile:", error);
+          setIsAuthorized(false);
+          return;
+        }
+
+        if (!profileData) {
+          console.warn("ProtectedAdminRoute: No profile found");
           setIsAuthorized(false);
           return;
         }
 
         const adminProfile = profileData as { role: string };
-        // Check if user has required admin role
-        setIsAuthorized(adminProfile.role === requiredRole);
+        const hasRequiredRole = adminProfile.role === requiredRole;
+
+        if (!hasRequiredRole) {
+          console.warn(
+            `ProtectedAdminRoute: User has role "${adminProfile.role}", but required role is "${requiredRole}"`,
+          );
+        }
+
+        setIsAuthorized(hasRequiredRole);
       } catch (err) {
-        console.error("Admin verification error:", err);
+        console.error("ProtectedAdminRoute: Admin verification error:", err);
         setIsAuthorized(false);
       }
     };
@@ -48,6 +78,7 @@ const ProtectedAdminRoute: React.FC<ProtectedAdminRouteProps> = ({
     checkAdminAccess();
   }, [session, isLoading, supabase, requiredRole]);
 
+  // Show loading while checking authorization
   if (isLoading || isAuthorized === null) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-900">
@@ -66,10 +97,15 @@ const ProtectedAdminRoute: React.FC<ProtectedAdminRouteProps> = ({
     );
   }
 
+  // Not authorized = redirect to admin login
   if (!isAuthorized) {
+    console.warn(
+      "ProtectedAdminRoute: Access denied, redirecting to /admin-login",
+    );
     return <Navigate to="/admin-login" replace />;
   }
 
+  // Authorized = render children
   return <>{children}</>;
 };
 

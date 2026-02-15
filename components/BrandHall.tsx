@@ -1,91 +1,201 @@
-import React from 'react';
-import { BRANDS } from '../constants';
-import { BrandMetadata } from '../types';
-import { useTheme } from '../src/contexts/ThemeContext'; // Import useTheme
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { BRANDS } from "../constants";
+import { BrandMetadata } from "../types";
+import { useTheme } from "../src/contexts/ThemeContext";
+import {
+  Header,
+  GridSection,
+  BrandCard,
+  CTASection,
+  Footer,
+  Section,
+} from "./UI";
 
 interface Props {
   onSelectBrand: (brand: BrandMetadata) => void;
-  userName: string | null; // New prop for user's name
+  userName: string | null;
 }
 
 const BrandHall: React.FC<Props> = ({ onSelectBrand, userName }) => {
-  const { theme } = useTheme(); // Get current theme
+  const { theme } = useTheme();
+  const navigate = useNavigate();
+
+  // Brand accent colors mapping
+  const brandAccentColors: { [key: string]: string } = {
+    Slumbersoft: "#A78BFA",
+    Sleepworks: "#34D399",
+    Spinowell: "#60A5FA",
+    "Bedding N More": "#F97316",
+    Sleepson: "#94A3B8",
+    SleepGenie: "#4F46E5",
+  };
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-12">
-      <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
-        <div>
+    <div className="min-h-screen bg-white dark:bg-slate-950">
+      {/* Navigation Header */}
+      <Header
+        navLinks={[
+          { label: "Brands", href: "#" },
+          { label: "Customize", href: "/configurator" },
+          { label: "About", href: "#" },
+        ]}
+        ctaButton={{
+          text: "Build Mattress",
+          onClick: () => navigate("/configurator"),
+        }}
+        showCart={false}
+      />
+
+      {/* Hero Section */}
+      <Section maxWidth="2xl" className="py-20">
+        <div className="text-center mb-12">
           {userName && (
-            <p className="text-lg font-bold text-indigo-700 mb-2">Hello, {userName}!</p>
+            <p className="text-sm font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider mb-3">
+              Welcome back, {userName}!
+            </p>
           )}
-          <h2 className="text-3xl font-extrabold text-theme-primary tracking-tight">Select Your Sleep Series</h2>
-          <p className="text-theme-secondary mt-2">Engineered sub-brands optimized for specific comfort profiles.</p>
+          <h1 className="text-5xl font-bold text-slate-900 dark:text-white mb-4">
+            Select Your Sleep Series
+          </h1>
+          <p className="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
+            Each premium brand is engineered for specific comfort profiles and
+            sleep styles
+          </p>
         </div>
-        <div className="flex gap-4">
-          <div className="flex items-center gap-2 text-xs font-bold text-theme-secondary uppercase tracking-widest">
-            <span className="w-3 h-3 rounded-full bg-theme-border"></span>
-            Filter by Technology
+      </Section>
+
+      {/* Brands Grid Section */}
+      <section className="py-12">
+        <Section maxWidth="2xl">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {BRANDS.map((brand) => (
+              <div
+                key={brand.id}
+                onClick={() => onSelectBrand(brand)}
+                className="cursor-pointer transition-transform hover:scale-105"
+              >
+                <BrandCard
+                  name={brand.name}
+                  type={brand.type}
+                  description={brand.description}
+                  accentColor={brandAccentColors[brand.name] || "#6366F1"}
+                  features={
+                    brand.features || [
+                      "Premium Materials",
+                      "Expert Support",
+                      "Custom Comfort",
+                    ]
+                  }
+                  onLearnMore={() => onSelectBrand(brand)}
+                />
+              </div>
+            ))}
+          </div>
+        </Section>
+      </section>
+
+      {/* Feature Highlight Section */}
+      <Section maxWidth="2xl" className="py-20">
+        <div className="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-950/30 dark:to-purple-950/30 rounded-2xl p-12 text-center">
+          <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-4">
+            Why Choose Our Brands?
+          </h2>
+          <p className="text-lg text-slate-600 dark:text-slate-400 mb-8 max-w-2xl mx-auto">
+            Each of our carefully curated brands offers unique technology and
+            materials to match your sleep preferences
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="p-6 bg-white dark:bg-slate-900 rounded-lg">
+              <div className="text-4xl mb-3">🛏️</div>
+              <h3 className="font-bold text-slate-900 dark:text-white mb-2">
+                Premium Materials
+              </h3>
+              <p className="text-sm text-slate-600 dark:text-slate-400">
+                Handpicked fabrics, foams, and springs for maximum comfort
+              </p>
+            </div>
+            <div className="p-6 bg-white dark:bg-slate-900 rounded-lg">
+              <div className="text-4xl mb-3">🔬</div>
+              <h3 className="font-bold text-slate-900 dark:text-white mb-2">
+                Advanced Technology
+              </h3>
+              <p className="text-sm text-slate-600 dark:text-slate-400">
+                Innovative cooling, support, and durability features
+              </p>
+            </div>
+            <div className="p-6 bg-white dark:bg-slate-900 rounded-lg">
+              <div className="text-4xl mb-3">💯</div>
+              <h3 className="font-bold text-slate-900 dark:text-white mb-2">
+                Satisfaction Guaranteed
+              </h3>
+              <p className="text-sm text-slate-600 dark:text-slate-400">
+                100-night trial and expert sleep consultants
+              </p>
+            </div>
           </div>
         </div>
-      </div>
+      </Section>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {BRANDS.map((brand, idx) => (
-          <button 
-            key={brand.id}
-            onClick={() => onSelectBrand(brand)}
-            className={`group relative h-[420px] rounded-[2rem] overflow-hidden bg-theme-card border border-theme-border hover:border-indigo-500 hover:shadow-xl hover:shadow-indigo-500/20 transition-all text-left hover:scale-[1.02]
-              ${theme === 'dark' ? 'shadow-lg shadow-indigo-500/5' : ''}
-            `}
-          >
-            {/* Visual Background/Texture representation */}
-            <div className={`absolute inset-0 opacity-15 group-hover:opacity-25 transition-opacity pointer-events-none ${
-              brand.name === 'Slumbersoft' ? 'bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-purple-500 to-transparent' :
-              brand.name === 'Sleepworks' ? 'bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-emerald-500 to-transparent' :
-              brand.name === 'Spinowell' ? 'bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-blue-500 to-transparent' :
-              brand.name === 'Bedding N More' ? 'bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-orange-500 to-transparent' :
-              brand.name === 'Sleepson' ? 'bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-slate-500 to-transparent' :
-              'bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-indigo-900 to-transparent'
-            }`}></div>
+      {/* CTA Section */}
+      <CTASection
+        title="Ready to Customize?"
+        description="Let's find the perfect mattress for your sleep needs"
+        theme="primary"
+        primaryCTA={{
+          text: "Start Customizing",
+          onClick: () => navigate("/configurator"),
+        }}
+        secondaryCTA={{
+          text: "Get Sleep Consultation",
+          onClick: () => alert("Chat with sleep expert"),
+        }}
+      />
 
-            <div className="p-8 h-full flex flex-col justify-between relative z-10">
-              <div>
-                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-theme-secondary mb-2 block">{brand.type}</span>
-                <h3 className="text-3xl font-extrabold text-theme-primary group-hover:text-indigo-700 transition-colors">{brand.name}</h3>
-                <p className="text-sm text-theme-secondary mt-4 leading-relaxed line-clamp-2">{brand.description}</p>
-              </div>
-
-              <div className="space-y-4">
-                <div className="flex gap-2">
-                  {[1,2,3,4,5].map(dot => (
-                    <div key={dot} className={`h-1 flex-1 rounded-full ${dot <= (idx % 3 + 3) ? 'bg-indigo-700 shadow-sm' : 'bg-theme-input'}`}></div>
-                  ))}
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-xs font-bold text-theme-secondary uppercase">Comfort Rating</span>
-                  <div className="w-10 h-10 rounded-full border border-theme-border flex items-center justify-center group-hover:bg-indigo-700 group-hover:text-white group-hover:border-indigo-700 transition-all shadow-md">
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            {/* Unique Iconography for "Vacuum Sealed" or "Ortho" */}
-            <div className="absolute top-8 right-8">
-               {brand.name === 'SleepGenie' && (
-                 <div className="bg-indigo-900 text-white p-2 rounded-lg rotate-12 flex items-center gap-1 shadow-md">
-                   <span className="text-[8px] font-bold">VACUUM TECH</span>
-                 </div>
-               )}
-               {brand.name === 'Spinowell' && (
-                 <div className="bg-blue-700 text-white p-2 rounded-lg -rotate-6 flex items-center gap-1 shadow-md">
-                   <span className="text-[8px] font-bold">ORTHO ALIGN</span>
-                 </div>
-               )}
-            </div>
-          </button>
-        ))}
-      </div>
+      {/* Footer */}
+      <Footer
+        sections={[
+          {
+            title: "Brands",
+            links: [
+              { label: "All Brands", href: "#" },
+              { label: "Compare", href: "#" },
+              { label: "Technology", href: "#" },
+              { label: "Reviews", href: "#" },
+            ],
+          },
+          {
+            title: "Customize",
+            links: [
+              { label: "Build Mattress", href: "/configurator" },
+              { label: "Size Guide", href: "#" },
+              { label: "Firmness Guide", href: "#" },
+              { label: "FAQ", href: "#" },
+            ],
+          },
+          {
+            title: "Support",
+            links: [
+              { label: "Help Center", href: "#" },
+              { label: "Contact", href: "#" },
+              { label: "Shipping", href: "#" },
+              { label: "Returns", href: "#" },
+            ],
+          },
+          {
+            title: "Company",
+            links: [
+              { label: "About", href: "#" },
+              { label: "Blog", href: "#" },
+              { label: "Careers", href: "#" },
+              { label: "Press", href: "#" },
+            ],
+          },
+        ]}
+        onSocialClick={(platform) => {
+          console.log(`Share on ${platform}`);
+        }}
+      />
     </div>
   );
 };

@@ -1,4 +1,12 @@
 import React from "react";
+import { motion } from "framer-motion";
+import { buttonHover } from "../../src/utils/animations";
+
+// Re-export all components from this file and submodules
+export * from "./Advanced";
+export * from "./Layouts";
+export * from "./Forms";
+export * from "./Polish";
 
 // ============================================================================
 // BUTTON COMPONENT - Premium, Accessible, Multiple Variants
@@ -37,10 +45,8 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ) => {
     const baseStyles = `
       inline-flex items-center justify-center gap-2
-      font-bold transition-all duration-200 ease-out
-      focus:outline-none focus:ring-2 focus:ring-offset-2
+      font-bold focus:outline-none focus:ring-2 focus:ring-offset-2
       disabled:opacity-50 disabled:cursor-not-allowed
-      active:scale-95 hover:scale-105
     `;
 
     const sizeStyles = {
@@ -51,10 +57,10 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 
     const variantStyles = {
       primary: `
-        bg-gradient-to-r from-indigo-600 to-indigo-700
-        hover:from-indigo-700 hover:to-indigo-800
-        text-white shadow-lg hover:shadow-xl
-        focus:ring-indigo-300
+        bg-gradient-to-r from-indigo-500 to-indigo-600
+        hover:from-indigo-600 hover:to-indigo-700
+        text-white shadow-md hover:shadow-lg
+        focus:ring-indigo-200
       `,
       secondary: `
         border-2 border-indigo-600 text-indigo-600
@@ -89,11 +95,15 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const widthStyle = fullWidth ? "w-full" : "";
 
     return (
-      <button
+      <motion.button
         ref={ref}
         disabled={disabled || isLoading}
         className={`${baseStyles} ${sizeStyles[size]} ${variantStyles[variant]} ${widthStyle} ${className}`}
-        {...props}
+        initial="rest"
+        whileHover="hover"
+        whileTap="tap"
+        variants={buttonHover}
+        {...(props as any)}
       >
         {isLoading ? (
           <>
@@ -107,7 +117,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
             {icon && iconPosition === "right" && icon}
           </>
         )}
-      </button>
+      </motion.button>
     );
   },
 );
@@ -146,7 +156,7 @@ export const Card = React.forwardRef<HTMLDivElement, CardProps>(
       elevated: `
         bg-white dark:bg-slate-900
         border border-gray-200 dark:border-slate-700
-        shadow-lg hover:shadow-2xl
+        shadow-md hover:shadow-lg
       `,
       gradient: `
         bg-gradient-to-br from-gray-50 to-gray-100
@@ -162,18 +172,20 @@ export const Card = React.forwardRef<HTMLDivElement, CardProps>(
       `,
     };
 
-    const interactiveStyle = interactive
-      ? `cursor-pointer transform hover:scale-105 hover:-translate-y-1`
-      : "";
+    const interactiveStyle = interactive ? `cursor-pointer` : "";
 
     return (
-      <div
+      <motion.div
         ref={ref}
         className={`${baseStyles} ${variantStyles[variant]} ${interactiveStyle} ${className}`}
-        {...props}
+        variants={interactive ? { rest: { y: 0 }, hover: { y: -5 } } : {}}
+        initial="rest"
+        whileHover={interactive ? "hover" : undefined}
+        transition={{ type: "spring", stiffness: 300, damping: 10 }}
+        {...(props as any)}
       >
         {children}
-      </div>
+      </motion.div>
     );
   },
 );
@@ -196,7 +208,7 @@ export const Label = React.forwardRef<HTMLLabelElement, LabelProps>(
         ref={ref}
         className={`
           block text-sm font-semibold
-          text-gray-700 dark:text-gray-300
+          text-slate-700 dark:text-slate-300
           mb-2 uppercase tracking-wider
           ${className}
         `}
@@ -239,13 +251,13 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
     const baseStyles = `
       w-full px-4 py-3 rounded-lg text-base
       bg-white dark:bg-slate-800
-      text-gray-900 dark:text-white
-      placeholder-gray-500 dark:placeholder-gray-400
+      text-slate-900 dark:text-white
+      placeholder-slate-400 dark:placeholder-slate-400
       border-2 border-gray-300 dark:border-slate-600
       transition-all duration-200
       focus:outline-none focus:ring-2 focus:ring-offset-2
       focus:border-indigo-500 focus:ring-indigo-200 dark:focus:ring-indigo-900/30
-      hover:border-gray-400 dark:hover:border-slate-500
+      hover:border-slate-400 dark:hover:border-slate-500
       disabled:opacity-50 disabled:cursor-not-allowed
     `;
 
@@ -263,7 +275,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
     const containerClass = icon ? "relative" : "";
     const inputClass = icon
       ? iconPosition === "left"
-        ? "pl-10"
+        ? "pl-12"
         : "pr-10"
       : "";
 
@@ -273,7 +285,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
           <div
             className={`
               absolute top-1/2 -translate-y-1/2
-              text-gray-400 dark:text-gray-500
+              text-slate-400 dark:text-slate-500
               pointer-events-none
               ${iconPosition === "left" ? "left-3" : "right-3"}
             `}

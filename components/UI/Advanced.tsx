@@ -1,5 +1,7 @@
-import React from 'react';
-import { Button } from './index';
+import React from "react";
+import { motion } from "framer-motion";
+import { Button } from "./index";
+import { hoverLift } from "../../src/utils/animations";
 
 // ============================================================================
 // FOOTER COMPONENT - Premium Footer
@@ -23,35 +25,35 @@ interface FooterProps {
 export const Footer: React.FC<FooterProps> = ({
   sections = [
     {
-      title: 'Product',
+      title: "Product",
       links: [
-        { href: '#', label: 'Browse Mattresses' },
-        { href: '#', label: 'Customize' },
-        { href: '#', label: 'Brands' },
+        { href: "#", label: "Browse Mattresses" },
+        { href: "#", label: "Customize" },
+        { href: "#", label: "Brands" },
       ],
     },
     {
-      title: 'Company',
+      title: "Company",
       links: [
-        { href: '#', label: 'About Us' },
-        { href: '#', label: 'Blog' },
-        { href: '#', label: 'Careers' },
+        { href: "#", label: "About Us" },
+        { href: "#", label: "Blog" },
+        { href: "#", label: "Careers" },
       ],
     },
     {
-      title: 'Support',
+      title: "Support",
       links: [
-        { href: '#', label: 'Contact' },
-        { href: '#', label: 'Shipping' },
-        { href: '#', label: 'Returns' },
+        { href: "#", label: "Contact" },
+        { href: "#", label: "Shipping" },
+        { href: "#", label: "Returns" },
       ],
     },
     {
-      title: 'Legal',
+      title: "Legal",
       links: [
-        { href: '#', label: 'Privacy' },
-        { href: '#', label: 'Terms' },
-        { href: '#', label: 'Cookies' },
+        { href: "#", label: "Privacy" },
+        { href: "#", label: "Terms" },
+        { href: "#", label: "Cookies" },
       ],
     },
   ],
@@ -68,27 +70,34 @@ export const Footer: React.FC<FooterProps> = ({
               <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center">
                 <span className="text-white font-black">M</span>
               </div>
-              <span className="text-lg font-bold uppercase tracking-tight">Make My Mattress</span>
+              <span className="text-lg font-bold uppercase tracking-tight">
+                Make My Mattress
+              </span>
             </div>
             <p className="text-slate-400 text-sm leading-relaxed mb-6">
-              Bespoke comfort, factory direct. Handcrafted mattresses designed for your perfect sleep.
+              Bespoke comfort, factory direct. Handcrafted mattresses designed
+              for your perfect sleep.
             </p>
             {/* Social Links */}
             <div className="flex gap-4">
-              {['facebook', 'twitter', 'instagram', 'linkedin'].map((platform) => (
-                <button
-                  key={platform}
-                  onClick={() => onSocialClick?.(platform)}
-                  className="
+              {["facebook", "twitter", "instagram", "linkedin"].map(
+                (platform) => (
+                  <button
+                    key={platform}
+                    onClick={() => onSocialClick?.(platform)}
+                    className="
                     w-10 h-10 rounded-lg bg-slate-800 hover:bg-indigo-600
                     flex items-center justify-center transition-all duration-200
                     transform hover:scale-110 hover:-translate-y-1
                   "
-                  aria-label={platform}
-                >
-                  <span className="text-sm font-bold">{platform[0].toUpperCase()}</span>
-                </button>
-              ))}
+                    aria-label={platform}
+                  >
+                    <span className="text-sm font-bold">
+                      {platform[0].toUpperCase()}
+                    </span>
+                  </button>
+                ),
+              )}
             </div>
           </div>
 
@@ -140,7 +149,7 @@ export const Footer: React.FC<FooterProps> = ({
 interface ProductCardProps {
   image?: string;
   badge?: string;
-  badgeColor?: 'primary' | 'success' | 'warning';
+  badgeColor?: "primary" | "success" | "warning";
   title: string;
   subtitle?: string;
   description?: string;
@@ -155,7 +164,7 @@ interface ProductCardProps {
 export const ProductCard: React.FC<ProductCardProps> = ({
   image,
   badge,
-  badgeColor = 'primary',
+  badgeColor = "primary",
   title,
   subtitle,
   description,
@@ -164,23 +173,34 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   reviews = 128,
   tags = [],
   onCTA,
-  ctaText = 'View Details',
+  ctaText = "View Details",
 }) => {
   const badgeColors = {
-    primary: 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300',
-    success: 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300',
-    warning: 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300',
+    primary:
+      "bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300",
+    success:
+      "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300",
+    warning:
+      "bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300",
   };
 
   return (
-    <div className="group rounded-3xl overflow-hidden bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105 hover:-translate-y-2">
+    <motion.div
+      className="group rounded-3xl overflow-hidden bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 shadow-lg hover:shadow-2xl"
+      variants={hoverLift}
+      initial="rest"
+      whileHover="hover"
+      transition={{ type: "spring", stiffness: 300, damping: 10 }}
+    >
       {/* Image Container */}
       <div className="relative h-64 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-slate-800 dark:to-slate-900 overflow-hidden flex items-center justify-center">
         {image ? (
-          <img
+          <motion.img
             src={image}
             alt={title}
-            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+            className="w-full h-full object-cover"
+            whileHover={{ scale: 1.1 }}
+            transition={{ duration: 0.5 }}
           />
         ) : (
           <div className="text-6xl text-gray-300">🛏️</div>
@@ -188,13 +208,23 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
         {/* Badge */}
         {badge && (
-          <div className={`absolute top-4 right-4 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider ${badgeColors[badgeColor]}`}>
+          <motion.div
+            className={`absolute top-4 right-4 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider ${badgeColors[badgeColor]}`}
+            initial={{ opacity: 0, x: 20 }}
+            whileHover={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.3 }}
+          >
             {badge}
-          </div>
+          </motion.div>
         )}
 
         {/* Overlay on Hover */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        <motion.div
+          className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"
+          initial={{ opacity: 0 }}
+          whileHover={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
+        />
       </div>
 
       {/* Content */}
@@ -205,7 +235,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           </p>
         )}
 
-        <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">{title}</h3>
+        <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+          {title}
+        </h3>
 
         {description && (
           <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed mb-4 line-clamp-2">
@@ -218,7 +250,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           <div className="flex items-center gap-2 mb-4">
             <div className="flex gap-1">
               {[...Array(5)].map((_, i) => (
-                <span key={i} className={`text-lg ${i < Math.floor(rating) ? '⭐' : '☆'}`} />
+                <motion.span
+                  key={i}
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  transition={{ delay: i * 0.1 }}
+                  className={`text-lg ${i < Math.floor(rating) ? "⭐" : "☆"}`}
+                />
               ))}
             </div>
             <span className="text-sm text-gray-600 dark:text-gray-400">
@@ -243,13 +281,22 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
         {/* Price and CTA */}
         <div className="flex items-center justify-between gap-4 pt-4 border-t border-gray-100 dark:border-slate-800">
-          {price && <span className="text-2xl font-black text-gray-900 dark:text-white">{price}</span>}
-          <Button variant="primary" size="sm" onClick={onCTA} fullWidth={!price}>
+          {price && (
+            <span className="text-2xl font-black text-gray-900 dark:text-white">
+              {price}
+            </span>
+          )}
+          <Button
+            variant="primary"
+            size="sm"
+            onClick={onCTA}
+            fullWidth={!price}
+          >
             {ctaText}
           </Button>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
@@ -272,7 +319,7 @@ export const BrandCard: React.FC<BrandCardProps> = ({
   name,
   type,
   description,
-  accentColor = '#6366F1',
+  accentColor = "#6366F1",
   features = [],
   onLearnMore,
 }) => {
@@ -295,7 +342,11 @@ export const BrandCard: React.FC<BrandCardProps> = ({
 
         {/* Logo Area */}
         {logo ? (
-          <img src={logo} alt={name} className="w-16 h-16 rounded-xl mb-6 object-cover" />
+          <img
+            src={logo}
+            alt={name}
+            className="w-16 h-16 rounded-xl mb-6 object-cover"
+          />
         ) : (
           <div
             className="w-16 h-16 rounded-xl mb-6 flex items-center justify-center text-3xl font-black text-white"
@@ -307,11 +358,16 @@ export const BrandCard: React.FC<BrandCardProps> = ({
 
         {/* Content */}
         <div className="relative z-10">
-          <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: accentColor }}>
+          <p
+            className="text-xs font-bold uppercase tracking-widest mb-2"
+            style={{ color: accentColor }}
+          >
             {type}
           </p>
 
-          <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">{name}</h3>
+          <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
+            {name}
+          </h3>
 
           <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed mb-6">
             {description}
@@ -321,7 +377,10 @@ export const BrandCard: React.FC<BrandCardProps> = ({
           {features.length > 0 && (
             <ul className="space-y-2 mb-6">
               {features.slice(0, 3).map((feature) => (
-                <li key={feature} className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+                <li
+                  key={feature}
+                  className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300"
+                >
                   <span
                     className="w-2 h-2 rounded-full"
                     style={{ backgroundColor: accentColor }}
@@ -386,7 +445,7 @@ export const TestimonialCard: React.FC<TestimonialCardProps> = ({
       {/* Rating */}
       <div className="flex gap-1 mb-6">
         {[...Array(5)].map((_, i) => (
-          <span key={i} className={`text-xl ${i < rating ? '⭐' : '☆'}`} />
+          <span key={i} className={`text-xl ${i < rating ? "⭐" : "☆"}`} />
         ))}
       </div>
 
@@ -412,7 +471,9 @@ export const TestimonialCard: React.FC<TestimonialCardProps> = ({
         )}
         <div>
           <p className="font-bold text-gray-900 dark:text-white">{author}</p>
-          {role && <p className="text-sm text-gray-600 dark:text-gray-400">{role}</p>}
+          {role && (
+            <p className="text-sm text-gray-600 dark:text-gray-400">{role}</p>
+          )}
         </div>
       </div>
     </div>
@@ -427,27 +488,31 @@ interface FeatureCardProps {
   icon: React.ReactNode;
   title: string;
   description: string;
-  color?: 'primary' | 'secondary' | 'tertiary' | 'accent';
+  color?: "primary" | "secondary" | "tertiary" | "accent";
 }
 
 export const FeatureCard: React.FC<FeatureCardProps> = ({
   icon,
   title,
   description,
-  color = 'primary',
+  color = "primary",
 }) => {
   const colorStyles = {
-    primary: 'from-indigo-500/10 to-indigo-500/5 border-indigo-200 dark:border-indigo-800',
-    secondary: 'from-rose-500/10 to-rose-500/5 border-rose-200 dark:border-rose-800',
-    tertiary: 'from-teal-500/10 to-teal-500/5 border-teal-200 dark:border-teal-800',
-    accent: 'from-amber-500/10 to-amber-500/5 border-amber-200 dark:border-amber-800',
+    primary:
+      "from-indigo-500/10 to-indigo-500/5 border-indigo-200 dark:border-indigo-800",
+    secondary:
+      "from-rose-500/10 to-rose-500/5 border-rose-200 dark:border-rose-800",
+    tertiary:
+      "from-teal-500/10 to-teal-500/5 border-teal-200 dark:border-teal-800",
+    accent:
+      "from-amber-500/10 to-amber-500/5 border-amber-200 dark:border-amber-800",
   };
 
   const iconColors = {
-    primary: 'text-indigo-600 dark:text-indigo-400',
-    secondary: 'text-rose-600 dark:text-rose-400',
-    tertiary: 'text-teal-600 dark:text-teal-400',
-    accent: 'text-amber-600 dark:text-amber-400',
+    primary: "text-indigo-600 dark:text-indigo-400",
+    secondary: "text-rose-600 dark:text-rose-400",
+    tertiary: "text-teal-600 dark:text-teal-400",
+    accent: "text-amber-600 dark:text-amber-400",
   };
 
   return (
@@ -462,8 +527,12 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({
       </div>
 
       {/* Content */}
-      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">{title}</h3>
-      <p className="text-gray-700 dark:text-gray-300 leading-relaxed">{description}</p>
+      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
+        {title}
+      </h3>
+      <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+        {description}
+      </p>
     </div>
   );
 };
@@ -476,7 +545,7 @@ interface StatCardProps {
   value: string | number;
   label: string;
   icon?: React.ReactNode;
-  color?: 'primary' | 'secondary' | 'tertiary' | 'accent';
+  color?: "primary" | "secondary" | "tertiary" | "accent";
   suffix?: string;
 }
 
@@ -484,14 +553,14 @@ export const StatCard: React.FC<StatCardProps> = ({
   value,
   label,
   icon,
-  color = 'primary',
+  color = "primary",
   suffix,
 }) => {
   const colorStyles = {
-    primary: 'from-indigo-600/10 to-indigo-600/5 text-indigo-600',
-    secondary: 'from-rose-600/10 to-rose-600/5 text-rose-600',
-    tertiary: 'from-teal-600/10 to-teal-600/5 text-teal-600',
-    accent: 'from-amber-600/10 to-amber-600/5 text-amber-600',
+    primary: "from-indigo-600/10 to-indigo-600/5 text-indigo-600",
+    secondary: "from-rose-600/10 to-rose-600/5 text-rose-600",
+    tertiary: "from-teal-600/10 to-teal-600/5 text-teal-600",
+    accent: "from-amber-600/10 to-amber-600/5 text-amber-600",
   };
 
   return (
