@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import {
   BrandMetadata,
   UserRole,
@@ -7,11 +7,9 @@ import {
 } from "../types";
 import { LENGTHS, BREADTHS, THICKNESS_STEPS } from "../constants";
 import { calculateMattressPrice } from "../services/pricingEngine";
-import {
-  calculateLogistics,
-  fetchRelatedProducts,
-} from "../services/logisticsEngine";
+import { calculateLogistics } from "../services/logisticsEngine";
 import { FinancialEngine } from "../services/financialEngine";
+import { useTheme } from "../src/contexts/ThemeContext";
 
 interface Props {
   brand: BrandMetadata;
@@ -28,6 +26,7 @@ const SmartConfigurator: React.FC<Props> = ({
   onBack,
   onBookService,
 }) => {
+  const { theme } = useTheme();
   const [params, setParams] = useState<MattressParams>({
     length: 72,
     breadth: 36,
@@ -61,10 +60,6 @@ const SmartConfigurator: React.FC<Props> = ({
     () => calculateLogistics(params.length, params.breadth, params.thickness),
     [params],
   );
-  const upsells = useMemo(
-    () => fetchRelatedProducts(params.length, params.breadth),
-    [params.length, params.breadth],
-  );
 
   const handleCustomSize = () => {
     const l = parseFloat(customInput.l);
@@ -86,196 +81,418 @@ const SmartConfigurator: React.FC<Props> = ({
     }
   };
 
+  const sizeLabel = `${params.length}" x ${params.breadth}" x ${params.thickness}"`;
+  const idealFor = brand.ai_tags?.slice(0, 2).join(" • ");
+
   return (
-    <div className="flex flex-col h-screen bg-theme-background">
-      {/* Top Half: Visual Anchor */}
-      <div className="h-1/2 bg-theme-card relative flex items-center justify-center overflow-hidden border-b border-theme-border">
-        <button
-          onClick={onBack}
-          className="absolute top-6 left-6 z-20 text-theme-secondary hover:text-indigo-700 transition-colors"
-        >
-          <svg
-            className="w-8 h-8"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M15 19l-7-7 7-7"
-            />
-          </svg>
-        </button>
-
-        <div
-          className="relative w-full max-w-md transition-all duration-700 ease-out"
-          style={{ perspective: "1200px" }}
-        >
-          <div
-            className="bg-theme-card rounded-2xl shadow-theme-2xl relative transition-all duration-500 animate-in zoom-in-95"
-            style={{
-              height: `${params.thickness * 18}px`,
-              width: `${Math.min((params.breadth / 84) * 100, 100)}%`,
-              margin: "0 auto",
-              transform: "rotateX(55deg) rotateZ(-45deg)",
-              background:
-                "linear-gradient(135deg, var(--color-card-background) 0%, var(--color-card-background-hover) 100%)",
-            }}
-          >
-            <div className="absolute inset-0 border border-theme-border/50 rounded-2xl"></div>
-            <div className="absolute top-4 left-4 text-[10px] font-black text-indigo-300 tracking-[0.3em] uppercase">
-              Hindustan Mattress Co
+    <>
+      {/* Full-screen background gradient */}
+      <div
+        className="fixed inset-0 -z-10"
+        style={{
+          background:
+            theme === "dark"
+              ? "linear-gradient(135deg,#041229 0%, #0b3b66 45%, #153f6f 100%)"
+              : "linear-gradient(180deg,#f7f9ff 0%, #edf2ff 100%)",
+        }}
+      />
+      <div className="min-h-screen">
+        <div className="mx-auto max-w-7xl px-4 py-4 pb-40 md:px-6 md:py-8 md:pb-40 lg:px-8">
+          <div className="mb-4 flex items-center gap-3 md:mb-6 md:gap-4">
+            <button
+              onClick={onBack}
+              className="flex h-11 w-11 items-center justify-center rounded-2xl border border-theme-border bg-theme-card text-theme-secondary transition-colors hover:text-[var(--brand-primary)] md:h-12 md:w-12"
+            >
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M15 19l-7-7 7-7"
+                />
+              </svg>
+            </button>
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-[var(--brand-primary)]">
+                Mattress configurator
+              </p>
+              <h1 className="mt-1 text-xl font-black leading-tight text-theme-primary md:text-3xl">
+                Build your {brand.name} mattress
+              </h1>
             </div>
+          </div>
+
+          <div className="grid gap-4 md:gap-6 lg:gap-8 lg:grid-cols-[minmax(0,1.1fr)_420px]">
+            <div className="space-y-6 md:space-y-8">
+              <section className="rounded-[2rem] border border-theme-border bg-theme-card p-4 md:p-6 shadow-theme-light">
+                <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+                  <div>
+                    <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-indigo-600">
+                      Building now
+                    </p>
+                    <h2 className="mt-2 text-2xl font-black text-theme-primary">
+                      {brand.name} custom mattress
+                    </h2>
+                    <p className="mt-2 text-sm leading-relaxed text-theme-secondary">
+                      Adjust dimensions and comfort profile below. Your price
+                      updates live, so you can see the trade-off before adding
+                      to cart.
+                    </p>
+                  </div>
+                  <div className="rounded-2xl bg-theme-input px-4 py-3">
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-theme-secondary">
+                      Current size
+                    </p>
+                    <p className="mt-1 text-lg font-black text-theme-primary">
+                      {sizeLabel}
+                    </p>
+                  </div>
+                </div>
+                {idealFor && (
+                  <p className="mt-4 text-xs font-bold uppercase tracking-widest text-theme-secondary">
+                    Best known for: {idealFor}
+                  </p>
+                )}
+              </section>
+
+              <div className="space-y-4 lg:hidden">
+                <section className="overflow-hidden rounded-[2rem] border border-theme-border bg-theme-card shadow-theme-medium">
+                  <div className="border-b border-theme-border px-4 py-5">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-theme-secondary">
+                      Live preview
+                    </p>
+                    <h2 className="mt-2 text-lg font-black text-theme-primary">
+                      {sizeLabel}
+                    </h2>
+                    <p className="mt-2 text-sm text-theme-secondary">
+                      A smaller, cleaner preview so the main focus stays on choosing the right fit.
+                    </p>
+                  </div>
+
+                  <div className="relative overflow-hidden bg-[linear-gradient(180deg,#F8FAFF_0%,#EEF3FF_100%)] px-4 py-8 dark:bg-[linear-gradient(180deg,#162347_0%,#1B2B56_100%)]">
+                    <div
+                      className="relative mx-auto w-full max-w-[170px]"
+                      style={{ perspective: "1000px" }}
+                    >
+                      <div
+                        className="relative rounded-2xl shadow-theme-2xl transition-all duration-500"
+                        style={{
+                          height: `${Math.max(params.thickness * 12, 52)}px`,
+                          width: `${Math.min((params.breadth / 84) * 100, 100)}%`,
+                          margin: "0 auto",
+                          transform: "rotateX(58deg) rotateZ(-45deg)",
+                          background:
+                            "linear-gradient(135deg, var(--color-card-background) 0%, var(--color-card-background-hover) 100%)",
+                        }}
+                      >
+                        <div className="absolute inset-0 rounded-2xl border border-theme-border/60" />
+                        <div className="absolute left-3 top-3 text-[8px] font-black uppercase tracking-[0.2em] text-[var(--brand-primary)]">
+                          MMM
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="mt-8 flex items-center justify-center gap-2">
+                      <span className="text-2xl font-black tracking-tighter text-theme-primary">
+                        {params.length}" × {params.breadth}"
+                      </span>
+                      {logistics.is_cargo && (
+                        <span className="rounded-full bg-amber-200 px-2 py-1 text-[8px] font-bold text-brand-amber shadow-sm">
+                          HEAVY CARGO
+                        </span>
+                      )}
+                    </div>
+                    <p className="mt-2 text-center text-[10px] font-bold uppercase tracking-[0.2em] text-theme-secondary">
+                      {brand.name} • {params.thickness}" profile
+                    </p>
+                  </div>
+                </section>
+
+                <section className="rounded-[2rem] border border-theme-border bg-theme-card p-4 shadow-theme-light">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-theme-secondary">
+                    Quick summary
+                  </p>
+                  <div className="mt-4 grid gap-3 sm:grid-cols-3">
+                    <div className="rounded-2xl bg-theme-input px-4 py-3">
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-theme-secondary">
+                        Collection
+                      </p>
+                      <p className="mt-2 text-sm font-black text-theme-primary">
+                        {brand.name}
+                      </p>
+                    </div>
+                    <div className="rounded-2xl bg-theme-input px-4 py-3">
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-theme-secondary">
+                        Size
+                      </p>
+                      <p className="mt-2 text-sm font-black text-theme-primary">
+                        {params.length}" x {params.breadth}"
+                      </p>
+                    </div>
+                    <div className="rounded-2xl bg-theme-input px-4 py-3">
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-theme-secondary">
+                        Thickness
+                      </p>
+                      <p className="mt-2 text-sm font-black text-theme-primary">
+                        {params.thickness}"
+                      </p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+
+              {validationError && (
+                <div className="bg-red-500/10 text-red-500 p-4 rounded-2xl border border-red-500/20 text-xs font-bold animate-pulse">
+                  Error: {validationError}
+                </div>
+              )}
+
+              <section className="pt-2">
+                <div className="mb-4 flex items-end justify-between gap-3">
+                  <label className="text-[10px] font-bold text-theme-secondary uppercase tracking-widest">
+                    Comfort Profile
+                  </label>
+                  <span className="text-[10px] font-bold text-indigo-600">
+                    Thickness Variation
+                  </span>
+                </div>
+                <div className="grid grid-cols-2 gap-3 sm:flex sm:gap-3 sm:overflow-x-auto sm:pb-4 sm:px-4 sm:-mx-4 sm:snap-x">
+                  {THICKNESS_STEPS.map((t) => (
+                    <button
+                      key={t}
+                      onClick={() => {
+                        setParams({ ...params, thickness: t });
+                        triggerHaptic("light");
+                      }}
+                      className={`min-h-[96px] rounded-3xl border font-bold transition-all sm:flex-shrink-0 sm:w-24 sm:py-6 sm:snap-center hover:scale-[0.98] ${
+                        params.thickness === t
+                          ? "bg-indigo-600 text-white border-indigo-600 shadow-theme-xl shadow-indigo-600/30"
+                          : "bg-theme-card text-theme-secondary border-theme-border hover:border-indigo-400 shadow-theme-light"
+                      }`}
+                    >
+                      <span className="text-2xl block">{t}"</span>
+                      <span className="text-[8px] opacity-70 uppercase">
+                        {t < 6 ? "Basic" : t < 8 ? "Premium" : "Royal"}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </section>
+
+              <section className="space-y-6">
+                <div>
+                  <label className="text-[10px] font-bold text-theme-secondary uppercase tracking-widest mb-3 block">
+                    Frame Length
+                  </label>
+                  <div className="grid grid-cols-2 gap-3 sm:flex sm:flex-wrap">
+                    {LENGTHS.map((l) => (
+                      <button
+                        key={l}
+                        onClick={() => {
+                          setParams({ ...params, length: l });
+                          triggerHaptic("light");
+                        }}
+                        className={`min-h-[72px] rounded-2xl border px-4 py-3 text-sm font-bold transition-all hover:scale-[1.02] sm:px-6 ${
+                          params.length === l
+                            ? "bg-indigo-600 text-white border-indigo-600 shadow-theme-medium"
+                            : "bg-theme-input text-theme-secondary border-theme-border shadow-theme-light"
+                        }`}
+                      >
+                        {l}"
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <div className="flex justify-between items-center mb-3">
+                    <label className="text-[10px] font-bold text-theme-secondary uppercase tracking-widest block">
+                      Frame Breadth
+                    </label>
+                    <button
+                      onClick={onBookService}
+                      className="text-[10px] font-bold text-indigo-700 hover:underline text-right"
+                    >
+                      Book Expert Measurement
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+                    {BREADTHS.map((b) => (
+                      <button
+                        key={b}
+                        onClick={() => {
+                          setParams({ ...params, breadth: b });
+                          triggerHaptic("light");
+                        }}
+                        className={`min-h-[72px] rounded-2xl border px-4 py-3 text-sm font-bold transition-all hover:scale-[1.02] sm:px-6 ${
+                          params.breadth === b
+                            ? "bg-indigo-600 text-white border-indigo-600 shadow-theme-medium"
+                            : "bg-theme-input text-theme-secondary border-theme-border shadow-theme-light"
+                        }`}
+                      >
+                        {b}"
+                      </button>
+                    ))}
+                    <button
+                      onClick={() => setCustomModalOpen(true)}
+                      className="min-h-[72px] rounded-2xl border bg-brand-amber/20 px-4 py-3 text-sm font-bold text-brand-amber transition-all hover:scale-[1.02] shadow-theme-light sm:px-6 flex items-center justify-center gap-2 border-brand-amber/40"
+                    >
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                        />
+                      </svg>
+                      Odd Size
+                    </button>
+                  </div>
+                  <p className="mt-3 text-xs text-theme-secondary">
+                    Not sure about your frame size? Use a standard option for
+                    speed, or choose an odd size if your bed has custom
+                    dimensions.
+                  </p>
+                </div>
+              </section>
+
+              <section className="rounded-[2rem] border border-theme-border bg-theme-card p-4 md:p-6">
+                <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
+                  <div>
+                    <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-theme-secondary">
+                      What happens next
+                    </p>
+                    <ul className="mt-3 space-y-2 text-sm text-theme-secondary">
+                      <li>1. Save this build to your cart.</li>
+                      <li>
+                        2. Review totals and delivery details at checkout.
+                      </li>
+                      <li>
+                        3. Book an expert measurement if you want a home visit.
+                      </li>
+                    </ul>
+                  </div>
+                  <div className="min-w-56 rounded-2xl bg-theme-input p-4">
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-theme-secondary">
+                      Estimated total
+                    </p>
+                    <p className="mt-2 text-2xl font-black text-theme-primary">
+                      {results
+                        ? FinancialEngine.formatCurrency(results.final_price)
+                        : "---"}
+                    </p>
+                    <p className="mt-2 text-xs text-theme-secondary">
+                      {userRole === UserRole.DEALER
+                        ? "Dealer pricing shown before GST."
+                        : "Includes the current configuration and tax estimate."}
+                    </p>
+                  </div>
+                </div>
+              </section>
+            </div>
+
+            <aside className="hidden space-y-6 lg:sticky lg:top-28 lg:block lg:self-start">
+              <section className="overflow-hidden rounded-[2rem] border border-theme-border bg-theme-card shadow-theme-medium">
+                <div className="border-b border-theme-border px-4 md:px-6 py-5">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-theme-secondary">
+                    Live preview
+                  </p>
+                  <h2 className="mt-2 text-xl font-black text-theme-primary">
+                    {sizeLabel}
+                  </h2>
+                  <p className="mt-2 text-sm text-theme-secondary">
+                    A compact visual preview so you can stay focused on choosing
+                    the right size and comfort settings.
+                  </p>
+                </div>
+
+                <div className="relative overflow-hidden bg-[linear-gradient(180deg,#F8FAFF_0%,#EEF3FF_100%)] px-4 py-10 dark:bg-[linear-gradient(180deg,#162347_0%,#1B2B56_100%)] md:px-6">
+                  <div
+                    className="relative mx-auto w-full max-w-[200px] md:max-w-[280px]"
+                    style={{ perspective: "1000px" }}
+                  >
+                    <div
+                      className="relative rounded-2xl shadow-theme-2xl transition-all duration-500"
+                      style={{
+                        height: `${Math.max(params.thickness * 14, 56)}px`,
+                        width: `${Math.min((params.breadth / 84) * 100, 100)}%`,
+                        margin: "0 auto",
+                        transform: "rotateX(58deg) rotateZ(-45deg)",
+                        background:
+                          "linear-gradient(135deg, var(--color-card-background) 0%, var(--color-card-background-hover) 100%)",
+                      }}
+                    >
+                      <div className="absolute inset-0 rounded-2xl border border-theme-border/60" />
+                      <div className="absolute left-3 top-3 text-[8px] font-black uppercase tracking-[0.2em] text-[var(--brand-primary)]">
+                        MMM
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-10 flex items-center justify-center gap-2">
+                    <span className="text-3xl font-black tracking-tighter text-theme-primary">
+                      {params.length}" × {params.breadth}"
+                    </span>
+                    {logistics.is_cargo && (
+                      <span className="rounded-full bg-amber-200 px-2 py-1 text-[8px] font-bold text-brand-amber shadow-sm">
+                        HEAVY CARGO
+                      </span>
+                    )}
+                  </div>
+                  <p className="mt-2 text-center text-[10px] font-bold uppercase tracking-[0.2em] text-theme-secondary">
+                    {brand.name} • {params.thickness}" profile
+                  </p>
+                </div>
+              </section>
+
+              <section className="rounded-[2rem] border border-theme-border bg-theme-card p-4 md:p-6 shadow-theme-light">
+                <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-theme-secondary">
+                  Quick summary
+                </p>
+                <div className="mt-4 space-y-3">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-theme-secondary">Collection</span>
+                    <span className="font-bold text-theme-primary">
+                      {brand.name}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-theme-secondary">Size</span>
+                    <span className="font-bold text-theme-primary">
+                      {params.length}" x {params.breadth}"
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-theme-secondary">Thickness</span>
+                    <span className="font-bold text-theme-primary">
+                      {params.thickness}"
+                    </span>
+                  </div>
+                </div>
+              </section>
+            </aside>
           </div>
         </div>
-
-        <div className="absolute bottom-8 left-8">
-          <div className="flex items-center gap-2 mb-1">
-            <span className="text-4xl font-black text-theme-primary tracking-tighter">
-              {params.length}" × {params.breadth}"
-            </span>
-            {logistics.is_cargo && (
-              <span className="bg-amber-200 text-brand-amber text-[8px] font-bold px-2 py-1 rounded shadow-sm">
-                HEAVY CARGO
-              </span>
-            )}
-          </div>
-          <p className="text-indigo-700 font-bold tracking-widest text-[10px] uppercase">
-            {brand.name} | {params.thickness}" SIGNATURE PROFILE
-          </p>
-        </div>
-      </div>
-
-      {/* Bottom Half: Control Center */}
-      <div className="h-1/2 overflow-y-auto p-8 space-y-10 pb-40">
-        {validationError && (
-          <div className="bg-red-500/10 text-red-500 p-4 rounded-2xl border border-red-500/20 text-xs font-bold animate-pulse">
-            Error: {validationError}
-          </div>
-        )}
-
-        <section className="pt-4">
-          {" "}
-          {/* Added pt-4 here */}
-          <div className="flex justify-between items-end mb-4">
-            <label className="text-[10px] font-bold text-theme-secondary uppercase tracking-widest">
-              Comfort Profile
-            </label>
-            <span className="text-[10px] font-bold text-indigo-600">
-              Thickness Variation
-            </span>
-          </div>
-          <div className="flex gap-3 overflow-x-auto pb-4 px-4 -mx-4 snap-x">
-            {THICKNESS_STEPS.map((t) => (
-              <button
-                key={t}
-                onClick={() => {
-                  setParams({ ...params, thickness: t });
-                  triggerHaptic("light");
-                }}
-                className={`flex-shrink-0 w-24 py-6 rounded-3xl font-bold transition-all border snap-center hover:scale-[0.9] ${
-                  params.thickness === t
-                    ? "bg-indigo-600 text-white border-indigo-600 shadow-theme-xl shadow-indigo-600/30"
-                    : "bg-theme-card text-theme-secondary border-theme-border hover:border-indigo-400 shadow-theme-light"
-                }`}
-              >
-                <span className="text-2xl block">{t}"</span>
-                <span className="text-[8px] opacity-70 uppercase">
-                  {t < 6 ? "Basic" : t < 8 ? "Premium" : "Royal"}
-                </span>
-              </button>
-            ))}
-          </div>
-        </section>
-
-        <section className="space-y-6">
-          <div>
-            <label className="text-[10px] font-bold text-theme-secondary uppercase tracking-widest mb-3 block">
-              Frame Length
-            </label>
-            <div className="flex flex-wrap gap-2">
-              {LENGTHS.map((l) => (
-                <button
-                  key={l}
-                  onClick={() => {
-                    setParams({ ...params, length: l });
-                    triggerHaptic("light");
-                  }}
-                  className={`px-6 py-3 rounded-2xl text-sm font-bold transition-all border hover:scale-[1.05] ${
-                    params.length === l
-                      ? "bg-indigo-600 text-white border-indigo-600 shadow-theme-medium"
-                      : "bg-theme-input text-theme-secondary border-theme-border shadow-theme-light"
-                  }`}
-                >
-                  {l}"
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <div className="flex justify-between items-center mb-3">
-              <label className="text-[10px] font-bold text-theme-secondary uppercase tracking-widest block">
-                Frame Breadth
-              </label>
-              <button
-                onClick={onBookService}
-                className="text-[10px] font-bold text-indigo-700 hover:underline"
-              >
-                Book Expert Measurement
-              </button>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {BREADTHS.map((b) => (
-                <button
-                  key={b}
-                  onClick={() => {
-                    setParams({ ...params, breadth: b });
-                    triggerHaptic("light");
-                  }}
-                  className={`px-6 py-3 rounded-2xl text-sm font-bold transition-all border hover:scale-[1.05] ${
-                    params.breadth === b
-                      ? "bg-indigo-600 text-white border-indigo-600 shadow-theme-medium"
-                      : "bg-theme-input text-theme-secondary border-theme-border shadow-theme-light"
-                  }`}
-                >
-                  {b}"
-                </button>
-              ))}
-              <button
-                onClick={() => setCustomModalOpen(true)}
-                className="px-6 py-3 rounded-2xl text-sm font-bold transition-all border bg-brand-amber/20 text-brand-amber border-brand-amber/40 flex items-center gap-2 hover:scale-[1.05] shadow-theme-light"
-              >
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                  />
-                </svg>
-                Odd Size
-              </button>
-            </div>
-          </div>
-        </section>
       </div>
 
       {/* Sticky Footer (CMO-Amber Action) */}
-      <div className="fixed bottom-0 w-full bg-theme-card/95 backdrop-blur-xl border-t border-theme-border p-6 z-30">
-        <div className="max-w-4xl mx-auto flex items-center justify-between">
-          <div>
+      <div className="fixed bottom-0 z-30 w-full border-t border-theme-border bg-theme-card/95 p-4 backdrop-blur-xl md:p-6">
+        <div className="mx-auto flex max-w-4xl flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="text-center sm:text-left">
             <span className="text-[10px] font-bold text-theme-secondary uppercase block mb-1">
               Estimated Total
             </span>
-            <div className="flex items-baseline gap-2">
+            <div className="flex items-baseline justify-center gap-2 sm:justify-start">
               <span className="text-3xl font-black text-theme-primary">
                 {results
                   ? FinancialEngine.formatCurrency(results.final_price)
@@ -289,7 +506,7 @@ const SmartConfigurator: React.FC<Props> = ({
           <button
             disabled={!!validationError}
             onClick={handleAddToCartAction}
-            className="bg-brand-amber text-brand-navy px-12 py-5 rounded-[2rem] font-black text-sm hover:brightness-110 hover:shadow-2xl hover:shadow-amber-500/40 transition-all flex items-center gap-3 active:scale-95 disabled:opacity-20"
+            className="flex w-full items-center justify-center gap-3 rounded-[2rem] bg-brand-amber px-8 py-4 text-sm font-black text-brand-navy transition-all hover:brightness-110 hover:shadow-2xl hover:shadow-amber-500/40 active:scale-95 disabled:opacity-20 sm:w-auto md:px-12 md:py-5"
           >
             ADD TO CART
             <svg
@@ -312,7 +529,7 @@ const SmartConfigurator: React.FC<Props> = ({
       {/* Custom Size Modal */}
       {isCustomModalOpen && (
         <div className="fixed inset-0 bg-brand-navy/70 backdrop-blur-md z-50 flex items-center justify-center p-6 animate-in fade-in duration-300">
-          <div className="bg-theme-card rounded-[3rem] w-full max-w-sm p-12 shadow-theme-2xl shadow-indigo-500/20">
+          <div className="bg-theme-card rounded-[3rem] w-full max-w-sm p-6 md:p-12 shadow-theme-2xl shadow-indigo-500/20">
             <h3 className="text-2xl font-black text-theme-primary mb-2">
               Custom Build
             </h3>
@@ -367,7 +584,7 @@ const SmartConfigurator: React.FC<Props> = ({
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 

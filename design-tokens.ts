@@ -8,32 +8,32 @@
 // ============================================================================
 
 export const COLORS = {
-  // Primary: Deep Indigo (trustworthy, premium)
+  // Primary: Signature Royal Blue
   primary: {
-    50: "#EEF2FF",
-    100: "#E0E7FF",
-    200: "#C7D2FE",
-    300: "#A5B4FC",
-    400: "#818CF8",
-    500: "#6366F1", // Primary
-    600: "#4F46E5", // Primary Dark
-    700: "#4338CA",
-    800: "#3730A3",
-    900: "#312E81",
+    50: "#EEF3FF",
+    100: "#DCE6FF",
+    200: "#B8CBFF",
+    300: "#8EAAFF",
+    400: "#5E82FF",
+    500: "#1740D1",
+    600: "#1237B5",
+    700: "#0C2B93",
+    800: "#091F68",
+    900: "#09174A",
   },
 
-  // Secondary: Warm Rose (premium accent for CTAs)
+  // Secondary: Midnight Navy
   secondary: {
-    50: "#FDF2F8",
-    100: "#FCE7F3",
-    200: "#FBCFE8",
-    300: "#F8B4D6",
-    400: "#F472B6",
-    500: "#EC4899", // Secondary
-    600: "#DB2777",
-    700: "#BE185D",
-    800: "#9D174D",
-    900: "#831843",
+    50: "#EEF2FF",
+    100: "#D9E2FF",
+    200: "#B7C6FF",
+    300: "#8DA1F0",
+    400: "#687CD1",
+    500: "#415799",
+    600: "#2D427A",
+    700: "#1D3162",
+    800: "#11224B",
+    900: "#09174A",
   },
 
   // Tertiary: Teal (trust, wellness)
@@ -50,18 +50,18 @@ export const COLORS = {
     900: "#134E4A",
   },
 
-  // Accent: Warm Amber (wellness, comfort, warmth)
+  // Accent: Brushed Gold
   accent: {
-    50: "#FFFBEB",
-    100: "#FEF3C7",
-    200: "#FDE68A",
-    300: "#FCD34D",
-    400: "#FBBF24",
-    500: "#F59E0B", // Accent
-    600: "#D97706",
-    700: "#B45309",
-    800: "#92400E",
-    900: "#78350F",
+    50: "#FBF7ED",
+    100: "#F4E6C7",
+    200: "#E9D39F",
+    300: "#D9BC77",
+    400: "#C8A55B",
+    500: "#B79147",
+    600: "#9A7A39",
+    700: "#7C602D",
+    800: "#5F4922",
+    900: "#413117",
   },
 
   // Success: Emerald
@@ -122,16 +122,16 @@ export const COLORS = {
 
   // Light Theme Specific
   light: {
-    background: "#FDFDFE",
+    background: "#FAFBFF",
     surface: "#FFFFFF",
-    surfaceVariant: "#F9FAFB",
+    surfaceVariant: "#F5F8FF",
   },
 
   // Dark Theme Specific
   dark: {
-    background: "#0F172A",
-    surface: "#1E293B",
-    surfaceVariant: "#334155",
+    background: "#071238",
+    surface: "#0D1B4E",
+    surfaceVariant: "#142867",
   },
 };
 
@@ -266,27 +266,27 @@ export const BORDER_RADIUS = {
 // ============================================================================
 
 export const GRADIENTS = {
-  // Primary gradient (indigo to purple)
-  primary: "linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%)",
-  primaryHover: "linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%)",
+  // Primary gradient (midnight navy to royal blue)
+  primary: "linear-gradient(135deg, #09174A 0%, #1237B5 52%, #1740D1 100%)",
+  primaryHover: "linear-gradient(135deg, #09174A 0%, #0C2B93 52%, #1237B5 100%)",
 
-  // Secondary gradient (rose to pink)
-  secondary: "linear-gradient(135deg, #EC4899 0%, #F472B6 100%)",
+  // Secondary gradient (navy to royal blue)
+  secondary: "linear-gradient(135deg, #0C1F63 0%, #1740D1 100%)",
 
   // Tertiary gradient (teal to cyan)
   tertiary: "linear-gradient(135deg, #14B8A6 0%, #06B6D4 100%)",
 
   // Accent gradient (amber to orange)
-  accent: "linear-gradient(135deg, #F59E0B 0%, #F97316 100%)",
+  accent: "linear-gradient(135deg, #C8A55B 0%, #9A7A39 100%)",
 
   // Success gradient
   success: "linear-gradient(135deg, #22C55E 0%, #10B981 100%)",
 
   // Dark gradient (for dark theme backgrounds)
-  dark: "linear-gradient(135deg, #1E293B 0%, #334155 100%)",
+  dark: "linear-gradient(135deg, #071238 0%, #112970 100%)",
 
   // Light gradient (for light theme backgrounds)
-  light: "linear-gradient(135deg, #FDFDFE 0%, #F9FAFB 100%)",
+  light: "linear-gradient(135deg, #FAFBFF 0%, #F4F7FF 100%)",
 };
 
 // ============================================================================

@@ -23,6 +23,10 @@ const CheckoutScreen: React.FC<Props> = ({
 }) => {
   const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
   const [isAddressPickerOpen, setIsAddressPickerOpen] = useState(false);
+  const [feedback, setFeedback] = useState<{
+    type: "error";
+    message: string;
+  } | null>(null);
 
   const totalPayable = cartItems.reduce(
     (acc, item) => acc + item.pricing.final_price,
@@ -40,11 +44,14 @@ const CheckoutScreen: React.FC<Props> = ({
 
   const handlePlaceOrder = () => {
     if (!selectedAddress) {
-      alert("Please select a delivery address first.");
+      setFeedback({
+        type: "error",
+        message: "Add a delivery address before placing the order.",
+      });
       return;
     }
+
     onOrderSuccess();
-    alert("Order Placed Successfully! Your Hindustan Mattress journey begins.");
   };
 
   const SummaryRow = ({
@@ -102,6 +109,14 @@ const CheckoutScreen: React.FC<Props> = ({
       </header>
 
       <main className="pt-24 pb-32 px-6 max-w-2xl mx-auto space-y-12">
+        {feedback && (
+          <div
+            className="rounded-3xl border border-red-200 bg-red-50 px-5 py-4 text-sm font-semibold text-red-700"
+          >
+            {feedback.message}
+          </div>
+        )}
+
         {/* Section 1: Product Details (Itemized) */}
         <div className="space-y-4">
           <h3 className="text-[10px] font-black text-theme-secondary uppercase tracking-widest">
@@ -245,7 +260,7 @@ const CheckoutScreen: React.FC<Props> = ({
               onClick={() => setIsAddressPickerOpen(true)}
               className="w-full text-left p-10 rounded-[2.5rem] border-2 border-dashed border-theme-border hover:border-indigo-600 hover:bg-indigo-50/30 transition-all group"
             >
-              <div className="flex items-center justify-center gap-4">
+              <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-2xl bg-theme-input flex items-center justify-center text-theme-secondary group-hover:bg-indigo-600 group-hover:text-white transition-all shadow-sm">
                   <svg
                     className="w-6 h-6"
@@ -261,9 +276,14 @@ const CheckoutScreen: React.FC<Props> = ({
                     />
                   </svg>
                 </div>
-                <span className="font-black text-sm text-theme-secondary group-hover:text-indigo-600 uppercase tracking-widest transition-all">
-                  ~
-                </span>
+                <div>
+                  <p className="font-black text-sm text-theme-secondary group-hover:text-indigo-600 uppercase tracking-widest transition-all">
+                    Add delivery address
+                  </p>
+                  <p className="mt-1 text-xs text-theme-secondary">
+                    Save the exact location and pincode for delivery updates.
+                  </p>
+                </div>
               </div>
             </button>
           )}
@@ -287,6 +307,7 @@ const CheckoutScreen: React.FC<Props> = ({
         onClose={() => setIsAddressPickerOpen(false)}
         onSave={(addr) => {
           setSelectedAddress(addr);
+          setFeedback(null);
           setIsAddressPickerOpen(false);
         }}
       />

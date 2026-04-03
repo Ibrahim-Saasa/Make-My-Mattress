@@ -119,10 +119,10 @@ const AddressPicker: React.FC<Props> = ({ isOpen, onClose, onSave }) => {
         <div className="p-8 border-b border-slate-100 flex items-center justify-between flex-shrink-0">
           <div>
             <h2 className="text-2xl font-black text-slate-900 tracking-tighter uppercase italic">
-              Pin Your Comfort
+              Delivery address
             </h2>
             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">
-              Set precise delivery location
+              Pin the exact spot so delivery and service visits stay accurate
             </p>
           </div>
           <button
@@ -219,6 +219,10 @@ const AddressPicker: React.FC<Props> = ({ isOpen, onClose, onSave }) => {
                 />
               </div>
             </div>
+            <p className="text-xs text-slate-500">
+              Tip: drag the pin if the auto-filled address is close but not
+              exact.
+            </p>
           </div>
         </div>
 

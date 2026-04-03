@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Button } from "./index";
+import { BrandLogo, Button } from "./index";
 import {
   fadeInUp,
   fadeInDown,
@@ -55,12 +55,12 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
           <div className="flex items-center gap-3 cursor-pointer group">
-            <div className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-2xl flex items-center justify-center text-white font-black group-hover:shadow-lg group-hover:scale-110 transition-all duration-200">
-              M
-            </div>
-            <span className="hidden md:block font-bold uppercase tracking-tight text-gray-900 dark:text-white">
-              Make My Mattress
-            </span>
+            <BrandLogo
+              className="group-hover:scale-[1.02] transition-transform duration-200"
+              compact
+              size="md"
+              showTagline={false}
+            />
             {logo && <>{logo}</>}
           </div>
 
@@ -72,10 +72,10 @@ export const Header: React.FC<HeaderProps> = ({
                 href={link.href}
                 className="
                   text-sm font-semibold text-gray-700 dark:text-gray-300
-                  hover:text-indigo-600 dark:hover:text-indigo-400
+                  hover:text-[var(--brand-primary)] dark:hover:text-[#7F9CFF]
                   transition-colors duration-200 relative group
                   after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5
-                  after:bg-indigo-600 after:transition-all after:duration-200
+                  after:bg-[var(--brand-primary)] after:transition-all after:duration-200
                   group-hover:after:w-full
                 "
               >
@@ -106,7 +106,7 @@ export const Header: React.FC<HeaderProps> = ({
                   />
                 </svg>
                 {cartCount > 0 && (
-                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-indigo-600 text-white text-xs font-bold rounded-full flex items-center justify-center">
+                  <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-[var(--brand-primary)] text-xs font-bold text-white">
                     {cartCount}
                   </span>
                 )}
@@ -167,7 +167,7 @@ export const Header: React.FC<HeaderProps> = ({
               <a
                 key={link.label}
                 href={link.href}
-                className="block px-4 py-3 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                className="block px-4 py-3 text-sm font-semibold text-gray-700 transition-colors hover:text-[var(--brand-primary)] dark:text-gray-300 dark:hover:text-[#7F9CFF]"
               >
                 {link.label}
               </a>
@@ -208,7 +208,7 @@ export const Hero: React.FC<HeroProps> = ({
   primaryCTA,
   secondaryCTA,
   backgroundImage,
-  backgroundGradient = "from-indigo-600 via-purple-600 to-pink-600",
+  backgroundGradient = "from-[#09174A] via-[#1237B5] to-[#1740D1]",
   accentColor = "from-indigo-500 to-purple-600",
   statsSection,
 }) => {
@@ -218,7 +218,7 @@ export const Hero: React.FC<HeroProps> = ({
       style={
         backgroundImage
           ? {
-              backgroundImage: `url(${backgroundImage}), linear-gradient(135deg, #6366F1 0%, #9333EA 50%, #EC4899 100%)`,
+              backgroundImage: `url(${backgroundImage}), linear-gradient(135deg, #09174A 0%, #1237B5 55%, #1740D1 100%)`,
               backgroundSize: "cover",
               backgroundPosition: "center",
             }
@@ -289,7 +289,7 @@ export const Hero: React.FC<HeroProps> = ({
               variant="secondary"
               size="lg"
               onClick={primaryCTA.onClick}
-              className="text-indigo-600 !bg-white hover:!bg-gray-100"
+              className="!bg-white !text-[var(--brand-primary)] hover:!bg-[#EFF3FF]"
             >
               {primaryCTA.text}
             </Button>
@@ -387,9 +387,9 @@ export const CTASection: React.FC<CTASectionProps> = ({
   theme = "primary",
 }) => {
   const themeStyles = {
-    primary: "bg-gradient-to-r from-indigo-600 to-purple-600",
-    secondary: "bg-gradient-to-r from-rose-500 to-pink-600",
-    dark: "bg-gradient-to-r from-slate-900 to-slate-800",
+    primary: "bg-gradient-to-r from-[#0C1F63] to-[#1740D1]",
+    secondary: "bg-gradient-to-r from-[#102B89] to-[#1740D1]",
+    dark: "bg-gradient-to-r from-[#09174A] to-[#0C1F63]",
   };
 
   return (

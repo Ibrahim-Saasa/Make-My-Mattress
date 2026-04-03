@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:ital,wght@0,400;0,700;0,800;1,800&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap"
     rel="stylesheet">
   <style>
     body {
@@ -22,23 +22,23 @@
     h2,
     h3,
     .brand-header {
-      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-family: 'Manrope', sans-serif;
     }
 
     .bg-brand-navy {
-      background-color: #1E1B4B;
+      background-color: #09174A;
     }
 
     .text-brand-navy {
-      color: #1E1B4B;
+      color: #09174A;
     }
 
     .bg-brand-amber {
-      background-color: #F59E0B;
+      background-color: #C8A55B;
     }
 
     .border-brand-amber {
-      border-color: #F59E0B;
+      border-color: #C8A55B;
     }
 
     /* Custom scrollbar */
@@ -57,110 +57,94 @@
 
     /* Light Theme Defaults (CSS Variables) - ENHANCED PREMIUM SYSTEM */
     :root {
+      --brand-primary: #1740D1;
+      --brand-primary-strong: #1237B5;
+      --brand-primary-deep: #09174A;
+      --brand-gold: #C8A55B;
+      --brand-gold-deep: #9A7A39;
+
       /* Backgrounds - Premium gradients and surfaces */
-      --color-background: linear-gradient(135deg, #FDFDFE 0%, #F9FAFB 100%);
-      --color-background-solid: #FDFDFE;
+      --color-background: linear-gradient(180deg, #FAFBFF 0%, #F4F7FF 100%);
+      --color-background-solid: #FAFBFF;
       --color-card-background: #FFFFFF;
-      --color-card-background-hover: #F9FAFB;
+      --color-card-background-hover: #F5F8FF;
 
       /* Text - Enhanced contrast and hierarchy */
-      --color-text-primary: #111827;
-      /* neutral-900 */
-      --color-text-secondary: #4B5563;
-      /* neutral-600 */
-      --color-text-tertiary: #9CA3AF;
-      /* neutral-400 */
-      --color-text-muted: #D1D5DB;
-      /* neutral-300 */
+      --color-text-primary: #09174A;
+      --color-text-secondary: #3A4A78;
+      --color-text-tertiary: #7382A8;
+      --color-text-muted: #B5C0D8;
 
       /* Interactive colors */
-      --color-primary: #6366F1;
-      /* Indigo */
-      --color-primary-hover: #4F46E5;
-      --color-secondary: #EC4899;
-      /* Rose */
-      --color-tertiary: #14B8A6;
-      /* Teal */
-      --color-accent: #F59E0B;
-      /* Amber */
+      --color-primary: var(--brand-primary);
+      --color-primary-hover: var(--brand-primary-strong);
+      --color-secondary: var(--brand-primary-deep);
+      --color-tertiary: #0A7D67;
+      --color-accent: var(--brand-gold);
 
       /* Borders and dividers */
-      --color-border: #E5E7EB;
-      /* neutral-200 */
-      --color-border-focus: #6366F1;
-      /* Primary on focus */
+      --color-border: #DCE3F3;
+      --color-border-focus: var(--brand-primary);
 
       /* Inputs and forms */
-      --color-input-bg: #F9FAFB;
-      /* neutral-50 */
-      --color-input-border: #D1D5DB;
-      /* neutral-300 */
-      --color-input-border-focus: #6366F1;
+      --color-input-bg: #F6F8FE;
+      --color-input-border: #C7D2EA;
+      --color-input-border-focus: var(--brand-primary);
 
       /* Shadows - Premium depth system */
-      --color-shadow-light: rgba(0, 0, 0, 0.04);
-      --color-shadow-medium: rgba(0, 0, 0, 0.08);
-      --color-shadow-strong: rgba(0, 0, 0, 0.12);
-      --color-shadow-xl: rgba(0, 0, 0, 0.16);
+      --color-shadow-light: rgba(9, 23, 74, 0.05);
+      --color-shadow-medium: rgba(9, 23, 74, 0.09);
+      --color-shadow-strong: rgba(9, 23, 74, 0.14);
+      --color-shadow-xl: rgba(9, 23, 74, 0.18);
 
       /* Status colors */
-      --color-success: #22C55E;
-      --color-warning: #F59E0B;
-      --color-error: #EC4899;
-      --color-info: #6366F1;
+      --color-success: #0A7D67;
+      --color-warning: var(--brand-gold);
+      --color-error: #C25158;
+      --color-info: var(--brand-primary);
     }
 
     /* Dark Theme Overrides (CSS Variables) - ENHANCED PREMIUM SYSTEM */
     html.dark {
-      --color-background: linear-gradient(135deg, #0F172A 0%, #1A1F3A 100%);
-      --color-background-solid: #0F172A;
-      --color-card-background: #1E293B;
-      --color-card-background-hover: #334155;
+      --color-background: linear-gradient(180deg, #0A1330 0%, #0E1A3F 58%, #14265C 100%);
+      --color-background-solid: #0A1330;
+      --color-card-background: #152348;
+      --color-card-background-hover: #1B2B56;
 
-      --color-text-primary: #F8FAFC;
-      /* neutral-50 */
-      --color-text-secondary: #CBD5E1;
-      /* neutral-300 */
-      --color-text-tertiary: #94A3B8;
-      /* neutral-400 */
-      --color-text-muted: #64748B;
-      /* neutral-500 */
+      --color-text-primary: #F8FBFF;
+      --color-text-secondary: #D7DFFD;
+      --color-text-tertiary: #A8B8EC;
+      --color-text-muted: #7286C0;
 
       /* Interactive colors (brighter in dark mode) */
-      --color-primary: #818CF8;
-      /* Indigo-400 */
-      --color-primary-hover: #6366F1;
-      --color-secondary: #F472B6;
-      /* Rose-300 */
-      --color-tertiary: #2DD4BF;
-      /* Teal-300 */
-      --color-accent: #FCD34D;
-      /* Amber-300 */
+      --color-primary: #4C72FF;
+      --color-primary-hover: #6B8BFF;
+      --color-secondary: #DDE6FF;
+      --color-tertiary: #39C9A8;
+      --color-accent: #D8B56C;
 
-      --color-border: #334155;
-      /* neutral-700 */
-      --color-border-focus: #818CF8;
+      --color-border: #304578;
+      --color-border-focus: #7D98FF;
 
-      --color-input-bg: #1E293B;
-      --color-input-border: #475569;
-      /* neutral-600 */
-      --color-input-border-focus: #818CF8;
+      --color-input-bg: #1A274D;
+      --color-input-border: #4562A8;
+      --color-input-border-focus: #7D98FF;
 
-      --color-shadow-light: rgba(255, 255, 255, 0.04);
-      --color-shadow-medium: rgba(255, 255, 255, 0.08);
-      --color-shadow-strong: rgba(255, 255, 255, 0.12);
-      --color-shadow-xl: rgba(255, 255, 255, 0.16);
+      --color-shadow-light: rgba(0, 0, 0, 0.22);
+      --color-shadow-medium: rgba(0, 0, 0, 0.28);
+      --color-shadow-strong: rgba(0, 0, 0, 0.34);
+      --color-shadow-xl: rgba(0, 0, 0, 0.42);
 
-      --color-success: #4ADE80;
-      --color-warning: #FCD34D;
-      --color-error: #F472B6;
-      --color-info: #818CF8;
+      --color-success: #39C9A8;
+      --color-warning: #D8B56C;
+      --color-error: #D76A72;
+      --color-info: #6B8BFF;
 
       /* Moonlight Glow and Faint Stars */
       background-image:
         /* Moonlight glow from corners */
-        radial-gradient(circle 800px at top left, rgba(100, 100, 255, 0.08), transparent),
-        radial-gradient(circle 800px at bottom right, rgba(100, 100, 255, 0.08), transparent),
+        radial-gradient(circle 800px at top left, rgba(76, 114, 255, 0.12), transparent),
+        radial-gradient(circle 800px at bottom right, rgba(23, 64, 209, 0.14), transparent),
         /* Faint stars - multiple small radial gradients */
         radial-gradient(1px 1px at 10% 20%, rgba(255, 255, 255, 0.3), transparent),
         radial-gradient(1px 1px at 30% 70%, rgba(255, 255, 255, 0.3), transparent),

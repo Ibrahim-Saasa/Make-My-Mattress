@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSession } from "../src/contexts/SessionContext";
-import { Card, Input, Label, Button } from "./UI";
+import { BrandLogo, Card, Input, Label, Button } from "./UI";
 
 type SignupMethod = "EMAIL" | "PHONE";
 
@@ -70,7 +70,7 @@ const SignupScreen: React.FC = () => {
       className="min-h-screen flex items-center justify-center p-6 antialiased font-sans text-slate-100"
       style={{
         background:
-          "linear-gradient(135deg,#041229 0%, #0b3b66 45%, #153f6f 100%)",
+          "linear-gradient(135deg, #09174A 0%, #1237B5 55%, #1740D1 100%)",
       }}
     >
       <div
@@ -91,29 +91,16 @@ const SignupScreen: React.FC = () => {
         {/* Branding */}
         <div className="text-center space-y-4">
           <div className="flex justify-center">
-            <div
-              className="w-20 h-20 rounded-2xl flex items-center justify-center text-white shadow-lg"
-              style={{
-                background:
-                  "linear-gradient(135deg,#041229 0%, #0b3b66 45%, #153f6f 100%)",
-              }}
-            >
-              <svg
-                className="w-12 h-12"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-                />
-              </svg>
+            <div className="rounded-[1.9rem] border border-[rgba(23,64,209,0.14)] bg-[linear-gradient(180deg,#FFFFFF_0%,#F3F6FF_100%)] px-7 py-6 shadow-[0_20px_40px_rgba(9,23,74,0.12)]">
+              <BrandLogo
+                showWordmark={false}
+                size="xl"
+                layout="stacked"
+                className="gap-4"
+              />
             </div>
           </div>
-          <h1 className="text-2xl font-semibold text-slate-800">
+          <h1 className="brand-header text-2xl font-extrabold text-slate-800">
             Create account
           </h1>
         </div>
@@ -243,6 +230,16 @@ const SignupScreen: React.FC = () => {
         </form>
 
         <div className="text-center">
+          <p className="text-xs text-slate-600 mb-3">
+            Want to browse first?{" "}
+            <button
+              className="text-indigo-600 font-semibold"
+              onClick={() => navigate("/brand-hall")}
+            >
+              Continue as guest
+            </button>
+          </p>
+
           <p className="text-xs text-slate-600">
             Already have an account?{" "}
             <button

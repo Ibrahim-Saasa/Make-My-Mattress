@@ -5,7 +5,7 @@ import { ProductCategory } from "../../types";
 const CATEGORIES: Array<{ id: ProductCategory; label: string; emoji: string }> =
   [
     { id: "mattress", label: "Mattress", emoji: "🛏️" },
-    { id: "pillow", label: "Pillow", emoji: "🪑" },
+    { id: "pillow", label: "Pillow", emoji: "🛌" },
     { id: "bedsheet", label: "Bedsheet", emoji: "🧵" },
     { id: "accessories", label: "Accessories", emoji: "✨" },
   ];

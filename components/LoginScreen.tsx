@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSession } from "../src/contexts/SessionContext";
-import { Button, Card, Input, Label } from "./UI";
+import { BrandLogo, Button, Card, Input, Label } from "./UI";
 
 type LoginStep = "PHONE_INPUT" | "OTP_VERIFICATION" | "EMAIL_PASSWORD";
 
@@ -118,7 +118,7 @@ const LoginScreen: React.FC = () => {
       className="min-h-screen flex flex-col items-center justify-center p-6 relative overflow-hidden antialiased font-sans text-slate-100"
       style={{
         background:
-          "linear-gradient(135deg,#041229 0%, #0b3b66 45%, #153f6f 100%)",
+          "linear-gradient(135deg, #09174A 0%, #1237B5 55%, #1740D1 100%)",
       }}
     >
       {/* Subtle radial shine */}
@@ -150,7 +150,7 @@ const LoginScreen: React.FC = () => {
               className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
               style={{
                 background:
-                  "linear-gradient(135deg,#041229 0%, #0b3b66 45%, #153f6f 100%)",
+                  "linear-gradient(135deg, #09174A 0%, #1237B5 55%, #1740D1 100%)",
               }}
             >
               <svg
@@ -180,51 +180,39 @@ const LoginScreen: React.FC = () => {
       </div>
 
       {/* Main Login Card */}
-      <Card variant="elevated" className="w-full max-w-md space-y-6 p-8">
+      <Card
+        variant="elevated"
+        className="w-full max-w-md space-y-6 border-[rgba(141,161,240,0.18)] bg-[#121C3B] p-8 shadow-[0_30px_80px_rgba(7,18,56,0.45)]"
+      >
         {/* Header */}
         <div className="text-center space-y-4">
           <div className="flex justify-center">
-            <div
-              className="w-20 h-20 rounded-2xl flex items-center justify-center text-white shadow-lg"
-              style={{
-                background:
-                  "linear-gradient(135deg,#041229 0%, #0b3b66 45%, #153f6f 100%)",
-              }}
-            >
-              <svg
-                className="w-12 h-12"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-                />
-              </svg>
-            </div>
+            <BrandLogo
+              showWordmark={false}
+              size="xl"
+              layout="stacked"
+              className="gap-4"
+            />
           </div>
           <div>
-            <h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-50">
+            <h1 className="brand-header text-2xl font-extrabold text-white">
               Make My Mattress
             </h1>
-            <p className="text-sm text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">
-              Sleep experience designed for clarity and comfort.
+            <p className="mt-2 text-sm leading-relaxed text-[#D4DDFF]">
+              A calmer, more premium way to find the right comfort.
             </p>
           </div>
         </div>
 
         {/* Step Selector */}
-        <div className="grid grid-cols-2 gap-3 bg-slate-100 rounded-lg p-1">
+        <div className="grid grid-cols-2 gap-2 rounded-2xl bg-[#E8EDF7] p-1.5">
           <button
             type="button"
             onClick={() => setStep("PHONE_INPUT")}
-            className={`px-4 py-2 rounded-md text-sm font-semibold transition-all ${
+            className={`rounded-xl px-4 py-3 text-sm font-bold transition-all ${
               step === "PHONE_INPUT" || step === "OTP_VERIFICATION"
-                ? "bg-white text-indigo-600 shadow-sm"
-                : "text-slate-600 dark:text-slate-300"
+                ? "bg-white text-[var(--brand-primary)] shadow-sm"
+                : "text-[#95A5CF]"
             }`}
           >
             Phone
@@ -232,10 +220,10 @@ const LoginScreen: React.FC = () => {
           <button
             type="button"
             onClick={() => setStep("EMAIL_PASSWORD")}
-            className={`px-4 py-2 rounded-md text-sm font-semibold transition-all ${
+            className={`rounded-xl px-4 py-3 text-sm font-bold transition-all ${
               step === "EMAIL_PASSWORD"
-                ? "bg-white text-indigo-600 shadow-sm"
-                : "text-slate-600 dark:text-slate-300"
+                ? "bg-white text-[var(--brand-primary)] shadow-sm"
+                : "text-[#95A5CF]"
             }`}
           >
             Email
@@ -246,22 +234,22 @@ const LoginScreen: React.FC = () => {
         {step === "PHONE_INPUT" && (
           <div className="space-y-5 animate-in fade-in slide-in-from-bottom-4 duration-300">
             <div>
-              <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-50 mb-1">
+              <h2 className="mb-1 text-lg font-semibold text-white">
                 Login to get started
               </h2>
-              <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+              <p className="text-sm leading-relaxed text-[#D4DDFF]">
                 Enter your phone number to continue
               </p>
             </div>
 
             <form onSubmit={handleSendOtp} className="space-y-5">
               <div>
-                <Label htmlFor="phone" className="dark:text-slate-200">
+                <Label htmlFor="phone" className="text-[#EAF0FF]">
                   Mobile number
                 </Label>
-                <div className="flex gap-2 mt-2 w-full">
-                  <div className="flex items-center px-4 py-4 bg-slate-100 rounded-xl border border-slate-300 flex-shrink-0 w-20 justify-center">
-                    <span className="text-slate-600 font-semibold">+91</span>
+                <div className="mt-2 flex w-full gap-1">
+                  <div className="flex h-15 w-20 flex-shrink-0 items-center justify-center rounded-2xl border border-[#AEBBDB] bg-[#EFF3FF]">
+                    <span className="font-semibold text-[#22396D]">+91</span>
                   </div>
                   <Input
                     id="phone"
@@ -272,16 +260,16 @@ const LoginScreen: React.FC = () => {
                     onChange={(e) =>
                       setPhone(e.target.value.replace(/\D/g, ""))
                     }
-                    placeholder="9876543210"
-                    className="flex-1 w-full"
+                    placeholder="0000000000"
+                    className="h-15 flex-1 !w-[297px] !rounded-2xl !border-[#8FA4E8] !bg-[#253250] !px-5 !text-white placeholder:!text-[#91A1C8] focus:!border-white"
                     autoFocus
                   />
                 </div>
               </div>
 
               {error && (
-                <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-                  <p className="text-sm text-red-700">{error}</p>
+                <div className="rounded-2xl border border-[#D76A72]/40 bg-[#3B2030] p-3">
+                  <p className="text-sm text-[#FFB8BE]">{error}</p>
                 </div>
               )}
 
@@ -291,6 +279,7 @@ const LoginScreen: React.FC = () => {
                 fullWidth
                 isLoading={isLoading}
                 size="lg"
+                className="h-16 !rounded-2xl !text-base !font-extrabold"
               >
                 Send OTP
               </Button>
@@ -301,18 +290,18 @@ const LoginScreen: React.FC = () => {
         {step === "OTP_VERIFICATION" && (
           <div className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-300">
             <div>
-              <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-50 mb-1">
+              <h2 className="mb-1 text-lg font-semibold text-white">
                 Verify your number
               </h2>
-              <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+              <p className="text-sm leading-relaxed text-[#D4DDFF]">
                 We sent a code to{" "}
-                <span className="font-semibold text-slate-50">+91 {phone}</span>
+                <span className="font-semibold text-white">+91 {phone}</span>
               </p>
             </div>
 
             <form onSubmit={handleVerifyOtp} className="space-y-5">
               <div>
-                <Label htmlFor="otp" className="dark:text-slate-200">
+                <Label htmlFor="otp" className="text-[#EAF0FF]">
                   Verification Code
                 </Label>
                 <Input
@@ -325,14 +314,14 @@ const LoginScreen: React.FC = () => {
                     setOtpInput(e.target.value.replace(/\D/g, ""))
                   }
                   placeholder="000000"
-                  className="font-mono text-center text-lg tracking-[0.5em] mt-2"
+                  className="mt-2 h-16 !rounded-2xl !border-[#8FA4E8] !bg-[#253250] !font-mono !text-center !text-lg !tracking-[0.5em] !text-white placeholder:!text-[#91A1C8] focus:!border-white"
                   autoFocus
                 />
               </div>
 
               {error && (
-                <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-                  <p className="text-sm text-red-700">{error}</p>
+                <div className="rounded-2xl border border-[#D76A72]/40 bg-[#3B2030] p-3">
+                  <p className="text-sm text-[#FFB8BE]">{error}</p>
                 </div>
               )}
 
@@ -343,6 +332,7 @@ const LoginScreen: React.FC = () => {
                 isLoading={isLoading}
                 disabled={otpInput.length < 6}
                 size="lg"
+                className="h-16 !rounded-2xl !text-base !font-extrabold"
               >
                 Verify & Continue
               </Button>
@@ -352,19 +342,19 @@ const LoginScreen: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setStep("PHONE_INPUT")}
-                className="text-sm text-indigo-600 hover:underline font-medium"
+                className="text-sm font-medium text-[#BFD0FF] hover:text-white hover:underline"
               >
                 Use a different number
               </button>
             </div>
 
             <div className="text-center">
-              <p className="text-xs text-slate-600">
+              <p className="text-xs text-[#B7C5E8]">
                 Didn't get a code?{" "}
                 <button
                   type="button"
                   onClick={handleSendOtp}
-                  className="text-indigo-600 hover:underline font-semibold"
+                  className="font-semibold text-[#DDE6FF] hover:text-white hover:underline"
                 >
                   Resend
                 </button>
@@ -376,17 +366,19 @@ const LoginScreen: React.FC = () => {
         {step === "EMAIL_PASSWORD" && (
           <div className="space-y-5 animate-in fade-in slide-in-from-bottom-4 duration-300">
             <div>
-              <h2 className="text-lg font-semibold text-slate-800 mb-1">
+              <h2 className="mb-1 text-lg font-semibold text-white">
                 Login with email
               </h2>
-              <p className="text-sm text-slate-600 leading-relaxed">
+              <p className="text-sm leading-relaxed text-[#D4DDFF]">
                 Use your email and password
               </p>
             </div>
 
             <form onSubmit={handleEmailLogin} className="space-y-5">
               <div>
-                <Label htmlFor="email">Email Address</Label>
+                <Label htmlFor="email" className="text-[#EAF0FF]">
+                  Email Address
+                </Label>
                 <Input
                   id="email"
                   variant="large"
@@ -394,13 +386,15 @@ const LoginScreen: React.FC = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com"
-                  className="mt-2"
+                  className="mt-2 h-16 !rounded-2xl !border-[#8FA4E8] !bg-[#253250] !text-white placeholder:!text-[#91A1C8] focus:!border-white"
                   autoFocus
                 />
               </div>
 
               <div>
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password" className="text-[#EAF0FF]">
+                  Password
+                </Label>
                 <Input
                   id="password"
                   variant="large"
@@ -408,13 +402,13 @@ const LoginScreen: React.FC = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="mt-2"
+                  className="mt-2 h-16 !rounded-2xl !border-[#8FA4E8] !bg-[#253250] !text-white placeholder:!text-[#91A1C8] focus:!border-white"
                 />
               </div>
 
               {error && (
-                <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-                  <p className="text-sm text-red-700">{error}</p>
+                <div className="rounded-2xl border border-[#D76A72]/40 bg-[#3B2030] p-3">
+                  <p className="text-sm text-[#FFB8BE]">{error}</p>
                 </div>
               )}
 
@@ -424,6 +418,7 @@ const LoginScreen: React.FC = () => {
                 fullWidth
                 isLoading={isLoading}
                 size="lg"
+                className="h-16 !rounded-2xl !text-base !font-extrabold"
               >
                 Login
               </Button>
@@ -433,44 +428,61 @@ const LoginScreen: React.FC = () => {
 
         {/* Divider */}
         <div className="flex items-center gap-3 my-6">
-          <div className="flex-1 h-px bg-slate-200"></div>
-          <span className="text-xs text-slate-500 uppercase font-semibold">
+          <div className="h-px flex-1 bg-[#4A5D93]"></div>
+          <span className="text-xs font-semibold uppercase text-[#9FB0DA]">
             or
           </span>
-          <div className="flex-1 h-px bg-slate-200"></div>
+          <div className="h-px flex-1 bg-[#4A5D93]"></div>
         </div>
 
         {/* Footer Links */}
         <div className="space-y-3">
-          <p className="text-center text-sm text-slate-600">
+          <p className="text-center text-sm text-[#9FB0DA]">
+            Prefer to look around first?{" "}
+            <button
+              type="button"
+              onClick={() => navigate("/brand-hall")}
+              className="font-semibold text-[#DDE6FF] hover:text-white hover:underline"
+            >
+              Browse as guest
+            </button>
+          </p>
+
+          <p className="text-center text-sm text-[#9FB0DA]">
             Don't have an account?{" "}
             <button
               type="button"
               onClick={() => navigate("/signup")}
-              className="text-indigo-600 hover:underline font-semibold"
+              className="font-semibold text-[#DDE6FF] hover:text-white hover:underline"
             >
               Sign up
             </button>
           </p>
 
-          <p className="text-center text-sm text-slate-600">
+          <p className="text-center text-sm text-[#9FB0DA]">
             Admin user?{" "}
             <button
               type="button"
               onClick={() => navigate("/admin-login")}
-              className="text-rose-600 hover:underline font-bold"
+              className="font-bold text-[#FFB8BE] hover:text-white hover:underline"
             >
               Access Capitol
             </button>
           </p>
 
-          <p className="text-center text-xs text-slate-500 leading-relaxed">
+          <p className="text-center text-xs leading-relaxed text-[#8D9EC6]">
             By continuing, you agree to our{" "}
-            <button type="button" className="text-indigo-600 hover:underline">
+            <button
+              type="button"
+              className="text-[#DDE6FF] hover:text-white hover:underline"
+            >
               Terms
             </button>
             {" & "}
-            <button type="button" className="text-indigo-600 hover:underline">
+            <button
+              type="button"
+              className="text-[#DDE6FF] hover:text-white hover:underline"
+            >
               Privacy Policy
             </button>
           </p>

@@ -20,13 +20,13 @@ export const BUTTON_VARIANTS = {
   primary: {
     base: `
       px-6 py-3 rounded-xl font-bold text-white
-      bg-gradient-to-r from-indigo-600 to-indigo-700
-      hover:from-indigo-700 hover:to-indigo-800
-      active:from-indigo-800 active:to-indigo-900
+      bg-gradient-to-r from-[#1740D1] to-[#0C1F63]
+      hover:from-[#1237B5] hover:to-[#09174A]
+      active:from-[#0C2B93] active:to-[#09174A]
       shadow-lg hover:shadow-xl
       transition-all duration-200 ease-out
       hover:scale-105 active:scale-95
-      focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:ring-offset-2
+      focus:outline-none focus:ring-2 focus:ring-[rgba(23,64,209,0.25)] focus:ring-offset-2
       disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100
     `,
     small: `px-4 py-2 rounded-lg text-sm`,
@@ -37,10 +37,10 @@ export const BUTTON_VARIANTS = {
   secondary: {
     base: `
       px-6 py-3 rounded-xl font-bold
-      border-2 border-indigo-600 text-indigo-600
-      hover:bg-indigo-50 dark:hover:bg-indigo-900/20
+      border-2 border-[var(--brand-primary)] text-[var(--brand-primary)]
+      hover:bg-[rgba(23,64,209,0.06)] dark:hover:bg-[rgba(23,64,209,0.16)]
       transition-all duration-200
-      focus:outline-none focus:ring-2 focus:ring-indigo-300
+      focus:outline-none focus:ring-2 focus:ring-[rgba(23,64,209,0.2)]
       disabled:opacity-50 disabled:cursor-not-allowed
     `,
     small: `px-4 py-2 rounded-lg text-sm border-1.5`,
@@ -50,10 +50,10 @@ export const BUTTON_VARIANTS = {
   // Tertiary: Ghost button (minimal)
   tertiary: {
     base: `
-      px-6 py-3 rounded-xl font-bold text-indigo-600
-      hover:bg-indigo-50 dark:hover:bg-indigo-900/20
+      px-6 py-3 rounded-xl font-bold text-[var(--brand-primary)]
+      hover:bg-[rgba(23,64,209,0.06)] dark:hover:bg-[rgba(23,64,209,0.18)]
       transition-all duration-200
-      focus:outline-none focus:ring-2 focus:ring-indigo-200
+      focus:outline-none focus:ring-2 focus:ring-[rgba(23,64,209,0.15)]
       disabled:opacity-50
     `,
     small: `px-4 py-2 rounded-lg text-sm`,
@@ -63,13 +63,13 @@ export const BUTTON_VARIANTS = {
   // Accent: Warm CTAs (rose/orange)
   accent: {
     base: `
-      px-6 py-3 rounded-xl font-bold text-white
-      bg-gradient-to-r from-rose-500 to-pink-600
-      hover:from-rose-600 hover:to-pink-700
+      px-6 py-3 rounded-xl font-bold text-[#09174A]
+      bg-gradient-to-r from-[#C8A55B] to-[#9A7A39]
+      hover:from-[#B3914B] hover:to-[#7F632E]
       shadow-lg hover:shadow-xl
       transition-all duration-200
       hover:scale-105 active:scale-95
-      focus:outline-none focus:ring-2 focus:ring-rose-300
+      focus:outline-none focus:ring-2 focus:ring-[rgba(200,165,91,0.3)]
       disabled:opacity-50
     `,
     small: `px-4 py-2 rounded-lg text-sm`,
@@ -115,7 +115,7 @@ export const CARD_VARIANTS = {
       shadow-sm hover:shadow-md
       transition-shadow duration-200
     `,
-    interactive: `cursor-pointer hover:border-indigo-300 dark:hover:border-indigo-700`,
+    interactive: `cursor-pointer hover:border-[rgba(23,64,209,0.24)] dark:hover:border-[#4C72FF]`,
     padding: `p-6`,
   },
 
@@ -124,13 +124,13 @@ export const CARD_VARIANTS = {
     base: `
       bg-white dark:bg-slate-900
       rounded-3xl
-      border border-gray-200 dark:border-slate-700
+      border border-[#DCE3F3] dark:border-[#24408B]
       shadow-lg hover:shadow-2xl
       transition-all duration-300
     `,
     interactive: `
       cursor-pointer transform hover:scale-105 hover:-translate-y-1
-      hover:border-indigo-400 dark:hover:border-indigo-600
+      hover:border-[var(--brand-primary)] dark:hover:border-[#4C72FF]
     `,
     padding: `p-8`,
   },
@@ -138,10 +138,10 @@ export const CARD_VARIANTS = {
   // Gradient: Cards with subtle gradient background
   gradient: {
     base: `
-      bg-gradient-to-br from-gray-50 to-gray-100
-      dark:from-slate-800 dark:to-slate-900
+      bg-gradient-to-br from-[#F8FAFF] to-[#EEF3FF]
+      dark:from-[#0D1B4E] dark:to-[#11235A]
       rounded-2xl
-      border border-gray-200 dark:border-slate-700
+      border border-[#DCE3F3] dark:border-[#24408B]
       shadow-md
     `,
     padding: `p-6`,
@@ -153,7 +153,7 @@ export const CARD_VARIANTS = {
       bg-white/80 dark:bg-slate-900/70
       backdrop-blur-lg
       rounded-2xl
-      border border-white/20 dark:border-slate-700/30
+      border border-white/35 dark:border-[#3151A4]/35
       shadow-lg
     `,
     padding: `p-6`,
@@ -171,14 +171,14 @@ export const INPUT_VARIANTS = {
       w-full
       px-4 py-3
       rounded-lg
-      border-2 border-gray-300 dark:border-slate-600
+      border-2 border-[#C7D2EA] dark:border-[#3151A4]
       bg-white dark:bg-slate-800
       text-gray-900 dark:text-white
       placeholder-gray-500 dark:placeholder-gray-400
       transition-all duration-200
-      focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-900/30
+      focus:outline-none focus:border-[var(--brand-primary)] focus:ring-2 focus:ring-[rgba(23,64,209,0.16)] dark:focus:ring-[rgba(76,114,255,0.22)]
       disabled:opacity-50 disabled:cursor-not-allowed
-      hover:border-gray-400 dark:hover:border-slate-500
+      hover:border-[#AEBBDB] dark:hover:border-[#4870D7]
     `,
     error: `border-red-500 focus:border-red-500 focus:ring-red-200 dark:focus:ring-red-900/30`,
     success: `border-emerald-500 focus:border-emerald-500 focus:ring-emerald-200`,
@@ -238,8 +238,8 @@ export const BADGE_VARIANTS = {
     base: `
       inline-flex items-center gap-2
       px-3 py-1 rounded-full
-      bg-indigo-100 dark:bg-indigo-900/30
-      text-indigo-700 dark:text-indigo-300
+      bg-[rgba(23,64,209,0.08)] dark:bg-[rgba(76,114,255,0.18)]
+      text-[var(--brand-primary)] dark:text-[#D9E2FF]
       text-xs font-bold uppercase tracking-wider
     `,
   },
@@ -377,7 +377,7 @@ export const STATES = {
   loading: `relative pointer-events-none opacity-75`,
 
   // Focus ring (accessible)
-  focusRing: `focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`,
+  focusRing: `focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--brand-primary)]`,
 
   // Error state
   error: `border-red-500 focus:ring-red-200`,

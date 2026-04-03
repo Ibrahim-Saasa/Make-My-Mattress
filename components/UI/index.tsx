@@ -7,6 +7,7 @@ export * from "./Advanced";
 export * from "./Layouts";
 export * from "./Forms";
 export * from "./Polish";
+export { default as BrandLogo } from "./BrandLogo";
 
 // ============================================================================
 // BUTTON COMPONENT - Premium, Accessible, Multiple Variants
@@ -57,38 +58,38 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 
     const variantStyles = {
       primary: `
-        bg-gradient-to-r from-indigo-500 to-indigo-600
-        hover:from-indigo-600 hover:to-indigo-700
+        bg-gradient-to-r from-[#1740D1] to-[#0C1F63]
+        hover:from-[#1237B5] hover:to-[#09174A]
         text-white shadow-md hover:shadow-lg
-        focus:ring-indigo-200
+        focus:ring-[rgba(23,64,209,0.25)]
       `,
       secondary: `
-        border-2 border-indigo-600 text-indigo-600
-        hover:bg-indigo-50 dark:hover:bg-indigo-900/20
-        focus:ring-indigo-300
+        border-2 border-[var(--brand-primary)] text-[var(--brand-primary)]
+        hover:bg-[rgba(23,64,209,0.06)] dark:hover:bg-[rgba(23,64,209,0.16)]
+        focus:ring-[rgba(23,64,209,0.2)]
       `,
       tertiary: `
-        text-indigo-600 hover:bg-indigo-50
-        dark:text-indigo-400 dark:hover:bg-indigo-900/20
-        focus:ring-indigo-200
+        text-[var(--brand-primary)] hover:bg-[rgba(23,64,209,0.06)]
+        dark:text-[#7F9CFF] dark:hover:bg-[rgba(23,64,209,0.18)]
+        focus:ring-[rgba(23,64,209,0.15)]
       `,
       accent: `
-        bg-gradient-to-r from-rose-500 to-pink-600
-        hover:from-rose-600 hover:to-pink-700
-        text-white shadow-lg hover:shadow-xl
-        focus:ring-rose-300
+        bg-gradient-to-r from-[#C8A55B] to-[#9A7A39]
+        hover:from-[#B3914B] hover:to-[#7F632E]
+        text-[#09174A] shadow-lg hover:shadow-xl
+        focus:ring-[rgba(200,165,91,0.3)]
       `,
       success: `
-        bg-gradient-to-r from-emerald-500 to-teal-600
-        hover:from-emerald-600 hover:to-teal-700
+        bg-gradient-to-r from-[#0A7D67] to-[#095B5D]
+        hover:from-[#086A59] hover:to-[#074A4A]
         text-white shadow-lg hover:shadow-xl
-        focus:ring-emerald-300
+        focus:ring-[rgba(10,125,103,0.25)]
       `,
       danger: `
-        bg-gradient-to-r from-red-500 to-rose-600
-        hover:from-red-600 hover:to-rose-700
+        bg-gradient-to-r from-[#C25158] to-[#9E2F49]
+        hover:from-[#A7444C] hover:to-[#83253D]
         text-white shadow-lg hover:shadow-xl
-        focus:ring-red-300
+        focus:ring-[rgba(194,81,88,0.25)]
       `,
     };
 
@@ -149,25 +150,25 @@ export const Card = React.forwardRef<HTMLDivElement, CardProps>(
 
     const variantStyles = {
       minimal: `
-        bg-white dark:bg-slate-900
-        border border-gray-100 dark:border-slate-800
+        bg-white dark:bg-[var(--color-card-background)]
+        border border-gray-100 dark:border-[var(--color-border)]
         shadow-sm hover:shadow-md
       `,
       elevated: `
-        bg-white dark:bg-slate-900
-        border border-gray-200 dark:border-slate-700
+        bg-white dark:bg-[var(--color-card-background)]
+        border border-gray-200 dark:border-[var(--color-border)]
         shadow-md hover:shadow-lg
       `,
       gradient: `
         bg-gradient-to-br from-gray-50 to-gray-100
-        dark:from-slate-800 dark:to-slate-900
-        border border-gray-200 dark:border-slate-700
+        dark:from-[var(--color-card-background)] dark:to-[var(--color-card-background-hover)]
+        border border-gray-200 dark:border-[var(--color-border)]
         shadow-md
       `,
       glass: `
         bg-white/80 dark:bg-slate-900/70
         backdrop-blur-lg
-        border border-white/20 dark:border-slate-700/30
+        border border-white/30 dark:border-slate-700/40
         shadow-lg
       `,
     };
@@ -250,14 +251,14 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ) => {
     const baseStyles = `
       w-full px-4 py-3 rounded-lg text-base
-      bg-white dark:bg-slate-800
+      bg-white dark:bg-[var(--color-input-bg)]
       text-slate-900 dark:text-white
       placeholder-slate-400 dark:placeholder-slate-400
-      border-2 border-gray-300 dark:border-slate-600
+      border-2 border-gray-300 dark:border-[var(--color-input-border)]
       transition-all duration-200
       focus:outline-none focus:ring-2 focus:ring-offset-2
-      focus:border-indigo-500 focus:ring-indigo-200 dark:focus:ring-indigo-900/30
-      hover:border-slate-400 dark:hover:border-slate-500
+      focus:border-indigo-500 focus:ring-indigo-200 dark:focus:border-[var(--color-input-border-focus)] dark:focus:ring-[rgba(125,152,255,0.18)]
+      hover:border-slate-400 dark:hover:border-[#5875BC]
       disabled:opacity-50 disabled:cursor-not-allowed
     `;
 
