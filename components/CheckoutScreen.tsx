@@ -93,7 +93,7 @@ const CheckoutScreen: React.FC<Props> = ({
   );
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[linear-gradient(180deg,#F7F9FF_0%,#EEF3FF_100%)] dark:bg-theme-background">
+    <div className="relative min-h-screen overflow-hidden bg-white dark:bg-slate-950">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(23,64,209,0.08),transparent_24%),radial-gradient(circle_at_bottom_right,rgba(200,165,91,0.08),transparent_20%)] dark:hidden" />
       <div className="pointer-events-none absolute inset-x-0 top-0 hidden h-full dark:block">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(76,114,255,0.08),transparent_28%),radial-gradient(circle_at_bottom_right,rgba(255,255,255,0.03),transparent_24%)]" />

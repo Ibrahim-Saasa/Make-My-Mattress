@@ -14,33 +14,42 @@ const ProductWizardResults: React.FC<ProductWizardResultsProps> = ({
   const { goBack, closeWizard } = useProductWizard();
 
   return (
-    <div className="p-6 max-w-3xl mx-auto">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold">Recommended {category}s</h2>
+    <div className="p-6 max-w-3xl mx-auto bg-slate-950/95 border border-slate-800 rounded-[2rem] shadow-[0_35px_120px_rgba(15,23,42,0.35)] backdrop-blur-xl">
+      <div className="flex items-start justify-between gap-4 mb-6">
+        <div>
+          <h2 className="text-2xl font-black text-white">
+            Recommended {category}s
+          </h2>
+          <p className="mt-2 text-sm text-slate-400 max-w-xl">
+            Based on your preferences, here are our top recommendations
+          </p>
+        </div>
         <button
           onClick={closeWizard}
-          className="text-gray-500 hover:text-gray-700 text-xl"
+          className="text-slate-400 hover:text-white text-xl transition"
         >
           ✕
         </button>
       </div>
 
       {recommendations.length === 0 ? (
-        <div className="text-center py-8 text-gray-600">
+        <div className="text-center py-12 text-slate-400">
           No products found for your preferences. Please try again.
         </div>
       ) : (
-        <div className="grid gap-4 mb-6">
+        <div className="grid gap-4 mb-8">
           {recommendations.map((product) => (
             <div
               key={product.id}
-              className="border rounded-lg p-4 hover:shadow-md transition"
+              className="border border-slate-700 rounded-[1.5rem] p-6 bg-slate-900/90 hover:border-indigo-400 transition shadow-sm"
             >
-              <div className="flex justify-between items-start mb-2">
-                <h3 className="text-lg font-semibold">{product.name}</h3>
+              <div className="flex justify-between items-start mb-4">
+                <h3 className="text-xl font-bold text-white">{product.name}</h3>
                 <div className="text-right">
-                  <div className="text-sm text-gray-600">Match Score</div>
-                  <div className="text-2xl font-bold text-indigo-600">
+                  <div className="text-xs text-slate-400 uppercase tracking-wider">
+                    Match Score
+                  </div>
+                  <div className="text-3xl font-black text-indigo-400">
                     {Math.round(
                       (product.match_score || product.matchScore || 0) * 100,
                     )}
@@ -48,13 +57,20 @@ const ProductWizardResults: React.FC<ProductWizardResultsProps> = ({
                   </div>
                 </div>
               </div>
-              <p className="text-gray-700 mb-3">{product.description}</p>
-              <div className="text-sm text-gray-600 mb-4">
-                <strong>Price:</strong> ${product.price || "N/A"} |{" "}
-                <strong>Rating:</strong>{" "}
-                {product.rating ? `${product.rating}/5` : "N/A"}
+              <p className="text-slate-300 mb-4 leading-relaxed">
+                {product.description}
+              </p>
+              <div className="flex items-center justify-between mb-6">
+                <div className="text-sm text-slate-400">
+                  <span className="font-semibold text-indigo-300">Price:</span>{" "}
+                  ${product.price || "N/A"}
+                </div>
+                <div className="text-sm text-slate-400">
+                  <span className="font-semibold text-indigo-300">Rating:</span>{" "}
+                  {product.rating ? `${product.rating}/5` : "N/A"}
+                </div>
               </div>
-              <button className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition">
+              <button className="w-full px-6 py-3 bg-indigo-600 text-white rounded-[0.75rem] hover:bg-indigo-700 transition font-semibold">
                 View Details
               </button>
             </div>
@@ -62,16 +78,16 @@ const ProductWizardResults: React.FC<ProductWizardResultsProps> = ({
         </div>
       )}
 
-      <div className="flex gap-3">
+      <div className="flex gap-4">
         <button
           onClick={goBack}
-          className="flex-1 px-4 py-2 border border-gray-300 rounded hover:bg-gray-50"
+          className="flex-1 px-6 py-3 border border-slate-700 rounded-[0.75rem] bg-slate-800/90 text-slate-300 hover:bg-slate-700 transition"
         >
           Back to Categories
         </button>
         <button
           onClick={closeWizard}
-          className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
+          className="flex-1 px-6 py-3 bg-indigo-600 text-white rounded-[0.75rem] hover:bg-indigo-700 transition font-semibold"
         >
           Continue Shopping
         </button>

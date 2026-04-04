@@ -55,7 +55,9 @@ const App: React.FC = () => {
 
   const [userRole, setUserRole] = useState<UserRole | null>(null);
   const [userName, setUserName] = useState<string | null>(null);
-  const [selectedBrand, setSelectedBrand] = useState<BrandMetadata | null>(null);
+  const [selectedBrand, setSelectedBrand] = useState<BrandMetadata | null>(
+    null,
+  );
   const [isAiConsultantOpen, setIsAiConsultantOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
@@ -292,226 +294,226 @@ const App: React.FC = () => {
             <header className="fixed top-0 w-full z-40 border-b border-theme-border bg-theme-card/95 px-4 py-3 backdrop-blur-xl md:px-6 md:py-4">
               <div className="mx-auto max-w-7xl">
                 <div className="flex items-center justify-between gap-3">
-                <div
-                  className="flex min-w-0 items-center gap-2 cursor-pointer group"
-                  onClick={() => navigate("/brand-hall")}
-                >
-                  <BrandLogo
-                    className="group-hover:scale-[1.02] transition-transform"
-                    compact
-                    size="sm"
-                  />
-                  <div className="hidden min-[420px]:block">
-                    <p className="text-[10px] font-bold uppercase tracking-[0.26em] text-theme-subtext">
-                      Make My Mattress
-                    </p>
-                    <p className="mt-1 text-xs text-theme-secondary">
-                      Factory-direct comfort
-                    </p>
+                  <div
+                    className="flex min-w-0 items-center gap-2 cursor-pointer group"
+                    onClick={() => navigate("/brand-hall")}
+                  >
+                    <BrandLogo
+                      className="group-hover:scale-[1.02] transition-transform"
+                      compact
+                      size="sm"
+                    />
+                    <div className="hidden min-[420px]:block">
+                      <p className="text-[10px] font-bold uppercase tracking-[0.26em] text-theme-subtext">
+                        Make My Mattress
+                      </p>
+                      <p className="mt-1 text-xs text-theme-secondary">
+                        Factory-direct comfort
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-1 sm:gap-2 md:hidden">
+                    <button
+                      onClick={() => setIsAiConsultantOpen(true)}
+                      className="flex h-10 w-10 items-center justify-center rounded-full border border-[rgba(23,64,209,0.12)] bg-[rgba(23,64,209,0.06)] text-[var(--brand-primary)] transition-all hover:bg-[var(--brand-primary)] hover:text-white"
+                      title="Ask sleep expert"
+                      aria-label="Ask sleep expert"
+                    >
+                      <svg
+                        className="h-5 w-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-4l-4 4v-4z"
+                        />
+                      </svg>
+                    </button>
+                    <button
+                      onClick={() => setIsCartOpen(true)}
+                      className="relative flex h-10 w-10 items-center justify-center rounded-full text-theme-secondary transition-colors hover:text-indigo-600"
+                      aria-label="Open cart"
+                    >
+                      <svg
+                        className="h-6 w-6"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+                        />
+                      </svg>
+                      {cartItems.length > 0 && (
+                        <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full border-2 border-theme-card bg-brand-amber text-[10px] font-black text-brand-navy">
+                          {cartItems.length}
+                        </span>
+                      )}
+                    </button>
+                    <button
+                      onClick={toggleTheme}
+                      className="flex h-10 w-10 items-center justify-center rounded-full text-theme-secondary transition-colors hover:text-indigo-600"
+                      title={
+                        theme === "light"
+                          ? "Switch to Dark Mode"
+                          : "Switch to Light Mode"
+                      }
+                      aria-label="Toggle theme"
+                    >
+                      {theme === "light" ? (
+                        <svg
+                          className="h-6 w-6"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+                          />
+                        </svg>
+                      ) : (
+                        <svg
+                          className="h-6 w-6"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M12 3v1m0 16v1m9-9h1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+                          />
+                        </svg>
+                      )}
+                    </button>
+                  </div>
+
+                  <div className="hidden items-center gap-6 md:flex">
+                    {userName && (
+                      <span className="text-sm font-bold text-theme-secondary">
+                        Hello, {userName}!
+                      </span>
+                    )}
+                    {session && (
+                      <button
+                        onClick={() => navigate("/profile")}
+                        className="p-2 text-theme-secondary hover:text-indigo-600 transition-colors"
+                      >
+                        <svg
+                          className="w-6 h-6"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                          />
+                        </svg>
+                      </button>
+                    )}
+                    <button
+                      onClick={() => setIsCartOpen(true)}
+                      className="relative p-2 text-theme-secondary hover:text-indigo-600 transition-colors"
+                    >
+                      <svg
+                        className="w-6 h-6"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+                        />
+                      </svg>
+                      {cartItems.length > 0 && (
+                        <span className="absolute -top-1 -right-1 bg-brand-amber text-brand-navy text-[10px] font-black w-5 h-5 rounded-full flex items-center justify-center border-2 border-theme-card">
+                          {cartItems.length}
+                        </span>
+                      )}
+                    </button>
+                    <button
+                      onClick={() => setIsAiConsultantOpen(true)}
+                      className="flex items-center gap-2 rounded-full border border-[rgba(23,64,209,0.12)] bg-[rgba(23,64,209,0.06)] px-4 py-2 text-xs font-bold text-[var(--brand-primary)] transition-all hover:bg-[var(--brand-primary)] hover:text-white"
+                    >
+                      ASK SLEEP EXPERT
+                    </button>
+
+                    {/* Theme Toggle Button */}
+                    <button
+                      onClick={toggleTheme}
+                      className="p-2 text-theme-secondary hover:text-indigo-600 transition-colors"
+                      title={
+                        theme === "light"
+                          ? "Switch to Dark Mode"
+                          : "Switch to Light Mode"
+                      }
+                    >
+                      {theme === "light" ? (
+                        <svg
+                          className="w-6 h-6"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+                          />
+                        </svg>
+                      ) : (
+                        <svg
+                          className="w-6 h-6"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M12 3v1m0 16v1m9-9h1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+                          />
+                        </svg>
+                      )}
+                    </button>
+
+                    {session ? (
+                      <button
+                        onClick={handleLogout}
+                        className="text-xs font-bold text-theme-secondary hover:text-indigo-600 uppercase tracking-widest transition-colors"
+                      >
+                        Logout
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => navigate("/login")}
+                        className="rounded-full border border-theme-border px-4 py-2 text-xs font-bold text-theme-secondary hover:text-indigo-600 hover:border-indigo-200 uppercase tracking-widest transition-colors"
+                      >
+                        Sign In
+                      </button>
+                    )}
                   </div>
                 </div>
-
-                <div className="flex items-center gap-1 sm:gap-2 md:hidden">
-                  <button
-                    onClick={() => setIsAiConsultantOpen(true)}
-                    className="flex h-10 w-10 items-center justify-center rounded-full border border-[rgba(23,64,209,0.12)] bg-[rgba(23,64,209,0.06)] text-[var(--brand-primary)] transition-all hover:bg-[var(--brand-primary)] hover:text-white"
-                    title="Ask sleep expert"
-                    aria-label="Ask sleep expert"
-                  >
-                    <svg
-                      className="h-5 w-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-4l-4 4v-4z"
-                      />
-                    </svg>
-                  </button>
-                  <button
-                    onClick={() => setIsCartOpen(true)}
-                    className="relative flex h-10 w-10 items-center justify-center rounded-full text-theme-secondary transition-colors hover:text-indigo-600"
-                    aria-label="Open cart"
-                  >
-                    <svg
-                      className="h-6 w-6"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
-                      />
-                    </svg>
-                    {cartItems.length > 0 && (
-                      <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full border-2 border-theme-card bg-brand-amber text-[10px] font-black text-brand-navy">
-                        {cartItems.length}
-                      </span>
-                    )}
-                  </button>
-                  <button
-                    onClick={toggleTheme}
-                    className="flex h-10 w-10 items-center justify-center rounded-full text-theme-secondary transition-colors hover:text-indigo-600"
-                    title={
-                      theme === "light"
-                        ? "Switch to Dark Mode"
-                        : "Switch to Light Mode"
-                    }
-                    aria-label="Toggle theme"
-                  >
-                    {theme === "light" ? (
-                      <svg
-                        className="h-6 w-6"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
-                        />
-                      </svg>
-                    ) : (
-                      <svg
-                        className="h-6 w-6"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M12 3v1m0 16v1m9-9h1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
-                        />
-                      </svg>
-                    )}
-                  </button>
-                </div>
-
-                <div className="hidden items-center gap-6 md:flex">
-                  {userName && (
-                    <span className="text-sm font-bold text-theme-secondary">
-                      Hello, {userName}!
-                    </span>
-                  )}
-                  {session && (
-                    <button
-                      onClick={() => navigate("/profile")}
-                      className="p-2 text-theme-secondary hover:text-indigo-600 transition-colors"
-                    >
-                      <svg
-                        className="w-6 h-6"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                        />
-                      </svg>
-                    </button>
-                  )}
-                  <button
-                    onClick={() => setIsCartOpen(true)}
-                    className="relative p-2 text-theme-secondary hover:text-indigo-600 transition-colors"
-                  >
-                    <svg
-                      className="w-6 h-6"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
-                      />
-                    </svg>
-                    {cartItems.length > 0 && (
-                      <span className="absolute -top-1 -right-1 bg-brand-amber text-brand-navy text-[10px] font-black w-5 h-5 rounded-full flex items-center justify-center border-2 border-theme-card">
-                        {cartItems.length}
-                      </span>
-                    )}
-                  </button>
-                  <button
-                    onClick={() => setIsAiConsultantOpen(true)}
-                    className="flex items-center gap-2 rounded-full border border-[rgba(23,64,209,0.12)] bg-[rgba(23,64,209,0.06)] px-4 py-2 text-xs font-bold text-[var(--brand-primary)] transition-all hover:bg-[var(--brand-primary)] hover:text-white"
-                  >
-                    ASK SLEEP EXPERT
-                  </button>
-
-                  {/* Theme Toggle Button */}
-                  <button
-                    onClick={toggleTheme}
-                    className="p-2 text-theme-secondary hover:text-indigo-600 transition-colors"
-                    title={
-                      theme === "light"
-                        ? "Switch to Dark Mode"
-                        : "Switch to Light Mode"
-                    }
-                  >
-                    {theme === "light" ? (
-                      <svg
-                        className="w-6 h-6"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
-                        />
-                      </svg>
-                    ) : (
-                      <svg
-                        className="w-6 h-6"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M12 3v1m0 16v1m9-9h1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
-                        />
-                      </svg>
-                    )}
-                  </button>
-
-                  {session ? (
-                    <button
-                      onClick={handleLogout}
-                      className="text-xs font-bold text-theme-secondary hover:text-indigo-600 uppercase tracking-widest transition-colors"
-                    >
-                      Logout
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => navigate("/login")}
-                      className="rounded-full border border-theme-border px-4 py-2 text-xs font-bold text-theme-secondary hover:text-indigo-600 hover:border-indigo-200 uppercase tracking-widest transition-colors"
-                    >
-                      Sign In
-                    </button>
-                  )}
-                </div>
-              </div>
 
                 <div className="mt-3 flex items-center gap-2 md:hidden">
                   {session ? (
@@ -567,6 +569,7 @@ const App: React.FC = () => {
                   cartCount={cartItems.length}
                   isGuest={!session}
                   onLogin={() => navigate("/login")}
+                  onCartClick={() => navigate("/checkout")}
                 />
               }
             />
@@ -656,12 +659,7 @@ const App: React.FC = () => {
                 <DealerDashboard onBack={() => navigate("/brand-hall")} />
               }
             />
-            <Route
-              path="/"
-              element={
-                <Navigate to="/brand-hall" />
-              }
-            />
+            <Route path="/" element={<Navigate to="/brand-hall" />} />
           </Routes>
         </main>
 

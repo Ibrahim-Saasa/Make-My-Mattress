@@ -12,6 +12,7 @@ interface Props {
   cartCount: number;
   isGuest: boolean;
   onLogin: () => void;
+  onCartClick: () => void;
 }
 
 const BrandHall: React.FC<Props> = ({
@@ -23,6 +24,7 @@ const BrandHall: React.FC<Props> = ({
   cartCount,
   isGuest,
   onLogin,
+  onCartClick,
 }) => {
   const heroOffers = [
     {
@@ -178,7 +180,12 @@ const BrandHall: React.FC<Props> = ({
             className="flex min-w-0 items-center gap-3 text-left"
           >
             <div className="rounded-2xl border border-white/10 bg-white/5 p-2">
-              <BrandLogo compact size="sm" showTagline={false} showWordmark={false} />
+              <BrandLogo
+                compact
+                size="sm"
+                showTagline={false}
+                showWordmark={false}
+              />
             </div>
             <div className="hidden min-[420px]:block">
               <p className="text-xs font-black uppercase tracking-[0.26em] text-white">
@@ -218,12 +225,16 @@ const BrandHall: React.FC<Props> = ({
           </div>
 
           <div className="flex items-center gap-2 md:gap-3">
-            <div className="hidden rounded-full border border-white/10 bg-white/95 px-4 py-2 text-xs font-black uppercase tracking-[0.2em] text-[#0C1F63] md:flex md:items-center">
+            <button
+              type="button"
+              onClick={onCartClick}
+              className="hidden items-center rounded-full border border-white/10 bg-white/95 px-4 py-2 text-xs font-black uppercase tracking-[0.2em] text-[#0C1F63] transition hover:bg-slate-100 md:flex md:items-center"
+            >
               Cart
               <span className="ml-2 rounded-full bg-[var(--brand-primary)] px-2 py-1 text-[10px] text-white">
                 {cartCount}
               </span>
-            </div>
+            </button>
             <button
               type="button"
               onClick={selectedBrand ? onResumeBuild : onOpenConsultant}
@@ -599,11 +610,7 @@ const BrandHall: React.FC<Props> = ({
         </div>
       </Section>
 
-      <Section
-        id="sleep-journal"
-        maxWidth="2xl"
-        className="pb-20"
-      >
+      <Section id="sleep-journal" maxWidth="2xl" className="pb-20">
         <div className="mb-8 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="text-sm font-bold uppercase tracking-[0.25em] text-[var(--brand-primary)] dark:text-[#9BB0FF]">

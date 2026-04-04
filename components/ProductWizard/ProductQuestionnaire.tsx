@@ -65,28 +65,41 @@ const ProductQuestionnaire: React.FC<ProductQuestionnaireProps> = ({
   };
 
   return (
-    <div className="p-6 max-w-2xl mx-auto">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold capitalize">{category} Questions</h2>
+    <div className="p-6 max-w-2xl mx-auto bg-slate-950/95 border border-slate-800 rounded-[2rem] shadow-[0_35px_120px_rgba(15,23,42,0.35)] backdrop-blur-xl">
+      <div className="flex items-start justify-between gap-4 mb-6">
+        <div>
+          <h2 className="text-2xl font-black text-white capitalize">
+            {category} Questions
+          </h2>
+          <p className="mt-2 text-sm text-slate-400 max-w-xl">
+            Answer a few questions to get personalized recommendations
+          </p>
+        </div>
         <button
           onClick={goBack}
-          className="text-gray-500 hover:text-gray-700 text-xl"
+          className="text-slate-400 hover:text-white text-xl transition"
         >
           ✕
         </button>
       </div>
 
-      <div className="border rounded p-4 mb-6">
-        <div className="mb-4 text-sm text-gray-600">
+      <div className="border border-slate-700 rounded-[1.5rem] p-6 mb-6 bg-slate-900/90">
+        <div className="mb-4 text-sm text-slate-400">
           Question {index + 1} of {total}
         </div>
-        <div className="mb-2 font-semibold">{current.text}</div>
+        <div className="mb-6 font-semibold text-white text-lg">
+          {current.text}
+        </div>
         <div className="grid gap-3">
           {current.options.map((o: any) => (
             <button
               key={o.id}
               onClick={() => handleSelect(o.id)}
-              className={`text-left p-3 border rounded transition ${selected === o.id ? "border-indigo-600 bg-indigo-50" : "bg-white"}`}
+              className={`text-left p-4 border rounded-[1rem] transition ${
+                selected === o.id
+                  ? "border-indigo-400 bg-indigo-500/20 text-white shadow-lg shadow-indigo-500/20"
+                  : "border-slate-700 bg-slate-800/90 text-slate-300 hover:border-indigo-400 hover:bg-indigo-500/10"
+              }`}
               aria-pressed={selected === o.id}
             >
               {o.label}
@@ -94,20 +107,20 @@ const ProductQuestionnaire: React.FC<ProductQuestionnaireProps> = ({
           ))}
         </div>
 
-        <div className="mt-4 flex items-center justify-between">
+        <div className="mt-6 flex items-center justify-between">
           <button
             onClick={handleBack}
             disabled={index === 0}
-            className="px-3 py-2 rounded bg-gray-100 disabled:opacity-50"
+            className="px-4 py-2 rounded-[0.75rem] bg-slate-800 border border-slate-700 text-slate-300 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-700 transition"
           >
             Back
           </button>
           <button
             onClick={handleNext}
             disabled={!selected}
-            className="px-4 py-2 bg-indigo-600 text-white rounded disabled:opacity-50"
+            className="px-6 py-2 bg-indigo-600 text-white rounded-[0.75rem] disabled:opacity-50 disabled:cursor-not-allowed hover:bg-indigo-700 transition"
           >
-            {index + 1 === total ? "Finish" : "Next"}
+            {index + 1 === total ? "Get Recommendations" : "Next"}
           </button>
         </div>
       </div>

@@ -14,30 +14,31 @@ const ProductCategoryPicker: React.FC = () => {
   const { selectCategory, closeWizard } = useProductWizard();
 
   return (
-    <div className="p-6 max-w-2xl mx-auto">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold">What do you need?</h2>
+    <div className="p-6 max-w-2xl mx-auto bg-slate-950/95 border border-slate-800 rounded-[2rem] shadow-[0_35px_120px_rgba(15,23,42,0.35)] backdrop-blur-xl">
+      <div className="flex items-start justify-between gap-4 mb-6">
+        <div>
+          <h2 className="text-2xl font-black text-white">What do you need?</h2>
+          <p className="mt-2 text-sm text-slate-400 max-w-xl">
+            Select a product category to get personalized recommendations
+          </p>
+        </div>
         <button
           onClick={closeWizard}
-          className="text-gray-500 hover:text-gray-700 text-xl"
+          className="text-slate-400 hover:text-white text-xl transition"
         >
           ✕
         </button>
       </div>
-
-      <p className="text-gray-600 mb-8">
-        Select a product category to get personalized recommendations
-      </p>
 
       <div className="grid grid-cols-2 gap-4">
         {CATEGORIES.map((cat) => (
           <button
             key={cat.id}
             onClick={() => selectCategory(cat.id)}
-            className="p-6 border-2 border-gray-200 rounded-lg hover:border-indigo-600 hover:bg-indigo-50 transition text-center"
+            className="group p-6 rounded-[1.75rem] border border-slate-700 bg-slate-900/90 text-center transition hover:border-indigo-400 hover:bg-indigo-500/10 focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
           >
-            <div className="text-4xl mb-2">{cat.emoji}</div>
-            <div className="font-semibold text-gray-800">{cat.label}</div>
+            <div className="text-5xl mb-4">{cat.emoji}</div>
+            <div className="font-semibold text-white">{cat.label}</div>
           </button>
         ))}
       </div>
