@@ -1,12 +1,11 @@
-import type { StoryFn } from "@storybook/react";
 import ProductCategoryPicker from "./ProductCategoryPicker";
 import { ProductWizardProvider } from "../../contexts/ProductWizardContext";
 
-export default {
+const meta = {
   title: "ProductWizard/ProductCategoryPicker",
   component: ProductCategoryPicker,
   decorators: [
-    (Story) => (
+    (Story: any) => (
       <ProductWizardProvider>
         <Story />
       </ProductWizardProvider>
@@ -14,7 +13,8 @@ export default {
   ],
 };
 
-const Template: StoryFn = () => <ProductCategoryPicker />;
+export default meta;
 
-export const Default = Template.bind({});
-Default.storyName = "Category Picker";
+export const Default = {
+  name: "Category Picker",
+};

@@ -3,10 +3,9 @@
  * Shows how to use the error handling system throughout the application
  */
 
-import { AppError, ErrorCode, ErrorSeverity } from '../src/utils/errorTypes';
-import { errorLogger } from '../src/utils/errorLogger';
-import { RetryHandler, CircuitBreaker } from '../src/utils/errorRecovery';
-import { useErrorHandler } from '../components/ErrorBoundary';
+import { AppError, ErrorCode, ErrorSeverity } from "./errorTypes";
+import { errorLogger } from "./errorLogger";
+import { RetryHandler, CircuitBreaker } from "./errorRecovery";
 
 // ============================================================================
 // 1. BASIC ERROR THROWING & LOGGING
@@ -189,58 +188,10 @@ export async function exampleFormSubmission(formData: Record<string, any>) {
 // 7. IN REACT COMPONENT: USING ERROR HANDLER HOOK
 // ============================================================================
 
-import React, { useState } from 'react';
-
-export const ExampleFormComponent: React.FC = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<AppError | null>(null);
-  const handleError = useErrorHandler();
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const formData = new FormData(e.currentTarget);
-      const data = Object.fromEntries(formData);
-
-      // Your submission logic with retry
-      await RetryHandler.executeWithRetry(async () => {
-        const response = await fetch('/api/submit', {
-          method: 'POST',
-          body: JSON.stringify(data),
-        });
-
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        return response.json();
-      });
-
-      // Success!
-      alert('Form submitted successfully');
-    } catch (err) {
-      if (err instanceof AppError) {
-        setError(err);
-      } else {
-        handleError(err as Error, { context: 'form-submission' });
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  return (
-    <form onSubmit={handleSubmit}>
-      {error && (
-        <div className="mb-4 p-4 bg-red-100 text-red-700 rounded">
-          {error.userMessage}
-        </div>
-      )}
-      {/* Form fields */}
-      <button disabled={isLoading}>{isLoading ? 'Loading...' : 'Submit'}</button>
-    </form>
-  );
-};
+/*
+The React example component lives in `errorExamples.component.tsx` so this file
+can stay as plain TypeScript and avoid JSX parse issues.
+*/
 
 // ============================================================================
 // 8. API CLIENT WITH ERROR HANDLING

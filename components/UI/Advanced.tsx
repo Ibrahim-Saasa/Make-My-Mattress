@@ -323,6 +323,8 @@ export const BrandCard: React.FC<BrandCardProps> = ({
   features = [],
   onLearnMore,
 }) => {
+  const heroGradient = `linear-gradient(135deg, ${accentColor} 0%, #0C1F63 100%)`;
+
   return (
     <div
       className="group relative rounded-3xl overflow-hidden transition-all duration-500 cursor-pointer"
@@ -331,7 +333,7 @@ export const BrandCard: React.FC<BrandCardProps> = ({
         borderColor: `${accentColor}30`,
       }}
     >
-      <div className="relative p-8 h-full border border-gray-200 dark:border-slate-700 rounded-3xl hover:border-opacity-50 transition-all duration-300 hover:shadow-2xl hover:scale-105 hover:-translate-y-2">
+      <div className="relative h-full rounded-3xl border border-gray-200 dark:border-slate-700 p-6 hover:border-opacity-50 transition-all duration-300 hover:shadow-2xl hover:scale-[1.02] hover:-translate-y-2">
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-300">
           <div
@@ -340,31 +342,55 @@ export const BrandCard: React.FC<BrandCardProps> = ({
           />
         </div>
 
-        {/* Logo Area */}
-        {logo ? (
-          <img
-            src={logo}
-            alt={name}
-            className="w-16 h-16 rounded-xl mb-6 object-cover"
-          />
-        ) : (
-          <div
-            className="w-16 h-16 rounded-xl mb-6 flex items-center justify-center text-3xl font-black text-white"
-            style={{ backgroundColor: accentColor }}
-          >
-            {name[0]}
+        <div
+          className="relative mb-6 h-48 overflow-hidden rounded-[2rem] border border-white/15"
+          style={{ background: heroGradient }}
+        >
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.24),transparent_28%),radial-gradient(circle_at_bottom_right,rgba(200,165,91,0.20),transparent_24%)]" />
+          <div className="absolute left-5 top-5 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.22em] text-white/90 backdrop-blur-sm">
+            {type}
           </div>
-        )}
+
+          {logo ? (
+            <img
+              src={logo}
+              alt={name}
+              className="absolute right-5 top-5 h-12 w-12 rounded-2xl object-cover shadow-lg"
+            />
+          ) : (
+            <div
+              className="absolute right-5 top-5 flex h-12 w-12 items-center justify-center rounded-2xl text-lg font-black text-white shadow-lg"
+              style={{
+                background: "rgba(255,255,255,0.18)",
+                backdropFilter: "blur(12px)",
+              }}
+            >
+              {name[0]}
+            </div>
+          )}
+
+          <div className="absolute inset-x-0 bottom-0 px-5 pb-5">
+            <div className="relative mx-auto h-24 max-w-[240px]">
+              <div className="absolute inset-x-0 bottom-0 h-5 rounded-[1.25rem] bg-[#4C2E17]/45 blur-[1px]" />
+              <div className="absolute inset-x-4 bottom-2 h-5 rounded-[1.25rem] border border-white/10 bg-[rgba(255,255,255,0.12)]" />
+              <div className="absolute inset-x-8 bottom-5 h-10 rounded-[1.5rem] bg-[linear-gradient(180deg,#FFFFFF_0%,#E9EEF9_100%)] shadow-[0_18px_40px_rgba(6,18,56,0.28)]" />
+              <div className="absolute left-14 bottom-10 h-6 w-12 rounded-[1rem] bg-[linear-gradient(180deg,#FFFFFF_0%,#EEF3FF_100%)] shadow-md" />
+              <div className="absolute left-28 bottom-10 h-6 w-12 rounded-[1rem] bg-[linear-gradient(180deg,#FFFFFF_0%,#EEF3FF_100%)] shadow-md" />
+              <div className="absolute right-8 bottom-7 h-11 w-8 rounded-[1rem] bg-[linear-gradient(180deg,#F3F7FF_0%,#DCE5FF_100%)] shadow-md" />
+              <div className="absolute right-11 bottom-11 h-4 w-2 rounded-full bg-white/80" />
+              <div className="absolute right-8 bottom-11 h-4 w-2 rounded-full bg-white/80" />
+              <div className="absolute right-5 bottom-11 h-4 w-2 rounded-full bg-white/80" />
+            </div>
+            <div className="mt-3 flex items-center justify-between text-[10px] font-black uppercase tracking-[0.18em] text-white/80">
+              <span>Mattress</span>
+              <span>Pillows</span>
+              <span>Accessories</span>
+            </div>
+          </div>
+        </div>
 
         {/* Content */}
         <div className="relative z-10">
-          <p
-            className="text-xs font-bold uppercase tracking-widest mb-2"
-            style={{ color: accentColor }}
-          >
-            {type}
-          </p>
-
           <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
             {name}
           </h3>

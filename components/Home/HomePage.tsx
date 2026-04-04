@@ -13,10 +13,48 @@ import {
   Section,
 } from "../UI";
 
+interface Product {
+  image: string;
+  badge: string;
+  badgeColor: "primary" | "success" | "warning";
+  title: string;
+  subtitle: string;
+  description: string;
+  price: string;
+  rating: number;
+  reviews: number;
+  tags: string[];
+  onCTA: () => void;
+  ctaText: string;
+}
+
+interface Brand {
+  name: string;
+  type: string;
+  description: string;
+  accentColor: string;
+  features: string[];
+  onLearnMore: () => void;
+}
+
+interface Feature {
+  icon: string;
+  title: string;
+  description: string;
+  color: string;
+}
+
+interface Stat {
+  value: string;
+  label: string;
+  icon: string;
+  color: string;
+}
+
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
 
-  const featuredProducts = [
+  const featuredProducts: Product[] = [
     {
       image: "/api/placeholder/400/300",
       badge: "Premium",
@@ -61,7 +99,7 @@ const HomePage: React.FC = () => {
     },
   ];
 
-  const brands = [
+  const brands: Brand[] = [
     {
       name: "Sleepworks",
       type: "Premium Latex",
@@ -88,7 +126,7 @@ const HomePage: React.FC = () => {
     },
   ];
 
-  const features = [
+  const features: Feature[] = [
     {
       icon: "⚙️",
       title: "Fully Customizable",
@@ -115,7 +153,7 @@ const HomePage: React.FC = () => {
     },
   ];
 
-  const stats = [
+  const stats: Stat[] = [
     { value: "250+", label: "Happy Customers", icon: "😴", color: "primary" },
     { value: "6", label: "Premium Brands", icon: "🏆", color: "secondary" },
     {

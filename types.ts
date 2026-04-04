@@ -201,6 +201,7 @@ export interface Profile {
   id: string;
   first_name?: string;
   last_name?: string;
+  date_of_birth?: string | null;
   avatar_url?: string;
   role?: UserRole; // Added role to profile
   updated_at?: string;

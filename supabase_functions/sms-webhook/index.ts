@@ -1,6 +1,7 @@
-// Supabase Edge Function: SMS Webhook Receiver
-// This function is meant to be configured in Supabase Auth -> SMS webhook settings.
-// It verifies an HMAC signature using SUPABASE_SMS_SECRET and forwards the SMS to
+// Supabase Edge Function: Send SMS Hook Receiver
+// This function is meant to be configured in Supabase Auth -> Send SMS hook settings.
+// Supabase still calls this a "Send SMS" hook even when the OTP is delivered on WhatsApp.
+// It verifies an HMAC signature using SUPABASE_SMS_SECRET and forwards the OTP to
 // a configured provider (FAST2SMS or GUPSHUP). Configure env vars in your Supabase
 // functions dashboard before deploying.
 
@@ -8,7 +9,10 @@
 // - SUPABASE_SMS_SECRET: shared secret used to verify incoming requests
 // - SMS_PROVIDER: 'fast2sms' | 'gupshup'
 // - FAST2SMS_API_KEY / FAST2SMS_ENDPOINT (optional)
-// - GUPSHUP_APP_ID / GUPSHUP_APP_SECRET (optional)
+// - GUPSHUP_CHANNEL: 'sms' | 'whatsapp' (defaults to 'sms')
+// - GUPSHUP_APP_ID / GUPSHUP_APP_SECRET (for SMS)
+// - GUPSHUP_API_KEY / GUPSHUP_WHATSAPP_SOURCE / GUPSHUP_WHATSAPP_TEMPLATE_ID (for WhatsApp)
+// For India-first login, use SMS_PROVIDER='gupshup' and GUPSHUP_CHANNEL='whatsapp'.
 
 // Notes: The exact provider API shapes vary. This function sends a simple JSON payload
 // { to: phone, message } to the provider endpoint (default placeholders). Replace provider
@@ -90,6 +94,49 @@ async function sendViaFast2SMS(phone: string, message: string) {
 }
 
 async function sendViaGupshup(phone: string, message: string) {
+  const channel = (Deno.env.get("GUPSHUP_CHANNEL") || "sms").toLowerCase();
+
+  if (channel === "whatsapp") {
+    const apiKey = Deno.env.get("GUPSHUP_API_KEY");
+    const source = Deno.env.get("GUPSHUP_WHATSAPP_SOURCE");
+    const templateId = Deno.env.get("GUPSHUP_WHATSAPP_TEMPLATE_ID");
+    const endpoint =
+      Deno.env.get("GUPSHUP_WHATSAPP_ENDPOINT") ||
+      "https://api.gupshup.io/wa/api/v1/template/msg";
+
+    if (!apiKey || !source || !templateId) {
+      throw new Error(
+        "Gupshup WhatsApp credentials not configured",
+      );
+    }
+
+    const form = new URLSearchParams();
+    form.set("source", source);
+    form.set("destination", phone);
+    form.set(
+      "template",
+      JSON.stringify({
+        id: templateId,
+        params: [extractOtp(message)],
+      }),
+    );
+
+    const resp = await fetch(endpoint, {
+      method: "POST",
+      headers: {
+        Apikey: apiKey,
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: form.toString(),
+    });
+
+    const data = await resp.json().catch(() => ({}));
+    const ok =
+      resp.ok &&
+      (data?.status === "submitted" || data?.messageId || resp.status < 300);
+    return { ok, data, channel };
+  }
+
   const appId = Deno.env.get("GUPSHUP_APP_ID");
   const appSecret = Deno.env.get("GUPSHUP_APP_SECRET");
   const endpoint =
@@ -114,7 +161,12 @@ async function sendViaGupshup(phone: string, message: string) {
   });
 
   const data = await resp.json().catch(() => ({}));
-  return { ok: resp.ok, data };
+  return { ok: resp.ok, data, channel };
+}
+
+function extractOtp(message: string) {
+  const match = message.match(/\b(\d{4,8})\b/);
+  return match?.[1] ?? message;
 }
 
 serve(async (req: Request) => {
@@ -184,7 +236,12 @@ serve(async (req: Request) => {
     }
 
     return new Response(
-      JSON.stringify({ ok: true, provider: provider, result: res.data }),
+      JSON.stringify({
+        ok: true,
+        provider: provider,
+        channel: res.channel ?? "sms",
+        result: res.data,
+      }),
       { status: 200 },
     );
   } catch (err) {

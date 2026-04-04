@@ -7,7 +7,7 @@
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "jsx": "react-jsx",
     "skipLibCheck": true,
-    "types": ["node", "vite/client", "react", "react-dom"],
+    "types": ["node", "vite/client", "react", "react-dom", "vitest/globals"],
     "moduleResolution": "bundler",
     "isolatedModules": true,
     "moduleDetection": "force",
@@ -19,5 +19,7 @@
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "noEmit": true
-  }
+  },
+  "include": ["**/*.ts", "**/*.tsx", "vite-env.d.ts"],
+  "exclude": ["node_modules", "dist", "storybook-static", ".dist"]
 }

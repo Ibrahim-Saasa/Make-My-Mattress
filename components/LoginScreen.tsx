@@ -16,14 +16,20 @@ const LoginScreen: React.FC = () => {
   const [otpInput, setOtpInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const [mockSms, setMockSms] = useState<{ show: boolean; message: string }>({
+  const [mockWhatsapp, setMockWhatsapp] = useState<{
+    show: boolean;
+    message: string;
+  }>({
     show: false,
     message: "",
   });
 
-  const triggerSmsSimulation = (message: string) => {
-    setMockSms({ show: true, message });
-    setTimeout(() => setMockSms((prev) => ({ ...prev, show: false })), 8000);
+  const triggerWhatsappSimulation = (message: string) => {
+    setMockWhatsapp({ show: true, message });
+    setTimeout(
+      () => setMockWhatsapp((prev) => ({ ...prev, show: false })),
+      8000,
+    );
   };
 
   const handleSendOtp = async (e: React.FormEvent) => {
@@ -42,19 +48,18 @@ const LoginScreen: React.FC = () => {
       });
 
       if (error) {
-        // Check for the specific "unsupported phone provider" error
         if (error.message.includes("unsupported phone provider")) {
           setError(
-            "SMS provider not configured. Please set up Twilio or another provider in your Supabase project settings (Authentication -> SMS).",
+            "WhatsApp delivery is not configured yet. Set up the Supabase Send SMS hook with your India WhatsApp provider before using phone login.",
           );
         } else {
           throw error;
         }
       } else {
-        setStep("OTP_VERIFICATION"); // Move to OTP verification step
-        triggerSmsSimulation(
-          `Your OTP for Hindustan Mattress Co. is: [Check your phone for the actual OTP]`,
-        ); // Supabase sends actual OTP
+        setStep("OTP_VERIFICATION");
+        triggerWhatsappSimulation(
+          "We sent your verification code on WhatsApp. Please open WhatsApp and enter the OTP here.",
+        );
       }
     } catch (err: any) {
       console.error("OTP Send Error:", err);
@@ -79,8 +84,8 @@ const LoginScreen: React.FC = () => {
         throw error;
       }
 
-      setMockSms({ show: false, message: "" });
-      navigate("/identity", { replace: true }); // Redirect to identity screen after successful login
+      setMockWhatsapp({ show: false, message: "" });
+      navigate("/identity", { replace: true });
     } catch (err: any) {
       console.error("OTP Verification Error:", err);
       setError(err.message || "Invalid OTP. Please try again.");
@@ -104,7 +109,7 @@ const LoginScreen: React.FC = () => {
         throw error;
       }
 
-      navigate("/identity", { replace: true }); // Redirect to identity screen after successful login
+      navigate("/identity", { replace: true });
     } catch (err: any) {
       console.error("Email Login Error:", err);
       setError(err.message || "Invalid email or password. Please try again.");
@@ -118,28 +123,29 @@ const LoginScreen: React.FC = () => {
       className="min-h-screen flex flex-col items-center justify-center p-6 relative overflow-hidden antialiased font-sans text-slate-100"
       style={{
         background:
-          "linear-gradient(135deg, #09174A 0%, #1237B5 55%, #1740D1 100%)",
+          "radial-gradient(circle at top left, rgba(255,255,255,0.12), transparent 22%), radial-gradient(circle at bottom right, rgba(92,128,255,0.22), transparent 28%), linear-gradient(140deg, #07153F 0%, #0C2E89 42%, #1740D1 100%)",
       }}
     >
       {/* Subtle radial shine */}
       <div
-        className="absolute -top-24 -left-24 w-96 h-96 rounded-full opacity-20 blur-3xl pointer-events-none"
+        className="absolute -top-24 -left-24 h-96 w-96 rounded-full opacity-25 blur-3xl pointer-events-none"
         style={{
           background:
-            "radial-gradient(closest-side at 15% 15%, rgba(255,255,255,0.12), rgba(255,255,255,0) 40%)",
+            "radial-gradient(closest-side at 15% 15%, rgba(255,255,255,0.16), rgba(255,255,255,0) 42%)",
         }}
       />
       <div
-        className="absolute -bottom-32 -right-24 w-[420px] h-[420px] rounded-full opacity-10 blur-2xl pointer-events-none"
+        className="absolute -bottom-32 -right-24 h-[420px] w-[420px] rounded-full opacity-20 blur-2xl pointer-events-none"
         style={{
           background:
-            "radial-gradient(closest-side at 85% 85%, rgba(255,255,255,0.06), rgba(255,255,255,0) 30%)",
+            "radial-gradient(closest-side at 85% 85%, rgba(112,149,255,0.25), rgba(255,255,255,0) 36%)",
         }}
       />
-      {/* SMS Notification Toast */}
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(6,15,44,0.08)_0%,rgba(6,15,44,0.2)_100%)] pointer-events-none" />
+      {/* WhatsApp Notification Toast */}
       <div
         className={`fixed top-6 left-1/2 -translate-x-1/2 w-[90%] max-w-sm z-[100] transition-all duration-700 ease-out ${
-          mockSms.show
+          mockWhatsapp.show
             ? "translate-y-0 opacity-100"
             : "-translate-y-32 opacity-0"
         }`}
@@ -168,11 +174,11 @@ const LoginScreen: React.FC = () => {
               </svg>
             </div>
             <div className="flex-1">
-              <div className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-1">
-                Messages • Now
+              <div className="text-xs font-bold text-emerald-600 uppercase tracking-wider mb-1">
+                WhatsApp • Now
               </div>
               <p className="text-sm text-slate-900 leading-relaxed">
-                {mockSms.message}
+                {mockWhatsapp.message}
               </p>
             </div>
           </div>
@@ -183,6 +189,12 @@ const LoginScreen: React.FC = () => {
       <Card
         variant="elevated"
         className="w-full max-w-md space-y-6 border-[rgba(141,161,240,0.18)] bg-[#121C3B] p-8 shadow-[0_30px_80px_rgba(7,18,56,0.45)]"
+        style={{
+          background:
+            "linear-gradient(180deg, rgba(13, 24, 58, 0.98) 0%, rgba(18, 28, 59, 0.98) 100%)",
+          borderColor: "rgba(127, 156, 255, 0.22)",
+          boxShadow: "0 32px 90px rgba(6, 14, 44, 0.52)",
+        }}
       >
         {/* Header */}
         <div className="text-center space-y-4">
@@ -205,14 +217,14 @@ const LoginScreen: React.FC = () => {
         </div>
 
         {/* Step Selector */}
-        <div className="grid grid-cols-2 gap-2 rounded-2xl bg-[#E8EDF7] p-1.5">
+        <div className="grid grid-cols-2 gap-2 rounded-2xl bg-[#DCE6FF]/12 p-1.5 ring-1 ring-white/8">
           <button
             type="button"
             onClick={() => setStep("PHONE_INPUT")}
             className={`rounded-xl px-4 py-3 text-sm font-bold transition-all ${
               step === "PHONE_INPUT" || step === "OTP_VERIFICATION"
-                ? "bg-white text-[var(--brand-primary)] shadow-sm"
-                : "text-[#95A5CF]"
+                ? "bg-white/95 text-[var(--brand-primary)] shadow-sm"
+                : "text-[#B7C7F2]"
             }`}
           >
             Phone
@@ -222,8 +234,8 @@ const LoginScreen: React.FC = () => {
             onClick={() => setStep("EMAIL_PASSWORD")}
             className={`rounded-xl px-4 py-3 text-sm font-bold transition-all ${
               step === "EMAIL_PASSWORD"
-                ? "bg-white text-[var(--brand-primary)] shadow-sm"
-                : "text-[#95A5CF]"
+                ? "bg-white/95 text-[var(--brand-primary)] shadow-sm"
+                : "text-[#B7C7F2]"
             }`}
           >
             Email
@@ -238,7 +250,7 @@ const LoginScreen: React.FC = () => {
                 Login to get started
               </h2>
               <p className="text-sm leading-relaxed text-[#D4DDFF]">
-                Enter your phone number to continue
+                Enter your WhatsApp number to continue
               </p>
             </div>
 
@@ -248,22 +260,24 @@ const LoginScreen: React.FC = () => {
                   Mobile number
                 </Label>
                 <div className="mt-2 flex w-full gap-1">
-                  <div className="flex h-15 w-20 flex-shrink-0 items-center justify-center rounded-2xl border border-[#AEBBDB] bg-[#EFF3FF]">
-                    <span className="font-semibold text-[#22396D]">+91</span>
+                  <div className="flex h-15 w-20 flex-shrink-0 items-center justify-center rounded-2xl border border-[#7F9CFF]/30 bg-[#DDE7FF]/92">
+                    <span className="font-semibold text-[#17398B]">+91</span>
                   </div>
-                  <Input
-                    id="phone"
-                    variant="large"
-                    type="tel"
-                    maxLength={10}
-                    value={phone}
-                    onChange={(e) =>
-                      setPhone(e.target.value.replace(/\D/g, ""))
-                    }
-                    placeholder="0000000000"
-                    className="h-15 flex-1 !w-[297px] !rounded-2xl !border-[#8FA4E8] !bg-[#253250] !px-5 !text-white placeholder:!text-[#91A1C8] focus:!border-white"
-                    autoFocus
-                  />
+                  <div className="min-w-0 flex-1">
+                    <Input
+                      id="phone"
+                      variant="large"
+                      type="tel"
+                      maxLength={10}
+                      value={phone}
+                      onChange={(e) =>
+                        setPhone(e.target.value.replace(/\D/g, ""))
+                      }
+                      placeholder="0000000000"
+                      className="h-15 !w-full !min-w-0 !rounded-2xl !border-[#8FA4E8] !bg-[#253250] !px-5 !text-white placeholder:!text-[#91A1C8] focus:!border-white"
+                      autoFocus
+                    />
+                  </div>
                 </div>
               </div>
 
@@ -281,7 +295,7 @@ const LoginScreen: React.FC = () => {
                 size="lg"
                 className="h-16 !rounded-2xl !text-base !font-extrabold"
               >
-                Send OTP
+                Send on WhatsApp
               </Button>
             </form>
           </div>
@@ -294,7 +308,7 @@ const LoginScreen: React.FC = () => {
                 Verify your number
               </h2>
               <p className="text-sm leading-relaxed text-[#D4DDFF]">
-                We sent a code to{" "}
+                We sent a WhatsApp code to{" "}
                 <span className="font-semibold text-white">+91 {phone}</span>
               </p>
             </div>
@@ -302,7 +316,7 @@ const LoginScreen: React.FC = () => {
             <form onSubmit={handleVerifyOtp} className="space-y-5">
               <div>
                 <Label htmlFor="otp" className="text-[#EAF0FF]">
-                  Verification Code
+                  WhatsApp verification code
                 </Label>
                 <Input
                   id="otp"
@@ -350,7 +364,7 @@ const LoginScreen: React.FC = () => {
 
             <div className="text-center">
               <p className="text-xs text-[#B7C5E8]">
-                Didn't get a code?{" "}
+                Didn't get it on WhatsApp?{" "}
                 <button
                   type="button"
                   onClick={handleSendOtp}

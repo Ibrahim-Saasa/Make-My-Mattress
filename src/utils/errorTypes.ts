@@ -62,6 +62,7 @@ export interface ErrorContext {
   userRole?: string;
   endpoint?: string;
   method?: string;
+  timeout?: number;
   timestamp?: Date;
   requestId?: string;
   metadata?: Record<string, any>;

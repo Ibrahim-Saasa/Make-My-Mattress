@@ -1,13 +1,13 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { Session, createClient } from "@supabase/supabase-js";
+import { Session } from "@supabase/supabase-js";
 import { supabase } from "../integrations/supabase/client"; // Import the client
 
 interface SessionContextType {
   session: Session | null;
   isLoading: boolean;
-  supabase: ReturnType<typeof createClient>;
+  supabase: typeof supabase;
   clearSession: () => Promise<void>;
 }
 

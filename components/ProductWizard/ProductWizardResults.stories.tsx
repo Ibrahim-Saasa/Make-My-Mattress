@@ -1,19 +1,20 @@
-import type { StoryFn } from "@storybook/react";
 import ProductWizardResults from "./ProductWizardResults";
 import { ProductWizardProvider } from "../../contexts/ProductWizardContext";
 import { ProductRecommendation } from "../../types";
 
-export default {
+const meta = {
   title: "ProductWizard/ProductWizardResults",
   component: ProductWizardResults,
   decorators: [
-    (Story) => (
+    (Story: any) => (
       <ProductWizardProvider>
         <Story />
       </ProductWizardProvider>
     ),
   ],
 };
+
+export default meta;
 
 const mockRecommendations: ProductRecommendation[] = [
   {
@@ -36,16 +37,16 @@ const mockRecommendations: ProductRecommendation[] = [
   },
 ];
 
-const Template: StoryFn = (args) => <ProductWizardResults {...args} />;
-
-export const WithRecommendations = Template.bind({});
-WithRecommendations.args = {
-  recommendations: mockRecommendations,
-  category: "Mattress",
+export const WithRecommendations = {
+  args: {
+    recommendations: mockRecommendations,
+    category: "Mattress",
+  },
 };
 
-export const NoRecommendations = Template.bind({});
-NoRecommendations.args = {
-  recommendations: [],
-  category: "Pillow",
+export const NoRecommendations = {
+  args: {
+    recommendations: [],
+    category: "Pillow",
+  },
 };

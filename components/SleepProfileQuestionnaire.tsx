@@ -27,6 +27,30 @@ const SleepProfileQuestionnaire: React.FC<Props> = ({ onProfileSaved, onBack }) 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
+  const sleepPositions: SleepProfile["sleep_position"][] = [
+    "side",
+    "back",
+    "stomach",
+    "combination",
+  ];
+  const firmnessOptions: SleepProfile["firmness_preference"][] = [
+    "soft",
+    "medium",
+    "firm",
+    "very_firm",
+  ];
+  const bodyTypes: SleepProfile["body_type"][] = ["light", "average", "heavy"];
+  const temperatureOptions: SleepProfile["sleep_temperature"][] = [
+    "hot",
+    "cool",
+    "normal",
+  ];
+  const budgetOptions: SleepProfile["budget_preference"][] = [
+    "economical",
+    "standard",
+    "luxury",
+  ];
+
   useEffect(() => {
     if (!session) {
       navigate('/login');
@@ -128,7 +152,7 @@ const SleepProfileQuestionnaire: React.FC<Props> = ({ onProfileSaved, onBack }) 
         return (
           <div className="space-y-6">
             <h3 className="text-xl font-black text-theme-primary mb-4">1. What's your primary sleep position?</h3>
-            {['side', 'back', 'stomach', 'combination'].map(pos => (
+            {sleepPositions.map((pos) => (
               <button
                 key={pos}
                 onClick={() => setFormData({ ...formData, sleep_position: pos })}
@@ -145,7 +169,7 @@ const SleepProfileQuestionnaire: React.FC<Props> = ({ onProfileSaved, onBack }) 
         return (
           <div className="space-y-6">
             <h3 className="text-xl font-black text-theme-primary mb-4">2. What firmness do you prefer?</h3>
-            {['soft', 'medium', 'firm', 'very_firm'].map(firm => (
+            {firmnessOptions.map((firm) => (
               <button
                 key={firm}
                 onClick={() => setFormData({ ...formData, firmness_preference: firm })}
@@ -162,7 +186,7 @@ const SleepProfileQuestionnaire: React.FC<Props> = ({ onProfileSaved, onBack }) 
         return (
           <div className="space-y-6">
             <h3 className="text-xl font-black text-theme-primary mb-4">3. What's your body type?</h3>
-            {['light', 'average', 'heavy'].map(type => (
+            {bodyTypes.map((type) => (
               <button
                 key={type}
                 onClick={() => setFormData({ ...formData, body_type: type })}
@@ -179,7 +203,7 @@ const SleepProfileQuestionnaire: React.FC<Props> = ({ onProfileSaved, onBack }) 
         return (
           <div className="space-y-6">
             <h3 className="text-xl font-black text-theme-primary mb-4">4. Do you tend to sleep hot or cool?</h3>
-            {['hot', 'cool', 'normal'].map(temp => (
+            {temperatureOptions.map((temp) => (
               <button
                 key={temp}
                 onClick={() => setFormData({ ...formData, sleep_temperature: temp })}
@@ -240,7 +264,7 @@ const SleepProfileQuestionnaire: React.FC<Props> = ({ onProfileSaved, onBack }) 
         return (
           <div className="space-y-6">
             <h3 className="text-xl font-black text-theme-primary mb-4">7. What's your budget preference?</h3>
-            {['economical', 'standard', 'luxury'].map(budget => (
+            {budgetOptions.map((budget) => (
               <button
                 key={budget}
                 onClick={() => setFormData({ ...formData, budget_preference: budget })}

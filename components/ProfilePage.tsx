@@ -32,7 +32,7 @@ const ProfilePage: React.FC = () => {
       setIsLoading(true);
       const { data, error } = await supabase
         .from('profiles')
-        .select('first_name, last_name, date_of_birth')
+        .select('id, first_name, last_name, date_of_birth')
         .eq('id', session.user.id)
         .single();
 
