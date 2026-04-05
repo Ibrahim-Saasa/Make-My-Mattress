@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSession } from "../src/contexts/SessionContext";
-import { BrandLogo, Card, Input, Label, Button } from "./UI";
+import { Card, Input, Label, Button, BrandLogo } from "./UI";
 
 type SignupMethod = "EMAIL" | "PHONE";
 
@@ -67,151 +67,197 @@ const SignupScreen: React.FC = () => {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center p-6 antialiased font-sans text-slate-100"
+      className="min-h-screen flex flex-col items-center justify-center p-6 relative overflow-hidden antialiased font-sans text-slate-100"
       style={{
         background:
-          "linear-gradient(135deg, #09174A 0%, #1237B5 55%, #1740D1 100%)",
+          "radial-gradient(circle at top left, rgba(255,255,255,0.12), transparent 22%), radial-gradient(circle at bottom right, rgba(92,128,255,0.22), transparent 28%), linear-gradient(140deg, #07153F 0%, #0C2E89 42%, #1740D1 100%)",
       }}
     >
+      {/* Subtle radial shine */}
       <div
-        className="absolute -top-24 -left-24 w-96 h-96 rounded-full opacity-18 blur-3xl pointer-events-none"
+        className="absolute -top-24 -left-24 h-96 w-96 rounded-full opacity-25 blur-3xl pointer-events-none"
         style={{
           background:
-            "radial-gradient(closest-side at 15% 15%, rgba(255,255,255,0.1), rgba(255,255,255,0) 40%)",
+            "radial-gradient(closest-side at 15% 15%, rgba(255,255,255,0.16), rgba(255,255,255,0) 42%)",
         }}
       />
       <div
-        className="absolute -bottom-32 -right-24 w-[420px] h-[420px] rounded-full opacity-10 blur-2xl pointer-events-none"
+        className="absolute -bottom-32 -right-24 h-[420px] w-[420px] rounded-full opacity-20 blur-2xl pointer-events-none"
         style={{
           background:
-            "radial-gradient(closest-side at 85% 85%, rgba(255,255,255,0.06), rgba(255,255,255,0) 30%)",
+            "radial-gradient(closest-side at 85% 85%, rgba(112,149,255,0.25), rgba(255,255,255,0) 36%)",
         }}
       />
-      <Card variant="elevated" className="max-w-md w-full space-y-6 p-8">
-        {/* Branding */}
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(6,15,44,0.08)_0%,rgba(6,15,44,0.2)_100%)] pointer-events-none" />
+      {/* Main Signup Card */}
+      <Card
+        variant="elevated"
+        className="w-full max-w-md space-y-6 border-[rgba(141,161,240,0.18)] bg-[#121C3B] p-8 shadow-[0_30px_80px_rgba(7,18,56,0.45)]"
+        style={{
+          background:
+            "linear-gradient(180deg, rgba(13, 24, 58, 0.98) 0%, rgba(18, 28, 59, 0.98) 100%)",
+          borderColor: "rgba(127, 156, 255, 0.22)",
+          boxShadow: "0 32px 90px rgba(6, 14, 44, 0.52)",
+        }}
+      >
+        {/* Header */}
         <div className="text-center space-y-4">
           <div className="flex justify-center">
-            <div className="rounded-[1.9rem] border border-[rgba(23,64,209,0.14)] bg-[linear-gradient(180deg,#FFFFFF_0%,#F3F6FF_100%)] px-7 py-6 shadow-[0_20px_40px_rgba(9,23,74,0.12)]">
-              <BrandLogo
-                showWordmark={false}
-                size="xl"
-                layout="stacked"
-                className="gap-4"
-              />
-            </div>
+            <BrandLogo
+              showWordmark={false}
+              size="xl"
+              layout="stacked"
+              className="gap-4"
+            />
           </div>
-          <h1 className="brand-header text-2xl font-extrabold text-slate-800">
-            Create account
-          </h1>
+          <div>
+            <h1 className="brand-header text-2xl font-extrabold text-white">
+              Create account
+            </h1>
+            <p className="mt-2 text-sm leading-relaxed text-[#D4DDFF]">
+              Join the premium comfort community.
+            </p>
+          </div>
         </div>
+
+        {/* Method Selector */}
+        <div className="grid grid-cols-2 gap-2 rounded-2xl bg-[#DCE6FF]/12 p-1.5 ring-1 ring-white/8">
+          <button
+            type="button"
+            onClick={() => setMethod("EMAIL")}
+            className={`rounded-xl px-4 py-3 text-sm font-bold transition-all ${
+              method === "EMAIL"
+                ? "bg-white/95 text-[var(--brand-primary)] shadow-sm"
+                : "text-[#B7C7F2]"
+            }`}
+          >
+            Email
+          </button>
+          <button
+            type="button"
+            onClick={() => setMethod("PHONE")}
+            className={`rounded-xl px-4 py-3 text-sm font-bold transition-all ${
+              method === "PHONE"
+                ? "bg-white/95 text-[var(--brand-primary)] shadow-sm"
+                : "text-[#B7C7F2]"
+            }`}
+          >
+            Phone
+          </button>
+        </div>
+
+        {/* Signup Forms */}
 
         <form onSubmit={handleSignup} className="space-y-5">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label>First Name</Label>
+              <Label htmlFor="firstName" className="text-[#EAF0FF]">
+                First Name
+              </Label>
               <Input
+                id="firstName"
                 variant="large"
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
                 placeholder="John"
+                className="mt-2 h-15 !rounded-2xl !border-[#8FA4E8] !bg-[#253250] !text-white placeholder:!text-[#91A1C8] focus:!border-white"
                 required
               />
             </div>
             <div>
-              <Label>Last Name</Label>
+              <Label htmlFor="lastName" className="text-[#EAF0FF]">
+                Last Name
+              </Label>
               <Input
+                id="lastName"
                 variant="large"
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
                 placeholder="Doe"
+                className="mt-2 h-15 !rounded-2xl !border-[#8FA4E8] !bg-[#253250] !text-white placeholder:!text-[#91A1C8] focus:!border-white"
                 required
               />
             </div>
           </div>
 
-          <div className="flex gap-4">
-            <Button
-              type="button"
-              size="md"
-              variant={method === "EMAIL" ? "primary" : "secondary"}
-              className="flex-1"
-              onClick={() => setMethod("EMAIL")}
-            >
-              Sign up with Email
-            </Button>
-            <Button
-              type="button"
-              size="md"
-              variant={method === "PHONE" ? "primary" : "secondary"}
-              className="flex-1"
-              onClick={() => setMethod("PHONE")}
-            >
-              Sign up with Phone
-            </Button>
-          </div>
-
           {method === "EMAIL" ? (
             <div>
-              <Label>Email</Label>
+              <Label htmlFor="email" className="text-[#EAF0FF]">
+                Email Address
+              </Label>
               <Input
+                id="email"
                 variant="large"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="john.doe@example.com"
+                className="mt-2 h-15 !rounded-2xl !border-[#8FA4E8] !bg-[#253250] !text-white placeholder:!text-[#91A1C8] focus:!border-white"
                 required
               />
             </div>
           ) : (
             <div>
-              <Label>Phone Number</Label>
-              <div className="relative">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 font-semibold">
-                  +91
-                </span>
-                <Input
-                  variant="large"
-                  type="tel"
-                  maxLength={10}
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
-                  className="pl-14"
-                  placeholder="Enter Mobile Number"
-                  required
-                />
+              <Label htmlFor="phone" className="text-[#EAF0FF]">
+                Mobile number
+              </Label>
+              <div className="mt-2 flex w-full gap-1">
+                <div className="flex h-15 w-20 flex-shrink-0 items-center justify-center rounded-2xl border border-[#7F9CFF]/30 bg-[#DDE7FF]/92">
+                  <span className="font-semibold text-[#17398B]">+91</span>
+                </div>
+                <div className="min-w-0 flex-1">
+                  <Input
+                    id="phone"
+                    variant="large"
+                    type="tel"
+                    maxLength={10}
+                    value={phone}
+                    onChange={(e) =>
+                      setPhone(e.target.value.replace(/\D/g, ""))
+                    }
+                    placeholder="0000000000"
+                    className="h-15 !w-full !min-w-0 !rounded-2xl !border-[#8FA4E8] !bg-[#253250] !px-5 !text-white placeholder:!text-[#91A1C8] focus:!border-white"
+                    required
+                  />
+                </div>
               </div>
             </div>
           )}
 
           <div>
-            <Label>Password</Label>
+            <Label htmlFor="password" className="text-[#EAF0FF]">
+              Password
+            </Label>
             <Input
+              id="password"
               variant="large"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
+              className="mt-2 h-15 !rounded-2xl !border-[#8FA4E8] !bg-[#253250] !text-white placeholder:!text-[#91A1C8] focus:!border-white"
               required
             />
           </div>
 
           {error && (
-            <p className="text-sm font-medium text-red-600 text-center">
-              {error}
-            </p>
+            <div className="rounded-2xl border border-[#D76A72]/40 bg-[#3B2030] p-3">
+              <p className="text-sm text-[#FFB8BE]">{error}</p>
+            </div>
           )}
           {successMessage && (
-            <p className="text-sm font-medium text-emerald-600 text-center">
-              {successMessage}
-            </p>
+            <div className="rounded-2xl border border-emerald-500/40 bg-emerald-900/20 p-3">
+              <p className="text-sm text-emerald-200">{successMessage}</p>
+            </div>
           )}
 
           <Button
             type="submit"
             variant="primary"
             fullWidth
+            isLoading={isLoading}
             size="lg"
-            className="py-4"
+            className="h-16 !rounded-2xl !text-base !font-extrabold"
             disabled={
               isLoading ||
               !firstName ||
@@ -221,43 +267,71 @@ const SignupScreen: React.FC = () => {
               (method === "PHONE" && phone.length < 10)
             }
           >
-            {isLoading ? (
-              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-            ) : (
-              "Sign Up"
-            )}
+            Create Account
           </Button>
         </form>
 
-        <div className="text-center">
-          <p className="text-xs text-slate-600 mb-3">
-            Want to browse first?{" "}
+        {/* Divider */}
+        <div className="flex items-center gap-3 my-6">
+          <div className="h-px flex-1 bg-[#4A5D93]"></div>
+          <span className="text-xs font-semibold uppercase text-[#9FB0DA]">
+            or
+          </span>
+          <div className="h-px flex-1 bg-[#4A5D93]"></div>
+        </div>
+
+        {/* Footer Links */}
+        <div className="space-y-3">
+          <p className="text-center text-sm text-[#9FB0DA]">
+            Prefer to look around first?{" "}
             <button
-              className="text-indigo-600 font-semibold"
+              type="button"
               onClick={() => navigate("/brand-hall")}
+              className="font-semibold text-[#DDE6FF] hover:text-white hover:underline"
             >
-              Continue as guest
+              Browse as guest
             </button>
           </p>
 
-          <p className="text-xs text-slate-600">
+          <p className="text-center text-sm text-[#9FB0DA]">
             Already have an account?{" "}
             <button
-              className="text-indigo-600 font-semibold"
+              type="button"
               onClick={() => navigate("/login")}
+              className="font-semibold text-[#DDE6FF] hover:text-white hover:underline"
             >
-              Log in here
+              Log in
+            </button>
+          </p>
+
+          <p className="text-center text-sm text-[#9FB0DA]">
+            Admin user?{" "}
+            <button
+              type="button"
+              onClick={() => navigate("/admin-login")}
+              className="font-bold text-[#FFB8BE] hover:text-white hover:underline"
+            >
+              Access Capitol
+            </button>
+          </p>
+
+          <p className="text-center text-xs leading-relaxed text-[#8D9EC6]">
+            By continuing, you agree to our{" "}
+            <button
+              type="button"
+              className="text-[#DDE6FF] hover:text-white hover:underline"
+            >
+              Terms
+            </button>
+            {" & "}
+            <button
+              type="button"
+              className="text-[#DDE6FF] hover:text-white hover:underline"
+            >
+              Privacy Policy
             </button>
           </p>
         </div>
-
-        <p className="text-xs text-center text-slate-500">
-          By continuing, you agree to our{" "}
-          <span className="text-indigo-600 underline">
-            Terms & Privacy Policy
-          </span>
-          .
-        </p>
       </Card>
     </div>
   );

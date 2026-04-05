@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { BRANDS } from "../constants";
 import { BrandMetadata } from "../types";
 import { BrandCard, BrandLogo, CTASection, Section } from "./UI";
@@ -48,6 +48,8 @@ const BrandHall: React.FC<Props> = ({
   ];
 
   const [activeOffer, setActiveOffer] = useState(0);
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const profileMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const timer = window.setInterval(() => {
@@ -56,6 +58,24 @@ const BrandHall: React.FC<Props> = ({
 
     return () => window.clearInterval(timer);
   }, [heroOffers.length]);
+
+  // Handle click outside profile menu to close it
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        profileMenuRef.current &&
+        !profileMenuRef.current.contains(event.target as Node)
+      ) {
+        setShowProfileMenu(false);
+      }
+    };
+
+    if (showProfileMenu) {
+      document.addEventListener("mousedown", handleClickOutside);
+      return () =>
+        document.removeEventListener("mousedown", handleClickOutside);
+    }
+  }, [showProfileMenu]);
 
   // Brand accent colors mapping
   const brandAccentColors: { [key: string]: string } = {
@@ -251,8 +271,72 @@ const BrandHall: React.FC<Props> = ({
                 Sign In
               </button>
             ) : (
-              <div className="rounded-full border border-white/10 bg-white/95 px-4 py-2 text-xs font-black uppercase tracking-[0.14em] text-[#0C1F63]">
-                {userName ? `Hi, ${userName}` : "Welcome back"}
+              <div className="relative" ref={profileMenuRef}>
+                <button
+                  type="button"
+                  onClick={() => setShowProfileMenu(!showProfileMenu)}
+                  className="rounded-full border border-white/10 bg-white/95 px-4 py-2 text-xs font-black uppercase tracking-[0.14em] text-[#0C1F63] hover:bg-slate-100 transition"
+                >
+                  {userName ? `Hi, ${userName}` : "Welcome back"}
+                </button>
+
+                {showProfileMenu && (
+                  <div className="absolute right-0 mt-2 w-48 rounded-2xl border border-white/10 bg-white/95 shadow-2xl z-50">
+                    <div className="space-y-1 p-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          // Navigate to profile page
+                          setShowProfileMenu(false);
+                        }}
+                        className="w-full text-left px-4 py-3 text-sm font-semibold text-[#0C1F63] hover:bg-slate-100 rounded-lg transition"
+                      >
+                        My Profile
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          // Navigate to order history
+                          setShowProfileMenu(false);
+                        }}
+                        className="w-full text-left px-4 py-3 text-sm font-semibold text-[#0C1F63] hover:bg-slate-100 rounded-lg transition"
+                      >
+                        Order History
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          // Navigate to sleep preferences
+                          setShowProfileMenu(false);
+                        }}
+                        className="w-full text-left px-4 py-3 text-sm font-semibold text-[#0C1F63] hover:bg-slate-100 rounded-lg transition"
+                      >
+                        Sleep Preferences
+                      </button>
+                      <div className="h-px bg-slate-200 my-2" />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          // Open support
+                          setShowProfileMenu(false);
+                        }}
+                        className="w-full text-left px-4 py-3 text-sm font-semibold text-[#0C1F63] hover:bg-slate-100 rounded-lg transition"
+                      >
+                        Support
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          // Sign out functionality
+                          setShowProfileMenu(false);
+                        }}
+                        className="w-full text-left px-4 py-3 text-sm font-semibold text-red-600 hover:bg-red-50 rounded-lg transition"
+                      >
+                        Sign Out
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </div>
