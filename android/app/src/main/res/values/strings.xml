@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Make My Mattress</string>
+    <string name="title_activity_main">Make My Mattress</string>
+    <string name="package_name">com.hindustanmattress.makemymattress</string>
+    <string name="custom_url_scheme">com.hindustanmattress.makemymattress</string>
+</resources>

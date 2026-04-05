@@ -25,86 +25,100 @@ interface FooterProps {
 export const Footer: React.FC<FooterProps> = ({
   sections = [
     {
-      title: "Product",
+      title: "Collections",
       links: [
-        { href: "#", label: "Browse Mattresses" },
-        { href: "#", label: "Customize" },
-        { href: "#", label: "Brands" },
+        { href: "#", label: "Mattresses" },
+        { href: "#", label: "Pillows" },
+        { href: "#", label: "Bedsheets" },
+        { href: "#", label: "Accessories" },
       ],
     },
     {
       title: "Company",
       links: [
         { href: "#", label: "About Us" },
-        { href: "#", label: "Blog" },
         { href: "#", label: "Careers" },
+        { href: "#", label: "Blog" },
+        { href: "#", label: "Press" },
       ],
     },
     {
       title: "Support",
       links: [
-        { href: "#", label: "Contact" },
-        { href: "#", label: "Shipping" },
+        { href: "#", label: "Contact Us" },
+        { href: "#", label: "Shipping Info" },
         { href: "#", label: "Returns" },
+        { href: "#", label: "FAQ" },
       ],
     },
     {
       title: "Legal",
       links: [
-        { href: "#", label: "Privacy" },
-        { href: "#", label: "Terms" },
-        { href: "#", label: "Cookies" },
+        { href: "#", label: "Privacy Policy" },
+        { href: "#", label: "Terms of Service" },
+        { href: "#", label: "Cookie Policy" },
+        { href: "#", label: "Accessibility" },
       ],
     },
   ],
   onSocialClick,
 }) => {
   return (
-    <footer className="bg-gradient-to-br from-slate-900 to-slate-950 text-white border-t border-slate-800">
+    <footer className="bg-white dark:bg-slate-950 border-t border-theme-border text-theme-primary dark:text-white">
       <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-16 md:py-20">
         {/* Main Footer Content */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 md:gap-12 mb-12">
           {/* Brand Section */}
           <div className="col-span-1 lg:col-span-1">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center">
-                <span className="text-white font-black">M</span>
+              <div className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-indigo-700 rounded-2xl flex items-center justify-center">
+                <span className="text-white font-black text-lg">M</span>
               </div>
-              <span className="text-lg font-bold uppercase tracking-tight">
-                Make My Mattress
-              </span>
+              <div>
+                <span className="text-lg font-bold uppercase tracking-tight block">
+                  Make My Mattress
+                </span>
+                <span className="text-xs font-bold text-theme-secondary uppercase tracking-wider">
+                  Premium Comfort
+                </span>
+              </div>
             </div>
-            <p className="text-slate-400 text-sm leading-relaxed mb-6">
-              Bespoke comfort, factory direct. Handcrafted mattresses designed
-              for your perfect sleep.
+            <p className="text-theme-secondary dark:text-slate-400 text-sm leading-relaxed mb-6">
+              Bespoke, handcrafted mattresses designed for your perfect sleep.
+              Factory direct comfort with honest guidance.
             </p>
             {/* Social Links */}
             <div className="flex gap-4">
-              {["facebook", "twitter", "instagram", "linkedin"].map(
-                (platform) => (
-                  <button
-                    key={platform}
-                    onClick={() => onSocialClick?.(platform)}
-                    className="
-                    w-10 h-10 rounded-lg bg-slate-800 hover:bg-indigo-600
+              {[
+                { platform: "facebook", icon: "f" },
+                { platform: "twitter", icon: "𝕏" },
+                { platform: "instagram", icon: "📷" },
+                { platform: "linkedin", icon: "in" },
+              ].map(({ platform, icon }) => (
+                <button
+                  key={platform}
+                  onClick={() => onSocialClick?.(platform)}
+                  className="
+                    w-10 h-10 rounded-lg bg-theme-input dark:bg-slate-800
+                    hover:bg-indigo-600 dark:hover:bg-indigo-600
                     flex items-center justify-center transition-all duration-200
                     transform hover:scale-110 hover:-translate-y-1
+                    text-theme-secondary hover:text-white dark:text-slate-400
+                    dark:hover:text-white font-bold text-sm
                   "
-                    aria-label={platform}
-                  >
-                    <span className="text-sm font-bold">
-                      {platform[0].toUpperCase()}
-                    </span>
-                  </button>
-                ),
-              )}
+                  aria-label={platform}
+                  title={platform}
+                >
+                  {icon}
+                </button>
+              ))}
             </div>
           </div>
 
           {/* Link Sections */}
           {sections.map((section) => (
             <div key={section.title}>
-              <h3 className="font-bold text-white mb-4 uppercase text-sm tracking-widest">
+              <h3 className="font-bold text-theme-primary dark:text-white mb-4 uppercase text-sm tracking-widest">
                 {section.title}
               </h3>
               <ul className="space-y-3">
@@ -113,9 +127,10 @@ export const Footer: React.FC<FooterProps> = ({
                     <a
                       href={link.href}
                       className="
-                        text-slate-400 hover:text-white
+                        text-theme-secondary dark:text-slate-400
+                        hover:text-indigo-600 dark:hover:text-indigo-400
                         transition-colors duration-200
-                        text-sm
+                        text-sm font-medium
                       "
                     >
                       {link.label}
@@ -128,10 +143,10 @@ export const Footer: React.FC<FooterProps> = ({
         </div>
 
         {/* Divider */}
-        <div className="h-px bg-gradient-to-r from-transparent via-slate-700 to-transparent mb-8" />
+        <div className="h-px bg-gradient-to-r from-transparent via-theme-border to-transparent mb-8" />
 
         {/* Bottom Section */}
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6 text-xs text-slate-400">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-6 text-xs text-theme-secondary dark:text-slate-400">
           <p>© 2026 Make My Mattress Co. All rights reserved.</p>
           <div className="flex items-center gap-6">
             <span>Made with ❤️ in Pune, India</span>

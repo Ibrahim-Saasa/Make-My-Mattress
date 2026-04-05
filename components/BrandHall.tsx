@@ -282,7 +282,27 @@ const BrandHall: React.FC<Props> = ({
             )}
           </div>
           <div className="relative grid items-center gap-10 lg:grid-cols-[minmax(0,1.2fr)_minmax(300px,0.8fr)]">
-            <div className="relative z-10">
+            <div className="order-first lg:order-last flex justify-center lg:justify-center lg:pl-6">
+              <div className="rounded-[2.75rem] border border-[rgba(255,255,255,0.18)] bg-[linear-gradient(180deg,rgba(255,255,255,0.14),rgba(255,255,255,0.08))] px-10 py-8 shadow-[0_28px_70px_rgba(0,0,0,0.18)] backdrop-blur-md">
+                <BrandLogo
+                  size="xl"
+                  layout="stacked"
+                  showWordmark={false}
+                  className="gap-5 scale-150"
+                />
+                <div className="mt-6 rounded-[1.5rem] border border-white/12 bg-[#081742]/40 px-5 py-4 text-left">
+                  <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[#DCE6FF]">
+                    Signature promise
+                  </p>
+                  <p className="mt-2 text-sm leading-relaxed text-slate-100">
+                    Premium comfort, honest guidance, and a buying journey that
+                    feels calm from the first click.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="relative z-10 order-last lg:order-first">
               {userName && (
                 <p className="text-sm font-bold text-[#DCE6FF] uppercase tracking-wider mb-3">
                   Welcome back, {userName}!
@@ -356,26 +376,6 @@ const BrandHall: React.FC<Props> = ({
                     </p>
                   </div>
                 ))}
-              </div>
-            </div>
-
-            <div className="flex justify-center lg:justify-center lg:pl-6">
-              <div className="rounded-[2.75rem] border border-[rgba(255,255,255,0.18)] bg-[linear-gradient(180deg,rgba(255,255,255,0.14),rgba(255,255,255,0.08))] px-10 py-8 shadow-[0_28px_70px_rgba(0,0,0,0.18)] backdrop-blur-md">
-                <BrandLogo
-                  size="xl"
-                  layout="stacked"
-                  showWordmark={false}
-                  className="gap-5 scale-150"
-                />
-                <div className="mt-6 rounded-[1.5rem] border border-white/12 bg-[#081742]/40 px-5 py-4 text-left">
-                  <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[#DCE6FF]">
-                    Signature promise
-                  </p>
-                  <p className="mt-2 text-sm leading-relaxed text-slate-100">
-                    Premium comfort, honest guidance, and a buying journey that
-                    feels calm from the first click.
-                  </p>
-                </div>
               </div>
             </div>
           </div>

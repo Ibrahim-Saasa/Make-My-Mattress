@@ -35,7 +35,7 @@ import { ProductWizardProvider } from "./contexts/ProductWizardContext";
 import ProductWizardModal from "./components/ProductWizard/ProductWizardModal";
 import ProductWizardFloatingButton from "./components/ProductWizard/ProductWizardFloatingButton";
 import { UserRole, BrandMetadata, PricingResult } from "./types";
-import { BrandLogo } from "./components/UI";
+import { BrandLogo, Footer } from "./components/UI";
 
 interface CartItem {
   brand: BrandMetadata;
@@ -594,18 +594,14 @@ const App: React.FC = () => {
             <Route
               path="/checkout"
               element={
-                cartItems.length > 0 ? (
-                  <CheckoutScreen
-                    cartItems={cartItems}
-                    onBack={() => navigate("/configurator")}
-                    onOrderSuccess={() => {
-                      setCartItems([]);
-                      navigate("/brand-hall");
-                    }}
-                  />
-                ) : (
-                  <Navigate to="/brand-hall" />
-                )
+                <CheckoutScreen
+                  cartItems={cartItems}
+                  onBack={() => navigate("/brand-hall")}
+                  onOrderSuccess={() => {
+                    setCartItems([]);
+                    navigate("/brand-hall");
+                  }}
+                />
               }
             />
             <Route
@@ -685,6 +681,14 @@ const App: React.FC = () => {
             <ProductWizardFloatingButton />
           </>
         )}
+
+        {/* Footer - Display on all pages except auth and industrial */}
+        {location.pathname !== "/identity" &&
+          location.pathname !== "/login" &&
+          location.pathname !== "/signup" &&
+          location.pathname !== "/admin-login" &&
+          location.pathname !== "/reset" &&
+          !isIndustrialScreen && <Footer />}
       </div>
     </ProductWizardProvider>
   );

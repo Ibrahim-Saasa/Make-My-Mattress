@@ -1,10 +1,12 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
-import { ProductCategory } from "../types";
+import { ProductCategory, ProductRecommendation } from "../types";
+import { preferenceService } from "../services/preferenceService";
 
 interface ProductWizardState {
   isOpen: boolean;
   currentCategory?: ProductCategory;
   step: "category" | "questionnaire" | "results";
+  recommendations: ProductRecommendation[];
   openWizard: () => void;
   closeWizard: () => void;
   selectCategory: (category: ProductCategory) => void;
@@ -15,6 +17,7 @@ interface ProductWizardState {
 const defaultState: ProductWizardState = {
   isOpen: false,
   step: "category",
+  recommendations: [],
   openWizard: () => {},
   closeWizard: () => {},
   selectCategory: () => {},
@@ -32,34 +35,46 @@ export const ProductWizardProvider: React.FC<{ children: ReactNode }> = ({
   const [step, setStep] = useState<"category" | "questionnaire" | "results">(
     "category",
   );
+  const [recommendations, setRecommendations] = useState<
+    ProductRecommendation[]
+  >([]);
 
   const openWizard = () => setIsOpen(true);
   const closeWizard = () => {
     setIsOpen(false);
     setCurrentCategory(undefined);
     setStep("category");
+    setRecommendations([]);
   };
 
   const selectCategory = (category: ProductCategory) => {
     setCurrentCategory(category);
     setStep("questionnaire");
+    setRecommendations([]);
   };
 
   const goBack = () => {
-    if (step === "questionnaire") {
+    if (step === "questionnaire" || step === "results") {
       setCurrentCategory(undefined);
       setStep("category");
-    } else if (step === "results") {
-      setCurrentCategory(undefined);
-      setStep("category");
+      setRecommendations([]);
     }
   };
 
   const completeQuestionnaire = async (payload: any) => {
-    // Persistence stub: wire to preferenceService later
-    // eslint-disable-next-line no-console
-    console.log("completeQuestionnaire", payload);
-    setStep("results");
+    try {
+      const recs = await preferenceService.getProductRecommendations(
+        payload.answers,
+      );
+      setRecommendations(recs);
+    } catch (error) {
+      console.error("Error fetching wizard recommendations:", error);
+      setRecommendations(
+        preferenceService.getRandomRecommendations(payload.answers),
+      );
+    } finally {
+      setStep("results");
+    }
   };
 
   return (
@@ -68,6 +83,7 @@ export const ProductWizardProvider: React.FC<{ children: ReactNode }> = ({
         isOpen,
         currentCategory,
         step,
+        recommendations,
         openWizard,
         closeWizard,
         selectCategory,
