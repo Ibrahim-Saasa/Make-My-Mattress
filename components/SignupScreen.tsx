@@ -15,6 +15,10 @@ const SignupScreen: React.FC = () => {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
+  const [otpInput, setOtpInput] = useState("");
+  const [signupStep, setSignupStep] = useState<"FORM" | "OTP_VERIFICATION">(
+    "FORM",
+  );
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
@@ -26,7 +30,6 @@ const SignupScreen: React.FC = () => {
     setIsLoading(true);
 
     try {
-      let signUpError;
       if (method === "EMAIL") {
         const { error } = await supabase.auth.signUp({
           email,
@@ -35,31 +38,70 @@ const SignupScreen: React.FC = () => {
             data: { first_name: firstName, last_name: lastName },
           },
         });
-        signUpError = error;
+
+        if (error) {
+          throw error;
+        }
+
+        setSuccessMessage(
+          "Signup successful! Please check your email for a confirmation link.",
+        );
+        setTimeout(() => navigate("/login"), 3000);
       } else {
-        // PHONE
-        const { error } = await supabase.auth.signUp({
+        if (phone.length < 10) {
+          setError("Please enter a valid 10-digit number");
+          return;
+        }
+
+        const { error } = await supabase.auth.signInWithOtp({
           phone: `+91${phone}`,
-          password,
-          options: {
-            data: { first_name: firstName, last_name: lastName },
-          },
         });
-        signUpError = error;
-      }
 
-      if (signUpError) {
-        throw signUpError;
-      }
+        if (error) {
+          throw error;
+        }
 
-      setSuccessMessage(
-        "Signup successful! Please check your email/phone for a confirmation link/OTP.",
-      );
-      // Optionally redirect to login after a short delay
-      setTimeout(() => navigate("/login"), 3000);
+        setSuccessMessage(
+          "OTP sent on WhatsApp. Enter the code below to finish signup.",
+        );
+        setSignupStep("OTP_VERIFICATION");
+      }
     } catch (err: any) {
       console.error("Signup Error:", err);
       setError(err.message || "Failed to sign up. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleVerifyOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setIsLoading(true);
+
+    try {
+      const { error } = await supabase.auth.verifyOtp({
+        phone: `+91${phone}`,
+        token: otpInput,
+        type: "sms",
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      const { error: updateError } = await supabase.auth.updateUser({
+        data: { first_name: firstName, last_name: lastName },
+      });
+
+      if (updateError) {
+        throw updateError;
+      }
+
+      navigate("/identity", { replace: true });
+    } catch (err: any) {
+      console.error("OTP Verification Error:", err);
+      setError(err.message || "Invalid OTP. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -148,7 +190,12 @@ const SignupScreen: React.FC = () => {
 
         {/* Signup Forms */}
 
-        <form onSubmit={handleSignup} className="space-y-5">
+        <form
+          onSubmit={
+            signupStep === "OTP_VERIFICATION" ? handleVerifyOtp : handleSignup
+          }
+          className="space-y-5"
+        >
           <div className="grid grid-cols-2 gap-4">
             <div>
               <Label htmlFor="firstName" className="text-[#EAF0FF]">
@@ -181,21 +228,78 @@ const SignupScreen: React.FC = () => {
           </div>
 
           {method === "EMAIL" ? (
-            <div>
-              <Label htmlFor="email" className="text-[#EAF0FF]">
-                Email Address
-              </Label>
-              <Input
-                id="email"
-                variant="large"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="john.doe@example.com"
-                className="mt-2 h-15 !rounded-2xl !border-[#8FA4E8] !bg-[#253250] !text-white placeholder:!text-[#91A1C8] focus:!border-white"
-                required
-              />
-            </div>
+            <>
+              <div>
+                <Label htmlFor="email" className="text-[#EAF0FF]">
+                  Email Address
+                </Label>
+                <Input
+                  id="email"
+                  variant="large"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="john.doe@example.com"
+                  className="mt-2 h-15 !rounded-2xl !border-[#8FA4E8] !bg-[#253250] !text-white placeholder:!text-[#91A1C8] focus:!border-white"
+                  required
+                />
+              </div>
+              <div>
+                <Label htmlFor="password" className="text-[#EAF0FF]">
+                  Password
+                </Label>
+                <Input
+                  id="password"
+                  variant="large"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="mt-2 h-15 !rounded-2xl !border-[#8FA4E8] !bg-[#253250] !text-white placeholder:!text-[#91A1C8] focus:!border-white"
+                  required
+                />
+              </div>
+            </>
+          ) : signupStep === "OTP_VERIFICATION" ? (
+            <>
+              <div>
+                <p className="text-sm leading-relaxed text-[#D4DDFF]">
+                  We sent a WhatsApp code to{" "}
+                  <span className="font-semibold text-white">+91 {phone}</span>.
+                </p>
+              </div>
+              <div>
+                <Label htmlFor="otp" className="text-[#EAF0FF]">
+                  WhatsApp verification code
+                </Label>
+                <Input
+                  id="otp"
+                  variant="large"
+                  type="text"
+                  maxLength={6}
+                  value={otpInput}
+                  onChange={(e) =>
+                    setOtpInput(e.target.value.replace(/\D/g, ""))
+                  }
+                  placeholder="000000"
+                  className="mt-2 h-16 !rounded-2xl !border-[#8FA4E8] !bg-[#253250] !font-mono !text-center !text-lg !tracking-[0.5em] !text-white placeholder:!text-[#91A1C8] focus:!border-white"
+                  autoFocus
+                  required
+                />
+              </div>
+              <div className="text-center">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSignupStep("FORM");
+                    setOtpInput("");
+                  }}
+                  className="text-sm font-medium text-[#BFD0FF] hover:text-white hover:underline"
+                >
+                  Use a different number
+                </button>
+              </div>
+            </>
           ) : (
             <div>
               <Label htmlFor="phone" className="text-[#EAF0FF]">
@@ -224,22 +328,6 @@ const SignupScreen: React.FC = () => {
             </div>
           )}
 
-          <div>
-            <Label htmlFor="password" className="text-[#EAF0FF]">
-              Password
-            </Label>
-            <Input
-              id="password"
-              variant="large"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              className="mt-2 h-15 !rounded-2xl !border-[#8FA4E8] !bg-[#253250] !text-white placeholder:!text-[#91A1C8] focus:!border-white"
-              required
-            />
-          </div>
-
           {error && (
             <div className="rounded-2xl border border-[#D76A72]/40 bg-[#3B2030] p-3">
               <p className="text-sm text-[#FFB8BE]">{error}</p>
@@ -262,12 +350,20 @@ const SignupScreen: React.FC = () => {
               isLoading ||
               !firstName ||
               !lastName ||
-              !password ||
-              (method === "EMAIL" && !email) ||
-              (method === "PHONE" && phone.length < 10)
+              (method === "EMAIL" && (!email || !password)) ||
+              (method === "PHONE" &&
+                signupStep === "FORM" &&
+                phone.length < 10) ||
+              (method === "PHONE" &&
+                signupStep === "OTP_VERIFICATION" &&
+                otpInput.length < 6)
             }
           >
-            Create Account
+            {method === "PHONE" && signupStep === "FORM"
+              ? "Send on WhatsApp"
+              : method === "PHONE" && signupStep === "OTP_VERIFICATION"
+              ? "Verify & Continue"
+              : "Create Account"}
           </Button>
         </form>
 
