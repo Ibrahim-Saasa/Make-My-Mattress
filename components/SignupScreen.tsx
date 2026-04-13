@@ -1,7 +1,15 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSession } from "../src/contexts/SessionContext";
 import { Card, Input, Label, Button, BrandLogo } from "./UI";
+import {
+  buildWhatsappOtpLink,
+  generateNumericOtp,
+  isOtpExpired,
+  isValidIndianMobile,
+  phoneToDerivedEmail,
+  phoneToDerivedPassword,
+} from "../src/utils/whatsappPhoneAuth";
 
 type SignupMethod = "EMAIL" | "PHONE";
 
@@ -22,6 +30,8 @@ const SignupScreen: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const generatedOtp = useRef("");
+  const otpExpiresAt = useRef<number | null>(null);
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,21 +58,19 @@ const SignupScreen: React.FC = () => {
         );
         setTimeout(() => navigate("/login"), 3000);
       } else {
-        if (phone.length < 10) {
+        if (!isValidIndianMobile(phone)) {
           setError("Please enter a valid 10-digit number");
           return;
         }
 
-        const { error } = await supabase.auth.signInWithOtp({
-          phone: `+91${phone}`,
-        });
+        const otp = generateNumericOtp();
+        const whatsappUrl = buildWhatsappOtpLink(phone, otp);
 
-        if (error) {
-          throw error;
-        }
-
+        generatedOtp.current = otp;
+        otpExpiresAt.current = Date.now() + 5 * 60 * 1000;
+        window.open(whatsappUrl, "_blank", "noopener,noreferrer");
         setSuccessMessage(
-          "OTP sent on WhatsApp. Enter the code below to finish signup.",
+          "WhatsApp opened with your verification code. Send the message to yourself, then enter the code below.",
         );
         setSignupStep("OTP_VERIFICATION");
       }
@@ -80,23 +88,78 @@ const SignupScreen: React.FC = () => {
     setIsLoading(true);
 
     try {
-      const { error } = await supabase.auth.verifyOtp({
-        phone: `+91${phone}`,
-        token: otpInput,
-        type: "sms",
+      if (isOtpExpired(otpExpiresAt.current)) {
+        throw new Error("This verification code has expired. Please resend it.");
+      }
+
+      if (otpInput !== generatedOtp.current) {
+        throw new Error("Invalid OTP. Please try again.");
+      }
+
+      const derivedEmail = phoneToDerivedEmail(phone);
+      const derivedPassword = phoneToDerivedPassword(phone);
+
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: derivedEmail,
+        password: derivedPassword,
       });
 
-      if (error) {
-        throw error;
+      if (signInError) {
+        const { error: confirmError } = await supabase.functions.invoke(
+          "confirm-phone-user",
+          {
+            body: {
+              email: derivedEmail,
+              password: derivedPassword,
+              phone: `+91${phone}`,
+              firstName,
+              lastName,
+            },
+          },
+        );
+
+        if (confirmError) {
+          throw confirmError;
+        }
+
+        const { error: secondSignInError } =
+          await supabase.auth.signInWithPassword({
+            email: derivedEmail,
+            password: derivedPassword,
+          });
+
+        if (secondSignInError) {
+          throw secondSignInError;
+        }
       }
 
       const { error: updateError } = await supabase.auth.updateUser({
-        data: { first_name: firstName, last_name: lastName },
+        data: { first_name: firstName, last_name: lastName, phone: `+91${phone}` },
       });
 
       if (updateError) {
         throw updateError;
       }
+
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (user) {
+        await supabase.from("profiles").upsert(
+          {
+            id: user.id,
+            first_name: firstName,
+            last_name: lastName,
+            phone: `+91${phone}`,
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: "id" },
+        );
+      }
+
+      generatedOtp.current = "";
+      otpExpiresAt.current = null;
 
       navigate("/identity", { replace: true });
     } catch (err: any) {

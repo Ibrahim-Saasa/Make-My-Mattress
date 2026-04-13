@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { BRANDS } from "../constants";
 import { BrandMetadata } from "../types";
 import { BrandCard, BrandLogo, CTASection, Section } from "./UI";
@@ -13,6 +14,7 @@ interface Props {
   isGuest: boolean;
   onLogin: () => void;
   onCartClick: () => void;
+  onLogout: () => void;
 }
 
 const BrandHall: React.FC<Props> = ({
@@ -25,7 +27,9 @@ const BrandHall: React.FC<Props> = ({
   isGuest,
   onLogin,
   onCartClick,
+  onLogout,
 }) => {
+  const navigate = useNavigate();
   const heroOffers = [
     {
       eyebrow: "New launch spotlight",
@@ -286,8 +290,8 @@ const BrandHall: React.FC<Props> = ({
                       <button
                         type="button"
                         onClick={() => {
-                          // Navigate to profile page
                           setShowProfileMenu(false);
+                          navigate("/profile");
                         }}
                         className="w-full text-left px-4 py-3 text-sm font-semibold text-[#0C1F63] hover:bg-slate-100 rounded-lg transition"
                       >
@@ -296,8 +300,8 @@ const BrandHall: React.FC<Props> = ({
                       <button
                         type="button"
                         onClick={() => {
-                          // Navigate to order history
                           setShowProfileMenu(false);
+                          navigate("/orders");
                         }}
                         className="w-full text-left px-4 py-3 text-sm font-semibold text-[#0C1F63] hover:bg-slate-100 rounded-lg transition"
                       >
@@ -306,8 +310,8 @@ const BrandHall: React.FC<Props> = ({
                       <button
                         type="button"
                         onClick={() => {
-                          // Navigate to sleep preferences
                           setShowProfileMenu(false);
+                          navigate("/sleep-preferences");
                         }}
                         className="w-full text-left px-4 py-3 text-sm font-semibold text-[#0C1F63] hover:bg-slate-100 rounded-lg transition"
                       >
@@ -317,8 +321,8 @@ const BrandHall: React.FC<Props> = ({
                       <button
                         type="button"
                         onClick={() => {
-                          // Open support
                           setShowProfileMenu(false);
+                          navigate("/support");
                         }}
                         className="w-full text-left px-4 py-3 text-sm font-semibold text-[#0C1F63] hover:bg-slate-100 rounded-lg transition"
                       >
@@ -326,9 +330,9 @@ const BrandHall: React.FC<Props> = ({
                       </button>
                       <button
                         type="button"
-                        onClick={() => {
-                          // Sign out functionality
+                        onClick={async () => {
                           setShowProfileMenu(false);
+                          onLogout();
                         }}
                         className="w-full text-left px-4 py-3 text-sm font-semibold text-red-600 hover:bg-red-50 rounded-lg transition"
                       >

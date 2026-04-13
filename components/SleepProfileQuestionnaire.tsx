@@ -64,7 +64,7 @@ const SleepProfileQuestionnaire: React.FC<Props> = ({
     }
   }, [session, navigate]);
 
-  const handleSubmit = async () => {
+  const handleGenerateRecommendations = async () => {
     setIsLoading(true);
     setError("");
     try {
@@ -74,22 +74,31 @@ const SleepProfileQuestionnaire: React.FC<Props> = ({
 
       // Convert formData to QuizAnswer[]
       const answers: QuizAnswer[] = [
-        { question: "sleep_position", answer: formData.sleep_position! },
         {
-          question: "firmness_preference",
-          answer: formData.firmness_preference!,
-        },
-        { question: "body_type", answer: formData.body_type! },
-        { question: "sleep_temperature", answer: formData.sleep_temperature! },
-        {
-          question: "health_concerns",
-          answer: formData.health_concerns!.join(", "),
+          question_id: "sleep_position",
+          answer_id: formData.sleep_position || "",
         },
         {
-          question: "partner_disturbance",
-          answer: formData.partner_disturbance ? "yes" : "no",
+          question_id: "firmness_preference",
+          answer_id: formData.firmness_preference || "",
         },
-        { question: "budget_preference", answer: formData.budget_preference! },
+        { question_id: "body_type", answer_id: formData.body_type || "" },
+        {
+          question_id: "sleep_temperature",
+          answer_id: formData.sleep_temperature || "",
+        },
+        {
+          question_id: "health_concerns",
+          answer_id: (formData.health_concerns || []).join(", "),
+        },
+        {
+          question_id: "partner_disturbance",
+          answer_id: formData.partner_disturbance ? "yes" : "no",
+        },
+        {
+          question_id: "budget_preference",
+          answer_id: formData.budget_preference || "",
+        },
       ];
 
       // Get recommendations
@@ -127,7 +136,7 @@ const SleepProfileQuestionnaire: React.FC<Props> = ({
       return;
     }
     if (step === 7) {
-      handleSubmit();
+      handleGenerateRecommendations();
     } else {
       setStep((prev) => prev + 1);
     }
@@ -156,7 +165,7 @@ const SleepProfileQuestionnaire: React.FC<Props> = ({
     });
   };
 
-  const handleSubmit = async () => {
+  const handleSaveProfile = async () => {
     setError("");
     setIsLoading(true);
 

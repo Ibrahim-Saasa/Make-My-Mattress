@@ -150,9 +150,8 @@ export const preferenceService = {
   ): Promise<ProductRecommendation[]> {
     try {
       // Initialize Gemini AI
-      const genAI = new GoogleGenAI(import.meta.env.VITE_GEMINI_API_KEY || "");
-      const model = genAI.models.getGenerativeModel({
-        model: "gemini-1.5-flash",
+      const genAI = new GoogleGenAI({
+        apiKey: import.meta.env.VITE_GEMINI_API_KEY || "",
       });
 
       // Convert answers to readable format
@@ -183,9 +182,11 @@ Make the recommendations specific and realistic. Focus on the category that seem
 Return only the JSON array, no additional text.
 `;
 
-      const result = await model.generateContent(prompt);
-      const response = await result.response;
-      const text = response.text();
+      const result = await genAI.models.generateContent({
+        model: "gemini-1.5-flash",
+        contents: prompt,
+      });
+      const text = result.text || "[]";
 
       // Parse the JSON response
       const recommendations = JSON.parse(text.trim());
@@ -325,3 +326,6 @@ Return only the JSON array, no additional text.
     return shuffled.slice(0, Math.min(3, shuffled.length));
   },
 };
+
+export const getProductRecommendations = (answers: QuizAnswer[]) =>
+  preferenceService.getProductRecommendations(answers);

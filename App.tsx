@@ -30,6 +30,7 @@ import DealerDashboard from "./components/DealerDashboard";
 import CheckoutScreen from "./components/CheckoutScreen";
 import CartDrawer from "./components/CartDrawer";
 import ProfilePage from "./components/ProfilePage";
+import PlaceholderPage from "./components/PlaceholderPage";
 import ResetPage from "./components/ResetPage";
 import { ProductWizardProvider } from "./contexts/ProductWizardContext";
 import ProductWizardModal from "./components/ProductWizard/ProductWizardModal";
@@ -545,7 +546,7 @@ const App: React.FC = () => {
           )}
 
         <main
-          className={`${location.pathname !== "/identity" && location.pathname !== "/login" && location.pathname !== "/signup" && location.pathname !== "/brand-hall" && !isIndustrialScreen ? "pt-32 md:pt-24" : ""}`}
+          className={`${location.pathname !== "/identity" && location.pathname !== "/login" && location.pathname !== "/signup" && location.pathname !== "/brand-hall" && location.pathname !== "/profile" && location.pathname !== "/orders" && location.pathname !== "/sleep-preferences" && location.pathname !== "/support" && !isIndustrialScreen ? "pt-32 md:pt-24" : ""}`}
         >
           <Routes>
             <Route path="/login" element={<LoginScreen />} />
@@ -570,6 +571,37 @@ const App: React.FC = () => {
                   isGuest={!session}
                   onLogin={() => navigate("/login")}
                   onCartClick={() => navigate("/checkout")}
+                  onLogout={handleLogout}
+                />
+              }
+            />
+            <Route
+              path="/orders"
+              element={
+                <PlaceholderPage
+                  eyebrow="Order history"
+                  title="Your orders will show up here"
+                  description="This placeholder is linked from the navbar menu for now. We can turn it into a full order timeline with delivery updates, invoices, and reorder actions next."
+                />
+              }
+            />
+            <Route
+              path="/sleep-preferences"
+              element={
+                <PlaceholderPage
+                  eyebrow="Sleep preferences"
+                  title="Your sleep preferences live here"
+                  description="This section is ready for the next pass. We can connect it to your quiz answers, saved comfort profile, and recommendations without changing the rest of the shopping flow."
+                />
+              }
+            />
+            <Route
+              path="/support"
+              element={
+                <PlaceholderPage
+                  eyebrow="Support"
+                  title="Support hub coming next"
+                  description="For now this gives the navbar a working destination. We can build this into a proper support area with FAQ, WhatsApp help, service requests, and post-purchase assistance."
                 />
               }
             />

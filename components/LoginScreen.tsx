@@ -1,7 +1,15 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSession } from "../src/contexts/SessionContext";
 import { BrandLogo, Button, Card, Input, Label } from "./UI";
+import {
+  buildWhatsappOtpLink,
+  generateNumericOtp,
+  isOtpExpired,
+  isValidIndianMobile,
+  phoneToDerivedEmail,
+  phoneToDerivedPassword,
+} from "../src/utils/whatsappPhoneAuth";
 
 type LoginStep = "PHONE_INPUT" | "OTP_VERIFICATION" | "EMAIL_PASSWORD";
 
@@ -16,6 +24,8 @@ const LoginScreen: React.FC = () => {
   const [otpInput, setOtpInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const generatedOtp = useRef("");
+  const otpExpiresAt = useRef<number | null>(null);
   const [mockWhatsapp, setMockWhatsapp] = useState<{
     show: boolean;
     message: string;
@@ -34,7 +44,7 @@ const LoginScreen: React.FC = () => {
 
   const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (phone.length < 10) {
+    if (!isValidIndianMobile(phone)) {
       setError("Please enter a valid 10-digit number");
       return;
     }
@@ -43,24 +53,16 @@ const LoginScreen: React.FC = () => {
     setIsLoading(true);
 
     try {
-      const { error } = await supabase.auth.signInWithOtp({
-        phone: `+91${phone}`,
-      });
+      const otp = generateNumericOtp();
+      const whatsappUrl = buildWhatsappOtpLink(phone, otp);
 
-      if (error) {
-        if (error.message.includes("unsupported phone provider")) {
-          setError(
-            "WhatsApp delivery is not configured yet. Set up the Supabase Send SMS hook with your India WhatsApp provider before using phone login.",
-          );
-        } else {
-          throw error;
-        }
-      } else {
-        setStep("OTP_VERIFICATION");
-        triggerWhatsappSimulation(
-          "We sent your verification code on WhatsApp. Please open WhatsApp and enter the OTP here.",
-        );
-      }
+      generatedOtp.current = otp;
+      otpExpiresAt.current = Date.now() + 5 * 60 * 1000;
+      setStep("OTP_VERIFICATION");
+      window.open(whatsappUrl, "_blank", "noopener,noreferrer");
+      triggerWhatsappSimulation(
+        "WhatsApp opened with your verification code. Send the message to yourself, then enter the code here.",
+      );
     } catch (err: any) {
       console.error("OTP Send Error:", err);
       setError(err.message || "Failed to send OTP. Please try again.");
@@ -71,24 +73,75 @@ const LoginScreen: React.FC = () => {
 
   const handleVerifyOtp = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
     setIsLoading(true);
 
     try {
-      const { error } = await supabase.auth.verifyOtp({
-        phone: `+91${phone}`,
-        token: otpInput,
-        type: "sms",
-      });
-
-      if (error) {
-        throw error;
+      if (isOtpExpired(otpExpiresAt.current)) {
+        throw new Error("This verification code has expired. Please resend it.");
       }
 
+      if (otpInput !== generatedOtp.current) {
+        throw new Error("Invalid OTP. Please try again.");
+      }
+
+      const derivedEmail = phoneToDerivedEmail(phone);
+      const derivedPassword = phoneToDerivedPassword(phone);
+
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: derivedEmail,
+        password: derivedPassword,
+      });
+
+      if (signInError) {
+        const { error: confirmError } = await supabase.functions.invoke(
+          "confirm-phone-user",
+          {
+            body: {
+              email: derivedEmail,
+              password: derivedPassword,
+              phone: `+91${phone}`,
+            },
+          },
+        );
+
+        if (confirmError) {
+          throw confirmError;
+        }
+
+        const { error: secondSignInError } =
+          await supabase.auth.signInWithPassword({
+            email: derivedEmail,
+            password: derivedPassword,
+          });
+
+        if (secondSignInError) {
+          throw secondSignInError;
+        }
+      }
+
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (user) {
+        await supabase.from("profiles").upsert(
+          {
+            id: user.id,
+            phone: `+91${phone}`,
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: "id" },
+        );
+      }
+
+      generatedOtp.current = "";
+      otpExpiresAt.current = null;
       setMockWhatsapp({ show: false, message: "" });
       navigate("/identity", { replace: true });
     } catch (err: any) {
       console.error("OTP Verification Error:", err);
-      setError(err.message || "Invalid OTP. Please try again.");
+      setError(err.message || "Unable to verify OTP. Please try again.");
     } finally {
       setIsLoading(false);
     }

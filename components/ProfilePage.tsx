@@ -108,19 +108,41 @@ const ProfilePage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-theme-background p-6 md:p-12">
+    <div
+      className="min-h-screen px-6 pb-12 pt-28 md:px-12 md:pb-16 md:pt-32 relative overflow-hidden"
+      style={{
+        background: 'var(--color-background)',
+        backgroundColor: 'var(--color-background-solid)',
+      }}
+    >
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-72 bg-[radial-gradient(circle_at_top,rgba(76,114,255,0.12),transparent_42%)] dark:bg-[radial-gradient(circle_at_top,rgba(111,145,255,0.18),transparent_42%)]" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-72 bg-[radial-gradient(circle_at_bottom,rgba(200,165,91,0.10),transparent_42%)] dark:bg-[radial-gradient(circle_at_bottom,rgba(76,114,255,0.12),transparent_42%)]" />
       <div className="max-w-2xl mx-auto">
         <div className="flex justify-between items-center mb-12">
-          <button onClick={() => navigate(-1)} className="w-10 h-10 rounded-full bg-theme-input flex items-center justify-center text-theme-secondary hover:bg-indigo-600 hover:text-white transition-all">
+          <button
+            onClick={() => navigate(-1)}
+            className="w-10 h-10 rounded-full flex items-center justify-center transition-all"
+            style={{
+              backgroundColor: 'var(--color-input-bg)',
+              color: 'var(--color-text-secondary)',
+            }}
+          >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" /></svg>
           </button>
           <h2 className="text-3xl font-black text-theme-primary tracking-tight">Your Profile</h2>
           <div className="w-10 h-10"></div> {/* Spacer */}
         </div>
 
-        <div className="bg-theme-card border border-theme-border p-8 rounded-[2.5rem] space-y-8">
+        <div
+          className="p-8 rounded-[2.5rem] space-y-8 border shadow-[0_28px_70px_rgba(9,23,74,0.12)] dark:shadow-[0_30px_80px_rgba(4,10,32,0.42)]"
+          style={{
+            background:
+              'linear-gradient(180deg, color-mix(in srgb, var(--color-card-background) 96%, white 4%) 0%, var(--color-card-background) 100%)',
+            borderColor: 'var(--color-border)',
+          }}
+        >
           <div className="text-center">
-            <h3 className="text-2xl font-black text-indigo-600">Hello, {firstName || 'User'}!</h3>
+            <h3 className="text-2xl font-black text-[var(--brand-primary)] dark:text-[#6E92FF]">Hello, {firstName || 'User'}!</h3>
             <p className="text-sm text-theme-secondary mt-2">Manage your personal details here.</p>
           </div>
 
@@ -132,7 +154,11 @@ const ProfilePage: React.FC = () => {
                   type="text"
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
-                  className="w-full bg-theme-input border border-theme-border rounded-2xl px-6 py-4 font-bold focus:outline-none focus:border-indigo-600 transition-colors text-theme-primary"
+                  className="w-full rounded-2xl px-6 py-4 font-bold focus:outline-none transition-colors text-theme-primary"
+                  style={{
+                    backgroundColor: 'var(--color-input-bg)',
+                    border: '1px solid var(--color-input-border)',
+                  }}
                   placeholder="John"
                   required
                 />
@@ -143,7 +169,11 @@ const ProfilePage: React.FC = () => {
                   type="text"
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
-                  className="w-full bg-theme-input border border-theme-border rounded-2xl px-6 py-4 font-bold focus:outline-none focus:border-indigo-600 transition-colors text-theme-primary"
+                  className="w-full rounded-2xl px-6 py-4 font-bold focus:outline-none transition-colors text-theme-primary"
+                  style={{
+                    backgroundColor: 'var(--color-input-bg)',
+                    border: '1px solid var(--color-input-border)',
+                  }}
                   placeholder="Doe"
                   required
                 />
@@ -156,7 +186,11 @@ const ProfilePage: React.FC = () => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-theme-input border border-theme-border rounded-2xl px-6 py-4 font-bold focus:outline-none focus:border-indigo-600 transition-colors text-theme-primary"
+                className="w-full rounded-2xl px-6 py-4 font-bold focus:outline-none transition-colors text-theme-primary"
+                style={{
+                  backgroundColor: 'var(--color-input-bg)',
+                  border: '1px solid var(--color-input-border)',
+                }}
                 placeholder="john.doe@example.com"
                 required
               />
@@ -168,7 +202,11 @@ const ProfilePage: React.FC = () => {
                 type="date"
                 value={dateOfBirth}
                 onChange={(e) => setDateOfBirth(e.target.value)}
-                className="w-full bg-theme-input border border-theme-border rounded-2xl px-6 py-4 font-bold focus:outline-none focus:border-indigo-600 transition-colors text-theme-primary"
+                className="w-full rounded-2xl px-6 py-4 font-bold focus:outline-none transition-colors text-theme-primary"
+                style={{
+                  backgroundColor: 'var(--color-input-bg)',
+                  border: '1px solid var(--color-input-border)',
+                }}
               />
             </div>
 
@@ -178,7 +216,11 @@ const ProfilePage: React.FC = () => {
             <button
               type="submit"
               disabled={isSaving}
-              className="w-full bg-indigo-600 text-white py-5 rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-indigo-500/20 hover:bg-indigo-700 active:scale-[0.98] transition-all flex items-center justify-center"
+              className="w-full text-white py-5 rounded-2xl font-black text-sm uppercase tracking-widest active:scale-[0.98] transition-all flex items-center justify-center"
+              style={{
+                background: 'linear-gradient(90deg, var(--brand-primary) 0%, var(--brand-primary-deep) 100%)',
+                boxShadow: '0 18px 36px rgba(23,64,209,0.22)',
+              }}
             >
               {isSaving ? (
                 <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
