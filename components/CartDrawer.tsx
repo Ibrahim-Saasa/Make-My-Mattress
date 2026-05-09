@@ -1,24 +1,50 @@
 import React from 'react';
 import { FinancialEngine } from '../services/financialEngine';
-import { BrandMetadata, PricingResult } from '../types';
+import { BrandMetadata, CartDiscountOffer, PricingResult } from '../types';
 
 interface CartItem {
   brand: BrandMetadata;
   dimensions: string;
   pricing: PricingResult;
   id: string;
+  label?: string;
+  source?: "brand" | "quiz";
+  comfortType?: string;
+  matchScore?: number;
 }
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
   items: CartItem[];
+  discountOffer?: CartDiscountOffer;
   onRemove: (id: string) => void;
   onCheckout: () => void;
+  celebrationMessage?: string;
 }
 
-const CartDrawer: React.FC<Props> = ({ isOpen, onClose, items, onRemove, onCheckout }) => {
+const CONFETTI_COLORS = ["#FFFFFF", "#C8A55B", "#6F8CFF", "#1740D1"];
+const CONFETTI_PIECES = Array.from({ length: 22 }, (_, index) => ({
+  left: `${4 + ((index * 13) % 92)}%`,
+  delay: `${(index % 7) * 0.12}s`,
+  color: CONFETTI_COLORS[index % CONFETTI_COLORS.length],
+  rotation: `${(index * 31) % 180}deg`,
+}));
+
+const CartDrawer: React.FC<Props> = ({
+  isOpen,
+  onClose,
+  items,
+  discountOffer,
+  onRemove,
+  onCheckout,
+  celebrationMessage,
+}) => {
   const subtotal = items.reduce((acc, item) => acc + item.pricing.final_price, 0);
+  const discountAmount = discountOffer
+    ? Math.round((subtotal * discountOffer.percent) / 100)
+    : 0;
+  const total = Math.max(subtotal - discountAmount, 0);
 
   if (!isOpen) return null;
 
@@ -52,6 +78,45 @@ const CartDrawer: React.FC<Props> = ({ isOpen, onClose, items, onRemove, onCheck
           </div>
 
           <div className="relative z-10 flex-1 space-y-8 overflow-y-auto p-8">
+            {celebrationMessage && (
+              <div className="relative overflow-hidden rounded-[2rem] border border-[#C8A55B]/30 bg-[linear-gradient(135deg,#10245D_0%,#1740D1_52%,#07143B_100%)] p-6 text-white shadow-2xl shadow-[#1740D1]/20">
+                <style>
+                  {`
+                    @keyframes mmm-confetti-fall {
+                      0% { opacity: 0; transform: translateY(-18px) rotate(0deg); }
+                      12% { opacity: 1; }
+                      100% { opacity: 0; transform: translateY(132px) rotate(220deg); }
+                    }
+                  `}
+                </style>
+                <div className="pointer-events-none absolute inset-0">
+                  {CONFETTI_PIECES.map((piece, index) => (
+                    <span
+                      key={`${piece.left}-${index}`}
+                      className="absolute top-0 h-3 w-1.5 rounded-full"
+                      style={{
+                        left: piece.left,
+                        backgroundColor: piece.color,
+                        transform: `rotate(${piece.rotation})`,
+                        animation: `mmm-confetti-fall 1.8s ease-out ${piece.delay} forwards`,
+                      }}
+                    />
+                  ))}
+                </div>
+                <div className="relative">
+                  <p className="text-[10px] font-black uppercase tracking-[0.24em] text-[#D9E2FF]">
+                    Almost there
+                  </p>
+                  <h3 className="mt-2 text-2xl font-black">
+                    Your match made it to the cart.
+                  </h3>
+                  <p className="mt-3 text-sm leading-6 text-[#EEF3FF]">
+                    {celebrationMessage}
+                  </p>
+                </div>
+              </div>
+            )}
+
             {items.length === 0 ? (
               <div className="flex h-full flex-col items-center justify-center space-y-4 text-center">
                 <div className="flex h-20 w-20 items-center justify-center rounded-full bg-theme-input text-theme-secondary">
@@ -79,12 +144,20 @@ const CartDrawer: React.FC<Props> = ({ isOpen, onClose, items, onRemove, onCheck
                   <div className="flex justify-between items-start mb-4">
                     <div>
                       <span className="mb-1 block text-[10px] font-black uppercase tracking-widest text-indigo-600">
-                        {item.brand.type} Series
+                        {item.comfortType || item.brand.type}{" "}
+                        {item.source === "quiz" ? "Custom Build" : "Series"}
                       </span>
-                      <h4 className="text-lg font-black text-theme-primary">{item.brand.name}</h4>
+                      <h4 className="text-lg font-black text-theme-primary">
+                        {item.label || item.brand.name}
+                      </h4>
                       <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.2em] text-theme-secondary">
                         {item.dimensions} INCHES
                       </p>
+                      {item.matchScore && (
+                        <p className="mt-3 text-[10px] font-black uppercase tracking-[0.18em] text-theme-secondary">
+                          Quiz match: {Math.round(item.matchScore * 100)}%
+                        </p>
+                      )}
                     </div>
                     <div className="text-right">
                       <div className="text-sm font-black text-theme-primary">
@@ -102,16 +175,45 @@ const CartDrawer: React.FC<Props> = ({ isOpen, onClose, items, onRemove, onCheck
 
           {items.length > 0 && (
             <div className="relative z-10 border-t border-theme-border bg-white/40 p-8 backdrop-blur-sm dark:bg-[#081742]/40">
-              <div className="flex justify-between items-end mb-6">
-                <div>
-                  <span className="mb-1 block text-[10px] font-bold uppercase tracking-widest text-theme-secondary">Cart Subtotal</span>
-                  <span className="text-3xl font-black text-theme-primary tracking-tighter">
+              <div className="mb-6 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-theme-secondary">
+                    Cart Subtotal
+                  </span>
+                  <span className="text-sm font-black text-theme-primary">
                     {FinancialEngine.formatCurrency(subtotal)}
                   </span>
                 </div>
-                <p className="text-[9px] text-theme-secondary text-right uppercase tracking-widest font-bold">
-                  Final delivery and taxes shown at checkout
-                </p>
+                {discountOffer && (
+                  <div className="rounded-[1.5rem] border border-[#C8A55B]/25 bg-[rgba(200,165,91,0.12)] px-4 py-3">
+                    <div className="flex items-center justify-between gap-4">
+                      <div>
+                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#9A7A39] dark:text-[#E3C98A]">
+                          {discountOffer.code}
+                        </p>
+                        <p className="mt-1 text-xs font-semibold text-theme-secondary">
+                          First-order comfort discount
+                        </p>
+                      </div>
+                      <span className="text-sm font-black text-[#00966C]">
+                        -{FinancialEngine.formatCurrency(discountAmount)}
+                      </span>
+                    </div>
+                  </div>
+                )}
+                <div className="flex items-end justify-between border-t border-theme-border pt-4">
+                  <div>
+                    <span className="mb-1 block text-[10px] font-bold uppercase tracking-widest text-theme-secondary">
+                      Total Payable
+                    </span>
+                    <span className="text-3xl font-black text-theme-primary tracking-tighter">
+                      {FinancialEngine.formatCurrency(total)}
+                    </span>
+                  </div>
+                  <p className="text-[9px] text-theme-secondary text-right uppercase tracking-widest font-bold">
+                    Final delivery and taxes shown at checkout
+                  </p>
+                </div>
               </div>
               <button 
                 onClick={onCheckout}

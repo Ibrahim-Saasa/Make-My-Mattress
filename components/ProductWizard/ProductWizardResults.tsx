@@ -1,96 +1,143 @@
 import React from "react";
 import { useProductWizard } from "../../contexts/ProductWizardContext";
-import { ProductRecommendation } from "../../types";
+import { FinancialEngine } from "../../services/financialEngine";
+import { CustomMattressBuild } from "../../types";
 
 interface ProductWizardResultsProps {
-  recommendations: ProductRecommendation[];
-  category: string;
+  customMattressBuild: CustomMattressBuild | null;
 }
 
 const ProductWizardResults: React.FC<ProductWizardResultsProps> = ({
-  recommendations,
-  category,
+  customMattressBuild,
 }) => {
-  const { goBack, closeWizard } = useProductWizard();
+  const { buyCustomMattress, startMattressQuiz, lookAround } =
+    useProductWizard();
 
-  return (
-    <div className="p-6 max-w-3xl mx-auto bg-slate-950/95 border border-slate-800 rounded-[2rem] shadow-[0_35px_120px_rgba(15,23,42,0.35)] backdrop-blur-xl">
-      <div className="flex items-start justify-between gap-4 mb-6">
-        <div>
-          <h2 className="text-2xl font-black text-white">
-            Recommended {category}s
-          </h2>
-          <p className="mt-2 text-sm text-slate-400 max-w-xl">
-            Based on your preferences, here are our top recommendations
-          </p>
-        </div>
+  if (!customMattressBuild) {
+    return (
+      <div className="rounded-[2.25rem] border border-white/10 bg-[#07112F] p-8 text-center text-white shadow-[0_35px_120px_rgba(3,9,30,0.45)]">
+        <p className="text-[10px] font-black uppercase tracking-[0.28em] text-[#B9C6FF]">
+          Sleep match studio
+        </p>
+        <h2 className="mt-4 text-3xl font-black">Let us try that again.</h2>
+        <p className="mx-auto mt-3 max-w-lg text-sm leading-7 text-[#D9E2FF]">
+          We could not build a clear custom quote from those answers. A quick
+          retake should get us there.
+        </p>
         <button
-          onClick={closeWizard}
-          className="text-slate-400 hover:text-white text-xl transition"
+          onClick={startMattressQuiz}
+          className="mt-8 rounded-[1.25rem] bg-white px-6 py-4 text-sm font-black uppercase tracking-[0.18em] text-[#07143B]"
         >
-          ✕
+          Retake Quiz
         </button>
       </div>
+    );
+  }
 
-      {recommendations.length === 0 ? (
-        <div className="text-center py-12 text-slate-400">
-          No products found for your preferences. Please try again.
+  const { params, pricing } = customMattressBuild;
+  const sizeLabel = `${params.length}" x ${params.breadth}" x ${params.thickness}"`;
+
+  return (
+    <div className="relative overflow-hidden rounded-[2.25rem] border border-white/10 bg-[linear-gradient(145deg,#07112F_0%,#12255A_52%,#061238_100%)] p-5 text-white shadow-[0_35px_120px_rgba(3,9,30,0.45)] md:p-8">
+      <div className="pointer-events-none absolute -right-20 -top-24 h-64 w-64 rounded-full bg-[#1740D1]/25 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-20 left-8 h-52 w-52 rounded-full bg-[#C8A55B]/[0.16] blur-3xl" />
+
+      <div className="relative">
+        <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
+          <div>
+            <p className="text-[10px] font-black uppercase tracking-[0.28em] text-[#B9C6FF]">
+              Your custom mattress quote
+            </p>
+            <h2 className="mt-3 text-3xl font-black leading-tight md:text-5xl">
+              {customMattressBuild.name}
+            </h2>
+            <p className="mt-3 text-sm font-bold uppercase tracking-[0.18em] text-[#C8A55B]">
+              {customMattressBuild.comfortType} comfort direction
+            </p>
+          </div>
+          <div className="rounded-[1.5rem] bg-white px-5 py-4 text-[#07143B]">
+            <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[#1740D1]">
+              Final price
+            </p>
+            <p className="mt-1 text-3xl font-black">
+              {FinancialEngine.formatCurrency(pricing.final_price)}
+            </p>
+            <p className="mt-1 text-[9px] font-black uppercase tracking-[0.16em] text-[#42527E]">
+              Price includes taxes
+            </p>
+          </div>
         </div>
-      ) : (
-        <div className="grid gap-4 mb-8">
-          {recommendations.map((product) => (
-            <div
-              key={product.id}
-              className="border border-slate-700 rounded-[1.5rem] p-6 bg-slate-900/90 hover:border-indigo-400 transition shadow-sm"
-            >
-              <div className="flex justify-between items-start mb-4">
-                <h3 className="text-xl font-bold text-white">{product.name}</h3>
-                <div className="text-right">
-                  <div className="text-xs text-slate-400 uppercase tracking-wider">
-                    Match Score
-                  </div>
-                  <div className="text-3xl font-black text-indigo-400">
-                    {Math.round(
-                      (product.match_score || product.matchScore || 0) * 100,
-                    )}
-                    %
-                  </div>
-                </div>
-              </div>
-              <p className="text-slate-300 mb-4 leading-relaxed">
-                {product.description}
-              </p>
-              <div className="flex items-center justify-between mb-6">
-                <div className="text-sm text-slate-400">
-                  <span className="font-semibold text-indigo-300">Price:</span>{" "}
-                  ${product.price || "N/A"}
-                </div>
-                <div className="text-sm text-slate-400">
-                  <span className="font-semibold text-indigo-300">Rating:</span>{" "}
-                  {product.rating ? `${product.rating}/5` : "N/A"}
-                </div>
-              </div>
-              <button className="w-full px-6 py-3 bg-indigo-600 text-white rounded-[0.75rem] hover:bg-indigo-700 transition font-semibold">
-                View Details
-              </button>
+
+        <p className="mt-6 max-w-3xl text-base leading-8 text-[#D9E2FF]">
+          {customMattressBuild.description}
+        </p>
+
+        <div className="mt-7 grid gap-3 md:grid-cols-3">
+          <div className="rounded-[1.25rem] border border-white/10 bg-white/[0.07] p-4">
+            <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[#B9C6FF]">
+              Size
+            </p>
+            <p className="mt-2 text-xl font-black text-white">{sizeLabel}</p>
+          </div>
+          <div className="rounded-[1.25rem] border border-white/10 bg-white/[0.07] p-4">
+            <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[#B9C6FF]">
+              Comfort
+            </p>
+            <p className="mt-2 text-xl font-black text-white">
+              {customMattressBuild.comfortType}
+            </p>
+          </div>
+          <div className="rounded-[1.25rem] border border-white/10 bg-white/[0.07] p-4">
+            <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[#B9C6FF]">
+              Match
+            </p>
+            <p className="mt-2 text-xl font-black text-white">
+              {Math.round(customMattressBuild.matchScore * 100)}%
+            </p>
+          </div>
+        </div>
+
+        {customMattressBuild.reasons.length > 0 && (
+          <div className="mt-6 rounded-[1.5rem] border border-white/10 bg-white/[0.06] p-5">
+            <p className="text-[10px] font-black uppercase tracking-[0.24em] text-[#C8A55B]">
+              Why this custom build fits
+            </p>
+            <div className="mt-4 grid gap-3 md:grid-cols-3">
+              {customMattressBuild.reasons.map((reason) => (
+                <p
+                  key={reason}
+                  className="rounded-[1rem] bg-[#07143B]/60 p-4 text-sm leading-6 text-[#EEF3FF]"
+                >
+                  {reason}
+                </p>
+              ))}
             </div>
-          ))}
-        </div>
-      )}
+          </div>
+        )}
 
-      <div className="flex gap-4">
-        <button
-          onClick={goBack}
-          className="flex-1 px-6 py-3 border border-slate-700 rounded-[0.75rem] bg-slate-800/90 text-slate-300 hover:bg-slate-700 transition"
-        >
-          Back to Categories
-        </button>
-        <button
-          onClick={closeWizard}
-          className="flex-1 px-6 py-3 bg-indigo-600 text-white rounded-[0.75rem] hover:bg-indigo-700 transition font-semibold"
-        >
-          Continue Shopping
-        </button>
+        <div className="mt-8 grid gap-3 md:grid-cols-[1.15fr_1fr]">
+          <button
+            onClick={buyCustomMattress}
+            className="rounded-[1.35rem] bg-white px-6 py-5 text-sm font-black uppercase tracking-[0.2em] text-[#07143B] transition hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-white/10"
+          >
+            Buy Now
+          </button>
+          <button
+            onClick={lookAround}
+            className="rounded-[1.35rem] border border-white/15 px-6 py-5 text-sm font-black uppercase tracking-[0.2em] text-[#B9C6FF] transition hover:bg-white/[0.08]"
+          >
+            Look Around
+          </button>
+        </div>
+
+        <div className="mt-6 flex justify-center">
+          <button
+            onClick={startMattressQuiz}
+            className="text-xs font-black uppercase tracking-[0.2em] text-[#B9C6FF] underline-offset-4 transition hover:text-white hover:underline"
+          >
+            Retake the quiz
+          </button>
+        </div>
       </div>
     </div>
   );

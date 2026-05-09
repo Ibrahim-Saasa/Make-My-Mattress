@@ -1,17 +1,196 @@
+import { BRANDS } from "../constants";
 import { supabase } from "../src/integrations/supabase/client";
-import { QuizAnswer, ProductCategory, ProductRecommendation } from "../types";
-import { GoogleGenAI } from "@google/genai";
+import { calculateMattressPrice } from "./pricingEngine";
+import {
+  CustomMattressBuild,
+  ProductCategory,
+  ProductRecommendation,
+  QuizAnswer,
+  TagWeights,
+  UserProductPreference,
+  UserRole,
+} from "../types";
+
+const CORE_MATTRESS_TYPES = new Set([
+  "Memory Foam",
+  "Latex",
+  "Spring",
+  "Orthopedic",
+]);
+
+const TAG_ALIASES: Record<string, string[]> = {
+  "memory foam": ["memory foam", "contouring", "pressure relief", "soft"],
+  contouring: ["memory foam", "contouring", "pressure relief"],
+  "pressure relief": ["memory foam", "contouring", "pressure relief", "soft"],
+  soft: ["memory foam", "soft", "pressure relief"],
+  latex: ["latex", "organic", "cooling", "breathable", "hypoallergenic"],
+  cooling: ["latex", "cooling", "breathable"],
+  breathable: ["latex", "cooling", "breathable"],
+  organic: ["latex", "organic"],
+  spring: ["spring", "pocket spring", "no disturbance", "bouncy", "durable"],
+  "pocket spring": ["spring", "pocket spring", "no disturbance"],
+  "no disturbance": ["spring", "pocket spring", "no disturbance"],
+  durable: ["spring", "durable"],
+  orthopedic: ["orthopedic", "back pain", "spinal alignment", "firm"],
+  support: ["orthopedic", "spinal alignment", "firm", "durable"],
+  firm: ["orthopedic", "firm", "spinal alignment"],
+  "back pain": ["orthopedic", "back pain", "spinal alignment"],
+  "spinal alignment": ["orthopedic", "spinal alignment"],
+  medium: ["memory foam", "spring"],
+  balanced: ["memory foam", "spring"],
+  adaptability: ["memory foam", "spring"],
+};
+
+const SIZE_TO_PARAMS: Record<string, { length: number; breadth: number }> = {
+  single: { length: 72, breadth: 36 },
+  double: { length: 72, breadth: 48 },
+  queen: { length: 78, breadth: 60 },
+  king: { length: 78, breadth: 72 },
+};
+
+const normalizeTag = (tag: string) =>
+  tag.toLowerCase().trim().replace(/_/g, " ").replace(/\s+/g, " ");
+
+const getSizeParamsFromAnswers = (answers: QuizAnswer[]) => {
+  const sizeAnswer = answers.find((answer) => SIZE_TO_PARAMS[answer.answer_id]);
+  return SIZE_TO_PARAMS[sizeAnswer?.answer_id || "single"];
+};
+
+const buildWhy = (comfortType: string, tagScores: TagWeights): string[] => {
+  const has = (tag: string) => (tagScores[normalizeTag(tag)] || 0) > 0;
+  const reasons: string[] = [];
+
+  if (comfortType === "Memory Foam" || has("pressure relief") || has("soft")) {
+    reasons.push("Built for close contouring and pressure relief.");
+  }
+
+  if (comfortType === "Latex" || has("cooling") || has("breathable")) {
+    reasons.push("Tuned for a cooler, more breathable sleep surface.");
+  }
+
+  if (comfortType === "Spring" || has("no disturbance") || has("durable")) {
+    reasons.push("Balanced for airflow, bounce, and sturdy everyday support.");
+  }
+
+  if (comfortType === "Orthopedic" || has("firm") || has("support")) {
+    reasons.push("Designed around firmer posture support and spinal alignment.");
+  }
+
+  if (
+    has("size single") ||
+    has("size double") ||
+    has("size queen") ||
+    has("size king")
+  ) {
+    reasons.push("Priced using the size you selected in the quiz.");
+  }
+
+  return Array.from(new Set(reasons)).slice(0, 3);
+};
+
+const scoreBrand = (brand: (typeof BRANDS)[number], tagScores: TagWeights) => {
+  const brandTags = brand.ai_tags.map(normalizeTag);
+  const brandType = normalizeTag(brand.type);
+  let score = CORE_MATTRESS_TYPES.has(brand.type) ? 1 : 0;
+
+  Object.entries(tagScores).forEach(([rawTag, weight]) => {
+    const tag = normalizeTag(rawTag);
+    const aliases = TAG_ALIASES[tag] || [tag];
+
+    if (brandTags.includes(tag) || brandType === tag) {
+      score += weight * 2.5;
+    }
+
+    aliases.forEach((alias) => {
+      const normalizedAlias = normalizeTag(alias);
+      if (brandTags.includes(normalizedAlias) || brandType === normalizedAlias) {
+        score += weight;
+      }
+    });
+  });
+
+  return score;
+};
+
+const getScoredCoreMattresses = (tagScores: TagWeights) =>
+  BRANDS.filter((brand) => CORE_MATTRESS_TYPES.has(brand.type))
+    .map((brand) => ({ brand, rawScore: scoreBrand(brand, tagScores) }))
+    .sort((a, b) => b.rawScore - a.rawScore);
+
+const buildMattressRecommendations = (
+  tagScores: TagWeights,
+): ProductRecommendation[] => {
+  const scored = getScoredCoreMattresses(tagScores);
+  const topScore = Math.max(scored[0]?.rawScore || 1, 1);
+
+  return scored.slice(0, 3).map(({ brand, rawScore }, index) => {
+    const matchScore = Math.min(
+      0.98,
+      Math.max(0.72, 0.72 + (rawScore / topScore) * 0.24 - index * 0.02),
+    );
+
+    return {
+      id: brand.id,
+      product_id: brand.id,
+      name: brand.name,
+      category: "mattress",
+      type: brand.type,
+      match_score: matchScore,
+      matchScore,
+      description: `${brand.description} This match is based on the comfort cues you just shared with us.`,
+      why: buildWhy(brand.type, tagScores),
+    };
+  });
+};
+
+const buildCustomMattressQuote = (
+  answers: QuizAnswer[],
+  tagScores: TagWeights,
+): CustomMattressBuild => {
+  const scored = getScoredCoreMattresses(tagScores);
+  const topMatch = scored[0]?.brand || BRANDS[0];
+  const topScore = Math.max(scored[0]?.rawScore || 1, 1);
+  const size = getSizeParamsFromAnswers(answers);
+  const params = {
+    ...size,
+    thickness: 6,
+    materialRate: topMatch.baseRate,
+    userType: UserRole.END_USER,
+    demandLevel: "NORMAL" as const,
+  };
+  const pricing = calculateMattressPrice(params);
+  const rawScore = scored[0]?.rawScore || 1;
+  const matchScore = Math.min(
+    0.98,
+    Math.max(0.78, 0.78 + (rawScore / topScore) * 0.2),
+  );
+
+  return {
+    id: "custom-comfort-mattress",
+    name: "Your Custom Comfort Mattress",
+    category: "mattress",
+    comfortType: topMatch.type,
+    materialRate: topMatch.baseRate,
+    matchedBrandId: topMatch.id,
+    matchScore,
+    params,
+    pricing,
+    reasons: buildWhy(topMatch.type, tagScores),
+    description:
+      "A custom mattress quote shaped from your quiz answers and priced with the same live mattress pricing engine used across the app.",
+    sourceAnswers: answers,
+  };
+};
 
 export const preferenceService = {
   /**
-   * Score product preference answers using tag-weight model
+   * Score product preference answers using the question tag-weight model.
    */
   async scoreProductAnswers(
     category: ProductCategory,
     answers: QuizAnswer[],
-  ): Promise<Record<string, number>> {
+  ): Promise<TagWeights> {
     try {
-      // Load questions for this category
       const questionsModule =
         category === "mattress"
           ? await import("../src/data/productQuestions/mattressQuestions.json")
@@ -22,7 +201,7 @@ export const preferenceService = {
               : await import("../src/data/productQuestions/accessoriesQuestions.json");
 
       const questions = questionsModule.default || questionsModule;
-      const tagScores: Record<string, number> = {};
+      const tagScores: TagWeights = {};
 
       answers.forEach(({ question_id, answer_id }) => {
         const question = questions.find((q: any) => q.id === question_id);
@@ -32,7 +211,9 @@ export const preferenceService = {
         if (!option || !option.weights) return;
 
         Object.entries(option.weights).forEach(([tag, weight]) => {
-          tagScores[tag] = (tagScores[tag] || 0) + (weight as number);
+          const normalizedTag = normalizeTag(tag);
+          tagScores[normalizedTag] =
+            (tagScores[normalizedTag] || 0) + (weight as number);
         });
       });
 
@@ -43,32 +224,63 @@ export const preferenceService = {
     }
   },
 
-  /**
-   * Get product recommendations based on tag scores
-   * TODO: Implement actual product matching from products table
-   */
-  async getRecommendations(
+  buildCustomMattressQuote(
     category: ProductCategory,
-    tagScores: Record<string, number>,
-  ): Promise<ProductRecommendation[]> {
-    try {
-      // TODO: Fetch from products table, match by category and tag scores
-      // For now, return mock data
-      return [];
-    } catch (error) {
-      console.error("Error getting recommendations:", error);
-      throw error;
-    }
+    answers: QuizAnswer[],
+    tagScores: TagWeights,
+  ): CustomMattressBuild | null {
+    if (category !== "mattress") return null;
+    return buildCustomMattressQuote(answers, tagScores);
+  },
+
+  buildCustomMattressFromPreference(
+    preference?: UserProductPreference | null,
+  ): CustomMattressBuild | null {
+    if (!preference || preference.product_category !== "mattress") return null;
+    return buildCustomMattressQuote(
+      preference.answers || [],
+      preference.tag_scores || {},
+    );
   },
 
   /**
-   * Save user product preference to database
+   * Backwards-compatible brand recommendations for older callers/stories.
+   */
+  async getRecommendations(
+    category: ProductCategory,
+    tagScores: TagWeights,
+  ): Promise<ProductRecommendation[]> {
+    if (category !== "mattress") return [];
+    return buildMattressRecommendations(tagScores);
+  },
+
+  buildRecommendationsFromPreference(
+    preference?: UserProductPreference | null,
+  ): ProductRecommendation[] {
+    if (!preference || preference.product_category !== "mattress") return [];
+
+    const recommendations = buildMattressRecommendations(
+      preference.tag_scores || {},
+    );
+    const savedIds = preference.recommended_product_ids || [];
+
+    if (savedIds.length === 0) return recommendations;
+
+    return recommendations.sort((a, b) => {
+      const aIndex = savedIds.indexOf(a.product_id || a.id);
+      const bIndex = savedIds.indexOf(b.product_id || b.id);
+      return (aIndex === -1 ? 99 : aIndex) - (bIndex === -1 ? 99 : bIndex);
+    });
+  },
+
+  /**
+   * Save user product preference to database.
    */
   async savePreference(
     userId: string,
     category: ProductCategory,
     answers: QuizAnswer[],
-    tagScores: Record<string, number>,
+    tagScores: TagWeights,
     recommendedProductIds: string[] = [],
   ): Promise<void> {
     try {
@@ -91,9 +303,9 @@ export const preferenceService = {
   },
 
   /**
-   * Get user's previous preferences
+   * Get user's previous preferences.
    */
-  async getUserPreferences(userId: string): Promise<any[]> {
+  async getUserPreferences(userId: string): Promise<UserProductPreference[]> {
     try {
       const { data, error } = await supabase
         .from("user_product_preferences")
@@ -102,7 +314,7 @@ export const preferenceService = {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      return data || [];
+      return (data || []) as UserProductPreference[];
     } catch (error) {
       console.error("Error fetching user preferences:", error);
       throw error;
@@ -110,220 +322,58 @@ export const preferenceService = {
   },
 
   /**
-   * Get all product categories and metadata
+   * Get all product categories and metadata.
    */
   async getProductCategories(): Promise<any[]> {
-    const categories = [
+    return [
       {
         id: "mattress",
         name: "Mattress",
-        emoji: "🛏️",
+        emoji: "Bed",
         description: "Find your perfect mattress",
       },
       {
         id: "pillow",
         name: "Pillow",
-        emoji: "🛌",
+        emoji: "Pillow",
         description: "Choose the right pillow",
       },
       {
         id: "bedsheet",
         name: "Bed Sheet",
-        emoji: "📄",
+        emoji: "Sheet",
         description: "Select your preferred sheets",
       },
       {
         id: "accessories",
         name: "Accessories",
-        emoji: "✨",
+        emoji: "Extras",
         description: "Enhance your sleep setup",
       },
     ];
-    return categories;
   },
 
   /**
-   * Generate AI-powered product recommendations based on quiz answers
+   * Backwards-compatible recommendation entry point.
    */
   async getProductRecommendations(
     answers: QuizAnswer[],
   ): Promise<ProductRecommendation[]> {
-    try {
-      // Initialize Gemini AI
-      const genAI = new GoogleGenAI({
-        apiKey: import.meta.env.VITE_GEMINI_API_KEY || "",
-      });
-
-      // Convert answers to readable format
-      const answersText = answers
-        .map((answer) => `${answer.question_id}: ${answer.answer_id}`)
-        .join(", ");
-
-      const prompt = `
-You are a sleep product recommendation expert. Based on the following user preferences from a sleep quiz, generate 3-5 personalized product recommendations.
-
-User preferences: ${answersText}
-
-Please return a JSON array of product recommendations with this exact structure:
-[
-  {
-    "id": "unique_id",
-    "name": "Product Name",
-    "category": "mattress|pillow|bedsheet|accessories",
-    "description": "Brief description explaining why it matches their preferences",
-    "price": number (realistic price in USD),
-    "rating": number (4.0-5.0),
-    "match_score": number (0.7-1.0 indicating how well it matches)
-  }
-]
-
-Make the recommendations specific and realistic. Focus on the category that seems most relevant based on the answers. If answers suggest mattress preferences, recommend mattresses. If they suggest pillow needs, recommend pillows, etc.
-
-Return only the JSON array, no additional text.
-`;
-
-      const result = await genAI.models.generateContent({
-        model: "gemini-1.5-flash",
-        contents: prompt,
-      });
-      const text = result.text || "[]";
-
-      // Parse the JSON response
-      const recommendations = JSON.parse(text.trim());
-
-      // Validate and ensure proper structure
-      return recommendations.map((rec: any, index: number) => ({
-        id: rec.id || `rec_${index}`,
-        name: rec.name || "Recommended Product",
-        category: rec.category || "mattress",
-        description: rec.description || "A great product for your sleep needs",
-        price: rec.price || 299,
-        rating: rec.rating || 4.5,
-        match_score: rec.match_score || 0.8,
-      }));
-    } catch (error) {
-      console.error("Error generating AI recommendations:", error);
-
-      // Fallback to random recommendations if AI fails
-      return this.getRandomRecommendations(answers);
-    }
+    const tagScores = await this.scoreProductAnswers("mattress", answers);
+    return this.getRecommendations("mattress", tagScores);
   },
 
   /**
-   * Fallback method to generate random recommendations based on answers
+   * Backwards-compatible fallback now returns catalogue recommendations.
    */
   getRandomRecommendations(answers: QuizAnswer[]): ProductRecommendation[] {
-    // Extract category from answers or default to mattress
-    const categoryAnswer = answers.find((a) =>
-      a.question_id.includes("category"),
-    );
-    const category =
-      (categoryAnswer?.answer_id as ProductCategory) || "mattress";
+    const tagScores: TagWeights = {};
+    answers.forEach((answer) => {
+      tagScores[normalizeTag(answer.answer_id)] =
+        (tagScores[normalizeTag(answer.answer_id)] || 0) + 1;
+    });
 
-    const randomProducts = {
-      mattress: [
-        {
-          id: "random_m1",
-          name: "Premium Memory Foam Mattress",
-          category: "mattress" as const,
-          description:
-            "High-quality memory foam with excellent contouring for personalized comfort",
-          price: 899,
-          rating: 4.7,
-          match_score: 0.85,
-        },
-        {
-          id: "random_m2",
-          name: "Hybrid Support Mattress",
-          category: "mattress" as const,
-          description:
-            "Combines memory foam and pocket springs for balanced support",
-          price: 1299,
-          rating: 4.8,
-          match_score: 0.92,
-        },
-        {
-          id: "random_m3",
-          name: "Natural Latex Mattress",
-          category: "mattress" as const,
-          description:
-            "Organic latex with natural cooling properties and excellent durability",
-          price: 1599,
-          rating: 4.6,
-          match_score: 0.78,
-        },
-      ],
-      pillow: [
-        {
-          id: "random_p1",
-          name: "Contour Memory Foam Pillow",
-          category: "pillow" as const,
-          description:
-            "Ergonomically designed to support neck and head alignment",
-          price: 79,
-          rating: 4.5,
-          match_score: 0.88,
-        },
-        {
-          id: "random_p2",
-          name: "Cooling Gel Pillow",
-          category: "pillow" as const,
-          description: "Temperature-regulating gel for cool, comfortable sleep",
-          price: 99,
-          rating: 4.4,
-          match_score: 0.82,
-        },
-      ],
-      bedsheet: [
-        {
-          id: "random_b1",
-          name: "Egyptian Cotton Sheets",
-          category: "bedsheet" as const,
-          description:
-            "Luxuriously soft 600 thread count Egyptian cotton sheets",
-          price: 199,
-          rating: 4.9,
-          match_score: 0.95,
-        },
-        {
-          id: "random_b2",
-          name: "Bamboo Cooling Sheets",
-          category: "bedsheet" as const,
-          description:
-            "Naturally cooling bamboo fabric for temperature regulation",
-          price: 149,
-          rating: 4.6,
-          match_score: 0.87,
-        },
-      ],
-      accessories: [
-        {
-          id: "random_a1",
-          name: "Mattress Topper",
-          category: "accessories" as const,
-          description:
-            "Add extra comfort and support to your existing mattress",
-          price: 249,
-          rating: 4.5,
-          match_score: 0.83,
-        },
-        {
-          id: "random_a2",
-          name: "Bed Frame Platform",
-          category: "accessories" as const,
-          description:
-            "Modern platform bed frame with storage and sleek design",
-          price: 599,
-          rating: 4.7,
-          match_score: 0.91,
-        },
-      ],
-    };
-
-    const products = randomProducts[category] || randomProducts.mattress;
-    // Return 2-3 random products
-    const shuffled = [...products].sort(() => 0.5 - Math.random());
-    return shuffled.slice(0, Math.min(3, shuffled.length));
+    return buildMattressRecommendations(tagScores);
   },
 };
 

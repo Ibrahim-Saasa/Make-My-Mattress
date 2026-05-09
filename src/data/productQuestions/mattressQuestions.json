@@ -1,5 +1,51 @@
 [
   {
+    "id": "q0",
+    "text": "Which mattress feel sounds most like home to you?",
+    "options": [
+      {
+        "id": "memory_foam",
+        "label": "Memory Foam - soft contouring comfort",
+        "weights": {
+          "memory foam": 6,
+          "contouring": 2,
+          "pressure_relief": 2,
+          "soft": 1
+        }
+      },
+      {
+        "id": "latex",
+        "label": "Latex - breathable natural bounce",
+        "weights": {
+          "latex": 6,
+          "cooling": 2,
+          "breathable": 2,
+          "organic": 1
+        }
+      },
+      {
+        "id": "spring",
+        "label": "Spring - airy bounce with partner support",
+        "weights": {
+          "spring": 6,
+          "pocket spring": 2,
+          "no disturbance": 2,
+          "durable": 1
+        }
+      },
+      {
+        "id": "orthopedic",
+        "label": "Orthopedic - firmer support for posture",
+        "weights": {
+          "orthopedic": 6,
+          "back pain": 2,
+          "spinal alignment": 2,
+          "firm": 1
+        }
+      }
+    ]
+  },
+  {
     "id": "q1",
     "text": "What's your primary sleep position?",
     "options": [

@@ -1,5 +1,10 @@
 import React, { useState } from "react";
-import { BrandMetadata, PricingResult, Address } from "../types";
+import {
+  BrandMetadata,
+  PricingResult,
+  Address,
+  CartDiscountOffer,
+} from "../types";
 import { FinancialEngine } from "../services/financialEngine";
 import AddressPicker from "./AddressPicker";
 
@@ -8,10 +13,15 @@ interface CartItem {
   dimensions: string;
   pricing: PricingResult;
   id: string;
+  label?: string;
+  source?: "brand" | "quiz";
+  comfortType?: string;
+  matchScore?: number;
 }
 
 interface Props {
   cartItems: CartItem[];
+  discountOffer?: CartDiscountOffer;
   onBack: () => void;
   onOrderSuccess: () => void;
 }
@@ -32,6 +42,7 @@ const CHECKOUT_STARS = [
 
 const CheckoutScreen: React.FC<Props> = ({
   cartItems,
+  discountOffer,
   onBack,
   onOrderSuccess,
 }) => {
@@ -42,14 +53,22 @@ const CheckoutScreen: React.FC<Props> = ({
     message: string;
   } | null>(null);
 
-  const totalPayable = cartItems.reduce(
+  const itemSubtotal = cartItems.reduce(
     (acc, item) => acc + item.pricing.final_price,
     0,
   );
-  const totalTax = cartItems.reduce(
+  const discountAmount = discountOffer
+    ? Math.round((itemSubtotal * discountOffer.percent) / 100)
+    : 0;
+  const totalPayable = Math.max(itemSubtotal - discountAmount, 0);
+  const totalTaxBeforeDiscount = cartItems.reduce(
     (acc, item) => acc + item.pricing.taxAmount,
     0,
   );
+  const totalTax =
+    itemSubtotal > 0
+      ? Math.round(totalTaxBeforeDiscount * (totalPayable / itemSubtotal))
+      : 0;
   const isB2B = cartItems.some(
     (item) => item.pricing.invoiceType === "B2B_GST",
   );
@@ -260,22 +279,30 @@ const CheckoutScreen: React.FC<Props> = ({
                     </div>
                     <div className="min-w-0">
                       <h3 className="text-xl font-black text-theme-primary">
-                        {item.brand.name} Mattress
+                        {item.label || `${item.brand.name} Mattress`}
                       </h3>
                       <p className="mt-1 text-[10px] font-black uppercase tracking-[0.24em] text-[var(--brand-primary)] dark:text-[#AFC0FF]">
                         Size: {item.dimensions} inches
                       </p>
                       <p className="mt-3 text-sm leading-relaxed text-theme-secondary">
-                        Crafted for balanced support and a cleaner sleep setup
-                        with your selected configuration.
+                        {item.source === "quiz"
+                          ? `Crafted from your quiz answers with a ${item.comfortType || item.brand.type} comfort direction.`
+                          : "Crafted for balanced support and a cleaner sleep setup with your selected configuration."}
                       </p>
                       <div className="mt-4 flex flex-wrap gap-2">
                         <span className="rounded-full bg-[rgba(23,64,209,0.08)] px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-[var(--brand-primary)] dark:bg-white/10 dark:text-[#DCE6FF]">
                           Qty 1
                         </span>
                         <span className="rounded-full bg-[rgba(200,165,91,0.12)] px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-[#9A7A39] dark:bg-[#2C2446] dark:text-[#E3C98A]">
-                          Premium build
+                          {item.source === "quiz"
+                            ? "Quiz custom build"
+                            : "Premium build"}
                         </span>
+                        {item.matchScore && (
+                          <span className="rounded-full bg-[rgba(23,64,209,0.08)] px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-[var(--brand-primary)] dark:bg-white/10 dark:text-[#DCE6FF]">
+                            {Math.round(item.matchScore * 100)}% match
+                          </span>
+                        )}
                       </div>
                     </div>
                     <div className="rounded-[1.5rem] bg-theme-input px-5 py-4 text-left md:min-w-[170px]">
@@ -314,8 +341,18 @@ const CheckoutScreen: React.FC<Props> = ({
                   label={
                     isB2B ? "Subtotal (Base Price)" : "Item MRP (Subtotal)"
                   }
-                  value={isB2B ? totalPayable - totalTax : totalPayable}
+                  value={
+                    isB2B ? itemSubtotal - totalTaxBeforeDiscount : itemSubtotal
+                  }
                 />
+
+                {discountOffer && (
+                  <SummaryRow
+                    label={`${discountOffer.code} (${discountOffer.percent}% first-order discount)`}
+                    value={`-${FinancialEngine.formatCurrency(discountAmount)}`}
+                    isTax
+                  />
+                )}
 
                 {isB2B && (
                   <SummaryRow label="GST (18%)" value={totalTax} isTax />

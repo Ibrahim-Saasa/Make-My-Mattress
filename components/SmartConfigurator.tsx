@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   BrandMetadata,
   UserRole,
@@ -14,6 +14,7 @@ import { useTheme } from "../src/contexts/ThemeContext";
 interface Props {
   brand: BrandMetadata;
   userRole: UserRole;
+  initialParams?: Partial<MattressParams>;
   onNext: (params: MattressParams, pricing: PricingResult) => void;
   onBack: () => void;
   onBookService: () => void;
@@ -22,23 +23,42 @@ interface Props {
 const SmartConfigurator: React.FC<Props> = ({
   brand,
   userRole,
+  initialParams,
   onNext,
   onBack,
   onBookService,
 }) => {
   const { theme } = useTheme();
-  const [params, setParams] = useState<MattressParams>({
-    length: 72,
-    breadth: 36,
-    thickness: 6,
+  const buildStartingParams = (): MattressParams => ({
+    length: initialParams?.length ?? 72,
+    breadth: initialParams?.breadth ?? 36,
+    thickness: initialParams?.thickness ?? 6,
     materialRate: brand.baseRate,
     userType: userRole,
-    demandLevel: "NORMAL",
+    demandLevel: initialParams?.demandLevel ?? "NORMAL",
+    coupon_code: initialParams?.coupon_code,
+    dealer_auth_code: initialParams?.dealer_auth_code,
   });
+
+  const [params, setParams] = useState<MattressParams>(buildStartingParams);
 
   const [isCustomModalOpen, setCustomModalOpen] = useState(false);
   const [customInput, setCustomInput] = useState({ l: "", b: "" });
   const [validationError, setValidationError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setParams(buildStartingParams());
+  }, [
+    brand.id,
+    brand.baseRate,
+    userRole,
+    initialParams?.length,
+    initialParams?.breadth,
+    initialParams?.thickness,
+    initialParams?.demandLevel,
+    initialParams?.coupon_code,
+    initialParams?.dealer_auth_code,
+  ]);
 
   const triggerHaptic = (impact: "light" | "medium") => {
     if (navigator.vibrate) {

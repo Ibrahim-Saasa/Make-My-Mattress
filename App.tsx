@@ -35,18 +35,37 @@ import ResetPage from "./components/ResetPage";
 import { ProductWizardProvider } from "./contexts/ProductWizardContext";
 import ProductWizardModal from "./components/ProductWizard/ProductWizardModal";
 import ProductWizardFloatingButton from "./components/ProductWizard/ProductWizardFloatingButton";
-import { UserRole, BrandMetadata, PricingResult } from "./types";
+import {
+  UserRole,
+  BrandMetadata,
+  PricingResult,
+  MattressParams,
+  CustomMattressBuild,
+  CartDiscountOffer,
+} from "./types";
 import { BrandLogo, Footer } from "./components/UI";
+import { FinancialEngine } from "./services/financialEngine";
 
 interface CartItem {
   brand: BrandMetadata;
   dimensions: string;
   pricing: PricingResult;
   id: string;
+  label?: string;
+  source?: "brand" | "quiz";
+  comfortType?: string;
+  matchScore?: number;
 }
 
 const SELECTED_BRAND_STORAGE_KEY = "mmm:selectedBrand";
 const CART_STORAGE_KEY = "mmm:cartItems";
+const CART_DISCOUNT_STORAGE_KEY = "mmm:cartDiscountOffer";
+const FIRST_ORDER_DISCOUNT = {
+  code: "FIRSTSLEEP5",
+  percent: 5,
+  message:
+    "Congratulations, for your first order we have added a 5% comfort discount. Have a nice sleep.",
+};
 
 const App: React.FC = () => {
   const { session, isLoading, supabase, clearSession } = useSession();
@@ -62,12 +81,21 @@ const App: React.FC = () => {
   const [isAiConsultantOpen, setIsAiConsultantOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [cartDiscountOffer, setCartDiscountOffer] =
+    useState<CartDiscountOffer | null>(null);
+  const [isDiscountModalOpen, setIsDiscountModalOpen] = useState(false);
+  const [configuratorInitialParams, setConfiguratorInitialParams] =
+    useState<Partial<MattressParams> | null>(null);
+  const [cartCelebrationMessage, setCartCelebrationMessage] = useState<
+    string | null
+  >(null);
   const [isRoleDetermined, setIsRoleDetermined] = useState(false); // New state
 
   useEffect(() => {
     try {
       const storedBrand = localStorage.getItem(SELECTED_BRAND_STORAGE_KEY);
       const storedCart = localStorage.getItem(CART_STORAGE_KEY);
+      const storedDiscount = localStorage.getItem(CART_DISCOUNT_STORAGE_KEY);
 
       if (storedBrand) {
         setSelectedBrand(JSON.parse(storedBrand));
@@ -75,6 +103,10 @@ const App: React.FC = () => {
 
       if (storedCart) {
         setCartItems(JSON.parse(storedCart));
+      }
+
+      if (storedDiscount) {
+        setCartDiscountOffer(JSON.parse(storedDiscount));
       }
     } catch (error) {
       console.error("Failed to restore shopper state:", error);
@@ -103,6 +135,30 @@ const App: React.FC = () => {
       console.error("Failed to persist cart:", error);
     }
   }, [cartItems]);
+
+  useEffect(() => {
+    if (cartItems.length > 0 || !cartDiscountOffer) {
+      return;
+    }
+
+    setCartDiscountOffer(null);
+    setIsDiscountModalOpen(false);
+  }, [cartDiscountOffer, cartItems.length]);
+
+  useEffect(() => {
+    try {
+      if (cartDiscountOffer && cartItems.length > 0) {
+        localStorage.setItem(
+          CART_DISCOUNT_STORAGE_KEY,
+          JSON.stringify(cartDiscountOffer),
+        );
+      } else {
+        localStorage.removeItem(CART_DISCOUNT_STORAGE_KEY);
+      }
+    } catch (error) {
+      console.error("Failed to persist cart discount:", error);
+    }
+  }, [cartDiscountOffer, cartItems.length]);
 
   useEffect(() => {
     if (isLoading) {
@@ -243,14 +299,97 @@ const App: React.FC = () => {
       dimensions: `${params.length}x${params.breadth}x${params.thickness}`,
       pricing,
       id: Math.random().toString(36).substr(2, 9),
+      source: "brand",
     };
     setCartItems((prev) => [...prev, newItem]);
+    setConfiguratorInitialParams(null);
+    setCartCelebrationMessage(null);
     setIsCartOpen(true);
   };
 
   const handleBrandSelection = (brand: BrandMetadata) => {
+    setConfiguratorInitialParams(null);
+    setCartCelebrationMessage(null);
     setSelectedBrand(brand);
     navigate("/configurator");
+  };
+
+  const handleCustomMattressBuyNow = (build: CustomMattressBuild) => {
+    const customBrand: BrandMetadata = {
+      id: build.id,
+      name: "Custom Comfort",
+      type: build.comfortType,
+      baseRate: build.materialRate,
+      description: build.description,
+      ai_tags: [build.comfortType.toLowerCase(), "custom", "quiz match"],
+    };
+
+    const newItem: CartItem = {
+      brand: customBrand,
+      label: build.name,
+      dimensions: `${build.params.length}x${build.params.breadth}x${build.params.thickness}`,
+      pricing: build.pricing,
+      id: `${build.id}-${Date.now()}`,
+      source: "quiz",
+      comfortType: build.comfortType,
+      matchScore: build.matchScore,
+    };
+
+    setCartItems((prev) => [...prev, newItem]);
+    setConfiguratorInitialParams(null);
+    setCartCelebrationMessage(
+      `${build.name} is in your cart. You are almost there, and your custom quote is ready for review.`,
+    );
+    setIsCartOpen(true);
+  };
+
+  const applyFirstOrderDiscount = () => {
+    setCartDiscountOffer((current) => {
+      if (current) return current;
+
+      return {
+        ...FIRST_ORDER_DISCOUNT,
+        appliedAt: new Date().toISOString(),
+      };
+    });
+  };
+
+  const showSaveTheSaleDiscount = () => {
+    if (cartItems.length === 0 || cartDiscountOffer) {
+      return false;
+    }
+
+    applyFirstOrderDiscount();
+    setIsDiscountModalOpen(true);
+    return true;
+  };
+
+  const handleCartClose = () => {
+    setIsCartOpen(false);
+    setCartCelebrationMessage(null);
+    showSaveTheSaleDiscount();
+  };
+
+  const handleCheckoutBack = () => {
+    if (showSaveTheSaleDiscount()) {
+      return;
+    }
+
+    navigate("/brand-hall");
+  };
+
+  const handleDiscountContinueCheckout = () => {
+    setIsDiscountModalOpen(false);
+    setIsCartOpen(false);
+    setCartCelebrationMessage(null);
+    navigate("/checkout");
+  };
+
+  const handleDiscountLookAround = () => {
+    setIsDiscountModalOpen(false);
+    setIsCartOpen(false);
+    setCartCelebrationMessage(null);
+    navigate("/brand-hall");
   };
 
   const removeItem = (id: string) => {
@@ -284,8 +423,26 @@ const App: React.FC = () => {
     "/signup",
   ].some((path) => location.pathname.startsWith(path));
 
+  const shouldAutoPromptMattressQuiz =
+    !!session &&
+    userRole === UserRole.END_USER &&
+    location.pathname === "/brand-hall";
+  const cartSubtotal = cartItems.reduce(
+    (acc, item) => acc + item.pricing.final_price,
+    0,
+  );
+  const cartDiscountAmount = cartDiscountOffer
+    ? Math.round((cartSubtotal * cartDiscountOffer.percent) / 100)
+    : 0;
+  const cartDiscountedTotal = Math.max(cartSubtotal - cartDiscountAmount, 0);
+
   return (
-    <ProductWizardProvider>
+    <ProductWizardProvider
+      userId={session?.user.id}
+      autoPrompt={shouldAutoPromptMattressQuiz}
+      onCustomMattressBuyNow={handleCustomMattressBuyNow}
+      onLookAround={() => navigate("/brand-hall")}
+    >
       <div className="min-h-screen bg-theme-background text-theme-primary overflow-x-hidden font-sans">
         {location.pathname !== "/identity" &&
           location.pathname !== "/login" &&
@@ -612,10 +769,14 @@ const App: React.FC = () => {
                   <SmartConfigurator
                     brand={selectedBrand}
                     userRole={userRole || UserRole.END_USER}
+                    initialParams={configuratorInitialParams || undefined}
                     onNext={(params, pricing) =>
                       handleAddToCart(selectedBrand, params, pricing)
                     }
-                    onBack={() => navigate("/brand-hall")}
+                    onBack={() => {
+                      setConfiguratorInitialParams(null);
+                      navigate("/brand-hall");
+                    }}
                     onBookService={() => navigate("/service-hub")}
                   />
                 ) : (
@@ -628,9 +789,12 @@ const App: React.FC = () => {
               element={
                 <CheckoutScreen
                   cartItems={cartItems}
-                  onBack={() => navigate("/brand-hall")}
+                  discountOffer={cartDiscountOffer || undefined}
+                  onBack={handleCheckoutBack}
                   onOrderSuccess={() => {
                     setCartItems([]);
+                    setCartDiscountOffer(null);
+                    setIsDiscountModalOpen(false);
                     navigate("/brand-hall");
                   }}
                 />
@@ -697,14 +861,84 @@ const App: React.FC = () => {
         />
         <CartDrawer
           isOpen={isCartOpen}
-          onClose={() => setIsCartOpen(false)}
+          onClose={handleCartClose}
           items={cartItems}
+          discountOffer={cartDiscountOffer || undefined}
           onRemove={removeItem}
           onCheckout={() => {
             setIsCartOpen(false);
+            setCartCelebrationMessage(null);
             navigate("/checkout");
           }}
+          celebrationMessage={cartCelebrationMessage || undefined}
         />
+
+        {isDiscountModalOpen && cartDiscountOffer && (
+          <div className="fixed inset-0 z-[120] flex items-center justify-center overflow-hidden bg-[rgba(3,10,32,0.72)] px-4 backdrop-blur-lg">
+            <div
+              className="absolute inset-0"
+              onClick={handleDiscountLookAround}
+            />
+            <div className="relative w-full max-w-lg overflow-hidden rounded-[2.25rem] border border-[#C8A55B]/35 bg-[linear-gradient(145deg,#07143B_0%,#10245D_48%,#1740D1_100%)] p-7 text-white shadow-[0_32px_100px_rgba(7,20,59,0.55)] md:p-8">
+              <div className="pointer-events-none absolute -right-14 -top-14 h-40 w-40 rounded-full bg-[#C8A55B]/20 blur-3xl" />
+              <div className="pointer-events-none absolute -bottom-16 -left-10 h-44 w-44 rounded-full bg-white/10 blur-3xl" />
+              <div className="relative">
+                <div className="mb-5 inline-flex items-center rounded-full border border-white/15 bg-white/10 px-4 py-2 text-[10px] font-black uppercase tracking-[0.24em] text-[#E8D59B]">
+                  {cartDiscountOffer.code}
+                </div>
+                <h2 className="text-3xl font-black tracking-tight md:text-4xl">
+                  A little comfort discount, just for you.
+                </h2>
+                <p className="mt-4 text-sm leading-6 text-[#EEF3FF] md:text-base">
+                  {cartDiscountOffer.message}
+                </p>
+
+                <div className="mt-6 grid gap-3 rounded-[1.75rem] border border-white/12 bg-white/10 p-4 backdrop-blur-sm">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="font-semibold text-[#D9E2FF]">
+                      Cart subtotal
+                    </span>
+                    <span className="font-black">
+                      {FinancialEngine.formatCurrency(cartSubtotal)}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="font-semibold text-[#E8D59B]">
+                      First-order discount ({cartDiscountOffer.percent}%)
+                    </span>
+                    <span className="font-black text-[#E8D59B]">
+                      -{FinancialEngine.formatCurrency(cartDiscountAmount)}
+                    </span>
+                  </div>
+                  <div className="h-px bg-white/14" />
+                  <div className="flex items-end justify-between">
+                    <span className="text-[10px] font-black uppercase tracking-[0.22em] text-[#D9E2FF]">
+                      New total
+                    </span>
+                    <span className="text-3xl font-black">
+                      {FinancialEngine.formatCurrency(cartDiscountedTotal)}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="mt-7 grid gap-3 sm:grid-cols-2">
+                  <button
+                    onClick={handleDiscountContinueCheckout}
+                    className="rounded-[1.5rem] bg-white px-5 py-4 text-sm font-black uppercase tracking-[0.18em] text-[#0C1F63] shadow-xl shadow-black/10 transition hover:bg-[#EEF3FF] active:scale-[0.98]"
+                  >
+                    Continue to Checkout
+                  </button>
+                  <button
+                    onClick={handleDiscountLookAround}
+                    className="rounded-[1.5rem] border border-white/18 bg-white/10 px-5 py-4 text-sm font-black uppercase tracking-[0.18em] text-white transition hover:bg-white/16 active:scale-[0.98]"
+                  >
+                    Look Around
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Product Wizard Modal and Floating Button */}
         {session && userRole === UserRole.END_USER && (

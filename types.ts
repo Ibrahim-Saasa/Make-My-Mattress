@@ -284,6 +284,39 @@ export interface ProductPreferenceResponse {
   updated_at?: string;
 }
 
+export interface UserProductPreference {
+  id?: string;
+  user_id: string;
+  product_category: ProductCategory;
+  answers: QuizAnswer[];
+  tag_scores: TagWeights;
+  recommended_product_ids?: string[];
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface CustomMattressBuild {
+  id: string;
+  name: string;
+  category: "mattress";
+  comfortType: string;
+  materialRate: number;
+  matchedBrandId?: string;
+  matchScore: number;
+  params: MattressParams;
+  pricing: PricingResult;
+  reasons: string[];
+  description: string;
+  sourceAnswers: QuizAnswer[];
+}
+
+export interface CartDiscountOffer {
+  code: string;
+  percent: number;
+  message: string;
+  appliedAt: string;
+}
+
 export interface ProductRecommendation {
   id: string;
   product_id?: string;
@@ -291,7 +324,9 @@ export interface ProductRecommendation {
   category: ProductCategory;
   match_score: number;
   matchScore?: number; // Alias for match_score
+  type?: string;
   description?: string;
+  why?: string[];
   price?: number;
   rating?: number;
   sku?: string;
